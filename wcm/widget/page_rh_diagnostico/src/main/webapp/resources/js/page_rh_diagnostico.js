@@ -226,6 +226,13 @@ var RHDiagnostico = SuperWidget.extend({
                 }
             });
         }
+
+        // SCROLL SUAVE PARA O TOPO DA CAIXA NO MOBILE
+        if (window.innerWidth <= 768) {
+            $('html, body').animate({
+                scrollTop: $(".content-box").offset().top - 80 // Desconta o tamanho do header fixo
+            }, 300);
+        }
     },
  
     restoreData: function () {
@@ -259,6 +266,13 @@ var RHDiagnostico = SuperWidget.extend({
         $("#landing-quiz").hide();
         
         $("#landing-result").show().addClass("vibrant-tech-entrance");
+
+        // SCROLL SUAVE PARA O TOPO DA TELA DE RESULTADOS NO MOBILE
+        if (window.innerWidth <= 768) {
+            $('html, body').animate({
+                scrollTop: $(".content-box").offset().top - 80 
+            }, 300);
+        }
  
         var scores = {
             'Recrutamento': this.calcPillar(['process_formal', 'use_ats', 'dedicated_team']),
@@ -495,17 +509,17 @@ var RHDiagnostico = SuperWidget.extend({
     },
 
     sendToWhatsApp: function() {
-        var whatsappNumber = "5511999999999"; // Lembre-se de mudar para o seu número
+        var whatsappNumber = "5531998377928"; // Lembre-se de mudar para o seu número
 
         var company = this.userAnswers['company_name'] || "Empresa Não Informada";
         var user = this.userAnswers['user_name'] || "Usuário";
         var challenge = $("#strategic_challenge").val() || "Não preenchido.";
 
         var message = "Olá, finalizei o *Diagnóstico InteRHativa*!\n\n";
-        message += "👤 *Nome:* " + user + "\n";
-        message += "🏢 *Empresa:* " + company + "\n";
-        message += "📊 *Score Final:* " + this.finalScoreGlobal + "% (" + this.finalClassification + ")\n\n";
-        message += "🎯 *Meu principal desafio estratégico hoje é:*\n" + challenge + "\n\n";
+        message += "*Nome:* " + user + "\n";
+        message += "*Empresa:* " + company + "\n";
+        message += "*Score Final:* " + this.finalScoreGlobal + "% (" + this.finalClassification + ")\n\n";
+        message += "*Meu principal desafio estratégico hoje é:*\n" + challenge + "\n\n";
         message += "Gostaria de falar com um especialista para iniciar a transformação do meu RH.";
 
         var encodedMessage = encodeURIComponent(message);
@@ -616,13 +630,11 @@ var RHDiagnostico = SuperWidget.extend({
             crossDomain: true,
             success: function (response) {
                 myLoading.hide();
-                // Ocultando o aviso visual e enviando apenas para o console
                 console.log('Sucesso! Diagnóstico enviado (ID ' + response.processInstanceId + ').');
             },
             error: function (xhr, status, error) {
                 myLoading.hide();
                 console.error("Erro API:", xhr.responseText);
-                // Também removi o toast de erro da tela para manter tudo no console
             }
         });
     }
