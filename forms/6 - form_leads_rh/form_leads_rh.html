@@ -1,0 +1,345 @@
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="/style-guide/css/fluig-style-guide.min.css" />
+    <script type="text/javascript" src="/portal/resources/js/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/style-guide/js/fluig-style-guide.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        body { 
+            background-color: #f4f7f9; 
+            padding-bottom: 30px;
+        }
+        
+        .landing-wrapper {
+            font-family: 'Poppins', sans-serif;
+            background-color: transparent;
+            padding: 20px 0;
+        }
+
+        /* --- ESTILO DOS CARDS (VERTICAL) --- */
+        .card-section {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 35px 40px;
+            max-width: 1100px;
+            margin: 0 auto 25px auto;
+            border-top: 5px solid #1eaad9;
+        }
+
+        .card-results {
+            border-top: 5px solid #004b8d;
+            background: linear-gradient(to bottom right, #ffffff, #f8fbff);
+        }
+
+        .form-section-title { 
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            color: #004b8d; 
+            margin: 0 0 25px 0; 
+            border-left: 4px solid #1eaad9; 
+            padding-left: 12px; 
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group label { 
+            font-weight: 600; 
+            font-size: 13px; 
+            color: #333; /* Deixei a pergunta mais escura para dar contraste */
+            margin-bottom: 8px; 
+            display: block;
+        }
+        
+        /* =========================================================================
+           BLINDAGEM CONTRA O FLUIG: FORÇANDO AS CAIXAS DE TEXTO
+           Isso garante que o Fluig não apague as bordas no modo Visualização
+           ========================================================================= */
+        .fluig-style-guide .card-section .form-group .form-control,
+        .fluig-style-guide .card-section .form-group input[readonly], 
+        .fluig-style-guide .card-section .form-group textarea[readonly],
+        .fluig-style-guide .card-section .form-group span[id^="_"] { 
+            background-color: #f0f4f8 !important; /* Fundo cinza azulado bem visível */
+            border: 1px solid #c9d3df !important; /* Borda forte */
+            border-radius: 8px !important;
+            color: #004b8d !important; /* Cor do texto (Laranja ou Azul escuro) */
+            font-weight: 600 !important; 
+            font-size: 14px !important;
+            padding: 12px 18px !important; 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.04) !important; 
+            height: auto !important;
+            min-height: 44px !important;
+            display: block !important; 
+            width: 100% !important;
+            margin-top: 4px !important;
+            opacity: 1 !important;
+            line-height: 1.4 !important;
+        }
+
+        /* Resultados */
+        .score-card { 
+            background: #fff; 
+            padding: 30px; 
+            border-radius: 12px; 
+            border: 1px solid #e1eef7; 
+            text-align: center; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+        .score-radial { 
+            width: 130px; 
+            height: 130px; 
+            border-radius: 50%; 
+            border: 10px solid #1eaad9; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto 15px; 
+            font-size: 32px; 
+            font-weight: 800; 
+            color: #004b8d; 
+        }
+
+        @media (max-width: 768px) {
+            .card-section { padding: 25px 20px; }
+            .col-md-6 { margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="fluig-style-guide">
+        <form name="form" role="form">
+            
+            <input type="hidden" name="score_final" id="score_final">
+            <input type="hidden" name="nivel_maturidade" id="nivel_maturidade">
+            <input type="hidden" name="json_respostas" id="json_respostas">
+
+            <div class="panel panel-primary" style="max-width: 1100px; margin: 20px auto 0;">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="flaticon flaticon-speaker icon-sm"></i> Visualização de Diagnóstico de RH</h3>
+                </div>
+            </div>
+
+            <div class="landing-wrapper">
+                <div class="container-fluid">
+                    
+                    <div class="card-section card-results">
+                        <h4 class="form-section-title">Performance e Maturidade Digital</h4>
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <div class="score-card">
+                                    <div class="score-radial"><span id="lbl_score">0%</span></div>
+                                    <h3 id="lbl_nivel" style="color: #004b8d; font-weight: 700; margin-top: 15px;">Carregando...</h3>
+                                    <p class="text-muted small mt-2">Classificação atual do RH baseado nas respostas</p>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div style="max-height: 350px; display: flex; justify-content: center;">
+                                    <canvas id="maturityChartViewer"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-section">
+                        <h4 class="form-section-title">Dados da Empresa e Contato</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group"><label>Empresa</label><input type="text" name="empresa" class="form-control" readonly></div>
+                                <div class="form-group"><label>Segmento</label><input type="text" name="segmento" class="form-control" readonly></div>
+                                <div class="form-group"><label>Número de Funcionários</label><input type="text" name="tamanho" class="form-control" readonly></div>
+                                <div class="form-group"><label>Site</label><input type="text" name="company_site" class="form-control" readonly></div>
+                                <div class="form-group"><label>Pessoas no RH atualmente</label><input type="text" name="rh_team_size" class="form-control" readonly></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group"><label>Nome do Contato</label><input type="text" name="nome_contato" class="form-control" readonly></div>
+                                <div class="form-group"><label>Email Corporativo</label><input type="text" name="email_contato" class="form-control" readonly></div>
+                                <div class="form-group"><label>Telefone</label><input type="text" name="telefone" class="form-control" readonly></div>
+                                <div class="form-group"><label>Cargo / Setor</label><input type="text" name="user_role" class="form-control" readonly></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-section">
+                        <h4 class="form-section-title">Recrutamento e Seleção</h4>
+                        <div class="row">
+                            <div class="col-md-6"><div class="form-group"><label>Possui processo formal e documentado de R&S?</label><input type="text" name="process_formal" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Utiliza plataforma de ATS?</label><input type="text" name="use_ats" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Qual plataforma de ATS utiliza?</label><input type="text" name="ats_name" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Em quais canais as vagas são divulgadas?</label><input type="text" name="job_channels" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Possui equipe destinada apenas para R&S?</label><input type="text" name="dedicated_team" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Volume médio de contratações por mês?</label><input type="text" name="hiring_volume" class="form-control" readonly></div></div>
+                        </div>
+                    </div>
+
+                    <div class="card-section">
+                        <h4 class="form-section-title">Admissão e Onboarding</h4>
+                        <div class="row">
+                            <div class="col-md-6"><div class="form-group"><label>O processo de Admissão é feito de forma digital?</label><input type="text" name="has_digital_admission" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Utiliza Portal para o candidato enviar documentos?</label><input type="text" name="use_admission_portal" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Possui Assinatura Eletrônica de contratos?</label><input type="text" name="has_electronic_signature" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Colaboradores passam por integração estruturada (onboarding)?</label><input type="text" name="has_integration_program" class="form-control" readonly></div></div>
+                            <div class="col-md-12"><div class="form-group"><label>Considera o processo atual seguro contra fraudes?</label><input type="text" name="is_admission_secure" class="form-control" readonly></div></div>
+                        </div>
+                    </div>
+
+                    <div class="card-section">
+                        <h4 class="form-section-title">Departamento Pessoal</h4>
+                        <div class="row">
+                            <div class="col-md-6"><div class="form-group"><label>Qual o sistema ERP/Folha utilizado atualmente?</label><input type="text" name="dp_system" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Quem é o responsável pelo processamento da folha?</label><input type="text" name="payroll_responsible" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Processos de solicitação de férias/benefícios são automatizados?</label><input type="text" name="dp_automated" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Atende exigências do eSocial sem processos manuais?</label><input type="text" name="esocial_compliant" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Utiliza planilhas como ferramentas auxiliares?</label><input type="text" name="use_sheets_payroll" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Existem fluxos de trabalho definidos para o DP?</label><input type="text" name="defined_dp_workflows" class="form-control" readonly></div></div>
+                        </div>
+                    </div>
+
+                    <div class="card-section">
+                        <h4 class="form-section-title">Treinamento e Desenvolvimento</h4>
+                        <div class="row">
+                            <div class="col-md-6"><div class="form-group"><label>Estratégia clara de desenvolvimento de pessoas?</label><input type="text" name="td_strategy_clear" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Treinamentos alinhados aos objetivos estratégicos?</label><input type="text" name="td_aligned_goals" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Existe planejamento anual de capacitação?</label><input type="text" name="td_annual_planning" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>A Alta Gestão participa da definição?</label><input type="text" name="td_management_participation" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Indicadores/avaliações mostram lacunas de competência?</label><input type="text" name="td_gap_indicators" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Líderes contribuem com necessidades de capacitação?</label><input type="text" name="td_leaders_contribution" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Indicadores avaliam impacto dos treinamentos na performance?</label><input type="text" name="td_impact_indicators" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Correlação entre treinamento e melhoria de resultados?</label><input type="text" name="td_results_correlation" class="form-control" readonly></div></div>
+                        </div>
+                    </div>
+
+                    <div class="card-section">
+                        <h4 class="form-section-title">Cultura Organizacional</h4>
+                        <div class="row">
+                            <div class="col-md-6"><div class="form-group"><label>Ações do dia a dia condizentes com a cultura divulgada?</label><input type="text" name="culture_alignment" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Liberdade e canais seguros para expressão de ideias?</label><input type="text" name="expression_freedom" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Cultura é centrada na valorização das pessoas?</label><input type="text" name="people_valuation" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>A estrutura de cargos, salários e hierarquias é clara?</label><input type="text" name="defined_hierarchy" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Realiza pesquisa de clima organizacional?</label><input type="text" name="climate_survey" class="form-control" readonly></div></div>
+                            <div class="col-md-12"><div class="form-group"><label>Como novos colaboradores são introduzidos à cultura?</label><textarea name="culture_intro" class="form-control" rows="2" readonly></textarea></div></div>
+                        </div>
+                    </div>
+
+                    <div class="card-section">
+                        <h4 class="form-section-title">Indicadores e Analytics</h4>
+                        <div class="row">
+                            <div class="col-md-6"><div class="form-group"><label>RH possui e acompanha indicadores (turnover, absenteísmo)?</label><input type="text" name="has_rh_indicators" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Utiliza dashboards para tomada de decisão?</label><input type="text" name="use_dashboards" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Análise de custo por colaborador e por área?</label><input type="text" name="cost_per_employee" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Quais ferramentas usa para indicadores?</label><input type="text" name="indicator_tools" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Integração dos indicadores de RH com estratégicos da empresa?</label><input type="text" name="indicators_integration" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Processo estruturado de avaliação de desempenho?</label><input type="text" name="structured_performance_eval" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Acompanhamento da produtividade por área ou função?</label><input type="text" name="productivity_tracking" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Custo de benefícios comparado com satisfação/produtividade?</label><input type="text" name="benefits_cost_comparison" class="form-control" readonly></div></div>
+                            <div class="col-md-12"><div class="form-group"><label>Análise de custo de rotatividade?</label><input type="text" name="turnover_cost_analysis" class="form-control" readonly></div></div>
+                        </div>
+                    </div>
+
+                    <div class="card-section">
+                        <h4 class="form-section-title">Tecnologia e Inovação</h4>
+                        <div class="row">
+                            <div class="col-md-6"><div class="form-group"><label>Utiliza Inteligência Artificial (IA) no RH?</label><input type="text" name="use_ai_rh" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Dados integrados com as demais áreas/sistemas?</label><input type="text" name="integrated_data" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Folha de pagamento e documentos armazenados em nuvem?</label><input type="text" name="payroll_cloud" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Utiliza consultoria especializada para demandas de RH?</label><input type="text" name="use_hr_consultancy" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Equipe utiliza todos os recursos das ferramentas?</label><input type="text" name="full_resource_usage" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Utiliza ferramenta BPM integrada ao ERP?</label><input type="text" name="use_bpm_erp" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Portal WEB para colaboradores?</label><input type="text" name="has_hr_portal" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Aplica ciência dos dados para otimizar processos?</label><input type="text" name="apply_data_science" class="form-control" readonly></div></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        var viewChart = null;
+
+        $(document).ready(function() {
+            // Renderiza o gráfico e preenche os dados direto no carregamento da tela
+            renderChartAndResults();
+        });
+
+        // Reconstrói o Gráfico Radar Lendo o JSON que veio do Widget
+        function renderChartAndResults() {
+            var scoreFinal = $("#score_final").val() || "0";
+            var nivelMaturidade = $("#nivel_maturidade").val() || "Não Classificado";
+            var jsonString = $("#json_respostas").val();
+
+            // Atualiza os Textos de Resultados no Card do Topo
+            $("#lbl_score").text(scoreFinal + "%");
+            $("#lbl_nivel").text(nivelMaturidade);
+
+            // Tenta gerar o Gráfico de Radar
+            if (jsonString && jsonString.length > 5) {
+                try {
+                    var answers = JSON.parse(jsonString);
+                    
+                    // Recalcula as médias por área para o gráfico
+                    var scores = {
+                        'Recrutamento': calcPillar(answers, ['process_formal', 'use_ats', 'dedicated_team']),
+                        'Admissão': calcPillar(answers, ['has_digital_admission', 'use_admission_portal', 'has_electronic_signature', 'has_integration_program', 'is_admission_secure']),
+                        'DP': calcPillar(answers, ['dp_automated', 'esocial_compliant', 'defined_dp_workflows']), 
+                        'T&D': calcPillar(answers, ['td_strategy_clear', 'td_aligned_goals', 'td_annual_planning', 'td_management_participation', 'td_gap_indicators', 'td_leaders_contribution', 'td_impact_indicators', 'td_results_correlation']),
+                        'Cultura': calcPillar(answers, ['culture_alignment', 'expression_freedom', 'people_valuation', 'defined_hierarchy', 'climate_survey']),
+                        'Analytics': calcPillar(answers, ['has_rh_indicators', 'use_dashboards', 'cost_per_employee', 'indicators_integration', 'structured_performance_eval', 'productivity_tracking', 'benefits_cost_comparison', 'turnover_cost_analysis']),
+                        'Tecnologia': calcPillar(answers, ['use_ai_rh', 'integrated_data', 'payroll_cloud', 'use_hr_consultancy', 'full_resource_usage', 'use_bpm_erp', 'has_hr_portal', 'apply_data_science'])
+                    };
+
+                    var ctx = document.getElementById('maturityChartViewer').getContext('2d');
+                    if (viewChart) viewChart.destroy();
+                    
+                    viewChart = new Chart(ctx, {
+                        type: 'radar',
+                        data: {
+                            labels: Object.keys(scores),
+                            datasets: [{
+                                label: 'Maturidade do Lead (%)',
+                                data: Object.values(scores),
+                                backgroundColor: 'rgba(30, 170, 217, 0.2)',
+                                borderColor: '#1eaad9',
+                                pointBackgroundColor: '#004b8d',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: '#1eaad9'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scale: { 
+                                ticks: { beginAtZero: true, max: 100, display: false },
+                                pointLabels: { fontSize: 13, fontColor: '#485363', fontStyle: '600' }
+                            },
+                            legend: { display: false },
+                            tooltips: {
+                                callbacks: {
+                                    label: function(tooltipItem, data) {
+                                        return data.datasets[tooltipItem.datasetIndex].label + ': ' + Math.round(tooltipItem.yLabel) + '%';
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                } catch(e) {
+                    console.error("Erro ao ler JSON de respostas para gerar gráfico.", e);
+                }
+            }
+        }
+
+        // Helper para o Gráfico
+        function calcPillar(answersObj, keys) {
+            var count = 0;
+            keys.forEach(function (k) { if (answersObj[k] === 'sim') count++; });
+            return (count / keys.length) * 100;
+        }
+    </script>
+</body>
+</html>
