@@ -6,6 +6,8 @@ var RHDiagnostico = SuperWidget.extend({
     isNavigating: false,
     finalClassification: "",
     finalScoreGlobal: 0,
+    chosenInsights: [], 
+    chosenOpportunities: [], 
  
     authConfig: {
         url: 'http://177.39.21.75:8080',
@@ -227,10 +229,9 @@ var RHDiagnostico = SuperWidget.extend({
             });
         }
 
-        // SCROLL SUAVE PARA O TOPO DA CAIXA NO MOBILE
         if (window.innerWidth <= 768) {
             $('html, body').animate({
-                scrollTop: $(".content-box").offset().top - 80 // Desconta o tamanho do header fixo
+                scrollTop: $(".content-box").offset().top - 80 
             }, 300);
         }
     },
@@ -267,7 +268,6 @@ var RHDiagnostico = SuperWidget.extend({
         
         $("#landing-result").show().addClass("vibrant-tech-entrance");
 
-        // SCROLL SUAVE PARA O TOPO DA TELA DE RESULTADOS NO MOBILE
         if (window.innerWidth <= 768) {
             $('html, body').animate({
                 scrollTop: $(".content-box").offset().top - 80 
@@ -302,31 +302,87 @@ var RHDiagnostico = SuperWidget.extend({
         var visionToStrategic = "Para alcançar o patamar de <strong>RH Estratégico</strong>, o setor deve atuar como parceiro direto do negócio. Isso exige o uso de <em>People Analytics</em> preditivo para antecipar cenários, alinhamento total das metas de pessoas com os objetivos financeiros da empresa e uma cultura contínua de inovação.";
 
         if (roundedAvg <= 20) {
-            title = "RH Tradicional";
+            title = "Tradicional";
             currentStateDescription = "Foco em processos operacionais e burocráticos. Há um grande potencial para iniciar a automação e ganhar agilidade.";
         } else if (roundedAvg <= 40) {
-            title = "RH Ágil";
+            title = "Ágil";
             currentStateDescription = "Busca por eficiência e rapidez, iniciando a transição para processos mais dinâmicos e menos engessados.";
         } else if (roundedAvg <= 60) {
-            title = "RH Digital";
+            title = "Digital";
             currentStateDescription = "Uso de tecnologia e automação consolidados. O próximo passo é equilibrar as ferramentas com a valorização da experiência humana.";
-        } else {
-            title = "RH Humanizado";
+        } else if (roundedAvg <= 80) {
+            title = "Humanizado";
             currentStateDescription = "Une tecnologia avançada e foco genuíno nas pessoas, promovendo uma excelente experiência para o colaborador.";
+        } else {
+            title = "Estratégico";
+            currentStateDescription = "O setor atua como parceiro de negócios, focando em análise de dados, métricas e retenção profunda de talentos.";
         }
         
         this.finalClassification = title;
  
+        // --- RESTAURADO O TEXTO DE DESCRIÇÃO E TÍTULO ORIGINAL ---
         $("#final-score-pct").text("0%");
         $("#result-title").text(title);
-        $("#result-description").html("<span style='font-size:14px;'>Sua operação foi classificada como <strong>" + title + "</strong>.</span><br><span style='font-size:12px; color:#666;'>" + currentStateDescription + "</span>");
+        $("#result-description").html("<span style='font-size:14px;'>Sua operação foi classificada como <strong>" + title + "</strong>.</span><br><span style='font-size:12px; color:#666; margin-top:5px; display:block;'>" + currentStateDescription + "</span>");
+        
         $("#vision-text").html(visionToStrategic);
  
         this.renderRadarChart(scores);
+        this.generateMaturityLevels(title); 
         this.generateRecommendations();
         this.saveLeadToFluig(roundedAvg, title, scores);
         
         this.animateScoreCounter(roundedAvg, 1500);
+    },
+
+    // --- FUNÇÃO GERADORA DE NÍVEIS COM LÓGICA DE VERDE/VERMELHO DINÂMICA ---
+    generateMaturityLevels: function (currentLevel) {
+        var levels = [
+            { titulo: "Tradicional", requisitos: ["Requisito 1", "Requisito 2", "Requisito 3", "Requisito 4"] },
+            { titulo: "Ágil", requisitos: ["Requisito 1", "Requisito 2", "Requisito 3", "Requisito 4"] },
+            { titulo: "Digital", requisitos: ["Requisito 1", "Requisito 2", "Requisito 3", "Requisito 4"] },
+            { titulo: "Humanizado", requisitos: ["Requisito 1", "Requisito 2", "Requisito 3", "Requisito 4"] },
+            { titulo: "Estratégico", requisitos: ["Requisito 1", "Requisito 2", "Requisito 3", "Requisito 4"] }
+        ];
+
+        var levelNames = ["Tradicional", "Ágil", "Digital", "Humanizado", "Estratégico"];
+        var currentIndex = levelNames.indexOf(currentLevel);
+
+        var html = "";
+        for (var i = 0; i < levels.length; i++) {
+            var lvl = levels[i];
+            
+            var isCurrent = (lvl.titulo === currentLevel);
+            var extraClass = isCurrent ? ' current-level-card' : '';
+            var badgeHtml = isCurrent ? '<span class="badge-popular" style="background:#ffffff; color:#d68910;">Você está aqui</span>' : '';
+
+            var reqHtml = '<ul class="level-checklist">';
+            for(var j=0; j<lvl.requisitos.length; j++) {
+                
+                // Lógica Dinâmica: 
+                // Se o card for de um nível que ele já passou (ex: ele é Digital, e o card é Tradicional) -> Fica tudo Verde
+                // Se o card for o nível atual -> Metade verde, metade vermelho
+                // Se o card for de um nível futuro -> Fica tudo vermelho
+                var status = 'missing'; 
+                if (i < currentIndex) {
+                    status = 'achieved'; 
+                } else if (i === currentIndex && j < 2) {
+                    status = 'achieved'; 
+                }
+
+                var iconClass = status === 'achieved' ? 'flaticon-check-circle' : 'flaticon-cancel';
+                reqHtml += '<li class="' + status + '"><i class="flaticon ' + iconClass + '"></i><span>' + lvl.requisitos[j] + '</span></li>';
+            }
+            reqHtml += '</ul>';
+
+            html += 
+                '<div class="level-card' + extraClass + '">' +
+                    badgeHtml +
+                    '<h6>' + lvl.titulo + '</h6>' +
+                    reqHtml +
+                '</div>';
+        }
+        $("#maturity-levels-list").html(html);
     },
 
     animateScoreCounter: function (targetScore, durationMs) {
@@ -408,12 +464,21 @@ var RHDiagnostico = SuperWidget.extend({
                     tooltip: {
                         backgroundColor: 'rgba(10, 20, 30, 0.95)',
                         titleFont: { size: 14, family: "'Poppins', sans-serif" },
-                        bodyFont: { size: 15, weight: 'bold', family: "'Poppins', sans-serif" },
+                        bodyFont: { size: 14, weight: 'normal', family: "'Poppins', sans-serif" },
                         padding: 14,
                         cornerRadius: 4,
                         displayColors: false,
                         callbacks: {
-                            label: function(context) { return ' SCORE: ' + context.raw.toFixed(0) + '%'; }
+                            label: function(context) { 
+                                var val = context.raw;
+                                var lbl = '';
+                                if (val <= 20) lbl = 'Tradicional';
+                                else if (val <= 40) lbl = 'Ágil';
+                                else if (val <= 60) lbl = 'Digital';
+                                else if (val <= 80) lbl = 'Humanizado';
+                                else lbl = 'Estratégico';
+                                return ' SCORE: ' + val.toFixed(0) + '% - Nível: ' + lbl; 
+                            }
                         }
                     }
                 },
@@ -434,51 +499,51 @@ var RHDiagnostico = SuperWidget.extend({
  
     generateRecommendations: function () {
         var listaInsights = [
-            { titulo: "Desenvolvimento de carreira", descricao: "Oferecer oportunidade de desenvolvimento de carreira e promoções com base no desempenho e nas habilidades dos funcionários." },
-            { titulo: "Remuneração variável", descricao: "Implementar programas de remuneração variável, como bônus e opções de ações, para incentivar o desempenho e a retenção de talentos." },
-            { titulo: "Benefícios flexíveis", descricao: "Oferecer benefícios flexíveis, como horários de trabalho flexíveis e trabalho remoto, para atender às necessidades dos funcionários e promover um equilíbrio saudável entre trabalho e vida pessoal." },
-            { titulo: "Benefícios e Salários", descricao: "Oferecer salários competitivos e benefícios atraentes, como planos de saúde e planos de aposentadoria." },
-            { titulo: "Feedback regular", descricao: "Fornecer feedback regular sobre o desempenho e a remuneração dos funcionários para promover a transparência e a comunicação aberta." },
-            { titulo: "Pesquisas salariais", descricao: "Realizar pesquisas salariais regulares para garantir que os salários estejam alinhados com o mercado e sejam justos e equitativos." },
+            { titulo: "Desenvolvimento de carreira", descricao: "Oferecer oportunidade de desenvolvimento de carreira e promoções com base no desempenho." },
+            { titulo: "Remuneração variável", descricao: "Implementar programas de remuneração variável para incentivar o desempenho e reter talentos." },
+            { titulo: "Benefícios flexíveis", descricao: "Oferecer benefícios flexíveis para promover um equilíbrio saudável entre trabalho e vida pessoal." },
+            { titulo: "Benefícios e Salários", descricao: "Oferecer salários competitivos e benefícios atraentes, como planos de saúde e aposentadoria." },
+            { titulo: "Feedback regular", descricao: "Fornecer feedback regular sobre o desempenho para promover a transparência." },
+            { titulo: "Pesquisas salariais", descricao: "Realizar pesquisas salariais regulares para garantir o alinhamento com o mercado." },
             { titulo: "Treinamentos", descricao: "Fornecer treinamentos em habilidades necessárias para o desenvolvimento das pessoas." },
-            { titulo: "Benefícios não financeiros", descricao: "Oferecer benefícios não financeiros, como programas de saúde e bem-estar, para promover a saúde e o bem-estar dos funcionários." },
-            { titulo: "Transparência", descricao: "Fornecer transparência na remuneração, incluindo a divulgação de faixas salariais e critérios de promoção." },
-            { titulo: "Bem-estar financeiro", descricao: "Implementar programas de bem-estar financeiro para ajudar os funcionários a gerenciar suas finanças pessoais e planejar para o futuro." },
-            { titulo: "Saúde mental e bem-estar", descricao: "A decisão de expandir benefícios focados em saúde mental e bem-estar indica uma maior conscientização sobre a relação entre qualidade de vida e produtividade. Esse movimento acompanha tendências globais." },
-            { titulo: "Modelo híbrido", descricao: "O trabalho híbrido está se consolidando como o formato preferido (53%), mas a resistência a modelos mais flexíveis mostra que a adaptação ao novo mundo do trabalho ainda é parcial." },
-            { titulo: "Retenção e cultura", descricao: "O fato de 75% das empresas apontarem a retenção de talentos como um dos maiores desafios reforça a necessidade de uma abordagem mais estratégica para benefícios e flexibilidade." },
-            { titulo: "Adesão a Bônus", descricao: "O aumento na concessão de bônus pode estar relacionado ao ambiente econômico mais desafiador, onde a retenção de talentos críticos se tornou essencial para manter a competitividade." },
-            { titulo: "Automação da folha", descricao: "Com 82% das empresas utilizando software para folha de pagamento, a tecnologia se confirma como um pilar essencial para a operação do RH, reduzindo riscos e permitindo maior foco estratégico." },
-            { titulo: "Jornada digital", descricao: "44% das empresas ainda estão nos estágios iniciais, enquanto apenas 21% já estão avançadas. O foco principal tem sido investimento em tecnologia antes da mudança cultural." },
-            { titulo: "RH cada vez mais digitalizado", descricao: "A maioria das empresas planeja aumentar investimentos em tecnologia de RH, com destaque para People Analytics e automação de tarefas, reforçando a busca por um RH baseado em dados." },
-            { titulo: "Aplicações da IA no RH", descricao: "A principal aplicação da IA no RH é no recrutamento e seleção, seguida por treinamento, desenvolvimento e gestão de desempenho, automatizando tarefas operacionais." },
-            { titulo: "Boas-vindas personalizadas", descricao: "Receba o novo colaborador de forma calorosa e pessoal para criar um vínculo forte desde o primeiro dia." },
-            { titulo: "Expectativas e responsabilidades", descricao: "Informações claras sobre as responsabilidades e as expectativas da empresa ajudam a deixar o novo colaborador mais confiante e preparado para o trabalho." },
-            { titulo: "Reconhecimento e recompensas", descricao: "Reconhecer o esforço dos colaboradores e recompensar suas conquistas é fundamental. Isso gera senso de valor e motivação." },
-            { titulo: "Oportunidades de crescimento", descricao: "Todo profissional se sente valorizado e estimulado quando percebe que pode crescer na empresa. Estabelecer planos de carreira promove uma experiência estimulante." },
-            { titulo: "Positividade", descricao: "Criar um ambiente de trabalho saudável, colaborativo e inclusivo é importante para o bem estar dos colaboradores e para sua experiência na empresa." },
-            { titulo: "Equilíbrio", descricao: "Medidas como flexibilidade de horários, políticas de trabalho remoto e programas de bem-estar contribuem para a satisfação e a retenção dos talentos." }
+            { titulo: "Benefícios não financeiros", descricao: "Oferecer benefícios não financeiros para promover a saúde e o bem-estar dos funcionários." },
+            { titulo: "Transparência", descricao: "Fornecer transparência na remuneração, incluindo a divulgação de critérios de promoção." },
+            { titulo: "Bem-estar financeiro", descricao: "Implementar programas de bem-estar financeiro para ajudar os funcionários a planejar o futuro." },
+            { titulo: "Saúde mental e bem-estar", descricao: "A decisão de expandir benefícios focados em saúde mental indica maior conscientização." },
+            { titulo: "Modelo híbrido", descricao: "O trabalho híbrido consolida-se como preferido (53%), flexibilidade é essencial." },
+            { titulo: "Retenção e cultura", descricao: "75% das empresas apontam a retenção de talentos como um dos maiores desafios." },
+            { titulo: "Adesão a Bônus", descricao: "A concessão de bônus pode ser essencial para reter talentos em cenários econômicos difíceis." },
+            { titulo: "Automação da folha", descricao: "82% das empresas usam software para folha de pagamento; a tecnologia é pilar." },
+            { titulo: "Jornada digital", descricao: "Apenas 21% já estão avançadas. O foco deve ser investimento aliado à cultura." },
+            { titulo: "RH digitalizado", descricao: "Aumentar investimentos em automação de tarefas e busca por dados (People Analytics)." },
+            { titulo: "Aplicações da IA no RH", descricao: "O principal uso da IA é em recrutamento, automatizando tarefas operacionais." },
+            { titulo: "Boas-vindas personalizadas", descricao: "Receba o colaborador de forma pessoal para criar um vínculo forte desde o primeiro dia." },
+            { titulo: "Expectativas e responsabilidades", descricao: "Informações claras ajudam a deixar o novo colaborador preparado para o trabalho." },
+            { titulo: "Reconhecimento e recompensas", descricao: "Reconhecer o esforço gera senso de valor e motivação contínua." },
+            { titulo: "Oportunidades de crescimento", descricao: "Todo profissional se sente estimulado quando percebe que pode crescer na empresa." },
+            { titulo: "Positividade", descricao: "Criar um ambiente saudável, colaborativo e inclusivo é importante para a experiência." },
+            { titulo: "Equilíbrio", descricao: "Flexibilidade de horários e políticas contribuem para a satisfação de todos." }
         ];
 
         var listaOportunidades = [
-            { titulo: "Desempenho e Crescimento", descricao: "Empresas que estruturam planos claros de ascensão profissional tendem a ter maior engajamento e retenção de talentos. Um framework mais sólido de carreira pode ser um diferencial." },
-            { titulo: "Treinamento e desenvolvimento", descricao: "Expandir a visão sobre treinamento: iniciativas como mentoria, job rotation e trilhas de aprendizado personalizadas podem equilibrar a necessidade de qualificação com um planejamento de carreira." },
-            { titulo: "Novos formatos de benefícios", descricao: "Explorar novos formatos de benefícios e remuneração: modelos híbridos de remuneração variável e personalização de benefícios podem aumentar o engajamento sem elevar excessivamente os custos." },
-            { titulo: "Personalização dos benefícios", descricao: "Modelos de benefícios flexíveis permitem que os colaboradores escolham pacotes que atendam melhor às suas necessidades individuais, aumentando a satisfação e o engajamento." },
-            { titulo: "Estratégia de cultura organizacional", descricao: "Alinhar benefícios e flexibilidade à estratégia de cultura: empresas que conseguem equilibrar inovação e pertencimento tendem a ter melhores resultados em engajamento." },
-            { titulo: "Política de bônus", descricao: "Expandir a política de bônus para além da liderança: a retenção de talentos estratégicos em níveis técnicos especializados pode gerar vantagens competitivas." },
-            { titulo: "Métricas de longo prazo", descricao: "Atrelar bônus a métricas de longo prazo: para garantir que o bônus cumpra seu papel de retenção, é essencial vinculá-lo a resultados sustentáveis ou inovação." },
-            { titulo: "Uso estratégico da tecnologia", descricao: "Ampliar o uso da tecnologia em RH: o alto índice de automação na folha de pagamento pode ser um ponto de partida para expandir a digitalização para outras áreas, como análise preditiva de turnover." },
-            { titulo: "Cultura digital e inovação", descricao: "Acelerar a cultura digital: o investimento em tecnologia precisa ser acompanhado por uma mudança cultural, incentivando um mindset digital em todas as áreas da empresa." },
-            { titulo: "Transformação digital", descricao: "Expandir o papel do RH na transformação digital: o RH pode atuar não apenas como um adotante de tecnologia, mas como um facilitador da mudança organizacional, liderando iniciativas de reskilling." },
-            { titulo: "Cultura de reconhecimento", descricao: "Ampliar a cultura de reconhecimento: criar modelos mais diversificados pode fortalecer a motivação e o desempenho, indo além de metas financeiras e incluindo colaboração." },
-            { titulo: "Engajamento e retenção", descricao: "Aproveitar o engajamento para fortalecer a retenção: é fundamental traduzir as informações sobre o clima em ações efetivas, como trilhas de carreira personalizadas." },
-            { titulo: "Agenda ESG no RH", descricao: "Fortalecer a agenda ESG no RH: empresas que integram ESG de forma estratégica podem ganhar vantagem competitiva para atração de talentos alinhados a valores sustentáveis." },
-            { titulo: "Capacitação em análise de dados", descricao: "Ampliar a capacitação da equipe em dados: treinamentos em estatística, interpretação de dados e ferramentas analíticas podem acelerar a adoção estratégica do People Analytics." },
-            { titulo: "Integração de dados", descricao: "Garantir acesso e integração dos dados: investir em soluções que consolidem dados de diferentes fontes e garantir uma governança de dados eficiente." },
-            { titulo: "Modelos preditivos", descricao: "Utilizar modelos preditivos para decisões estratégicas: o potencial do People Analytics vai além da análise de rotatividade. Prever riscos de turnover e embasar estratégias são diferenciais." },
-            { titulo: "Estratégia para IA no RH", descricao: "Definir uma estratégia clara para IA no RH: empresas que estruturam um plano estratégico conseguem maximizar seu impacto, indo além da automação para análises preditivas." },
-            { titulo: "Mudança cultural e IA", descricao: "Acelerar a capacitação e mudança cultural: a resistência à IA pode ser reduzida com treinamentos e projeções práticas de seus benefícios, mostrando como a tecnologia pode complementar o trabalho humano." }
+            { titulo: "Desempenho e Crescimento", descricao: "Empresas com planos claros de ascensão tendem a ter maior engajamento. Um framework sólido é diferencial." },
+            { titulo: "Treinamento e desenvolvimento", descricao: "Expandir a visão: iniciativas como mentoria e job rotation equilibram a qualificação." },
+            { titulo: "Novos formatos de benefícios", descricao: "Modelos híbridos de remuneração e personalização aumentam o engajamento sem elevar os custos." },
+            { titulo: "Personalização dos benefícios", descricao: "Permite que os colaboradores escolham pacotes que atendam melhor às suas necessidades individuais." },
+            { titulo: "Estratégia de cultura organizacional", descricao: "Empresas que equilibram inovação e pertencimento tendem a ter melhores resultados." },
+            { titulo: "Política de bônus", descricao: "A retenção de talentos estratégicos em níveis técnicos especializados pode gerar vantagens." },
+            { titulo: "Métricas de longo prazo", descricao: "Para que o bônus cumpra seu papel, é essencial vinculá-lo a resultados sustentáveis." },
+            { titulo: "Uso estratégico da tecnologia", descricao: "A automação na folha é um ponto de partida para expandir a digitalização analítica." },
+            { titulo: "Cultura digital e inovação", descricao: "O investimento em tecnologia precisa incentivar um mindset digital em toda a empresa." },
+            { titulo: "Transformação digital", descricao: "O RH pode atuar como um facilitador da mudança, liderando iniciativas de reskilling." },
+            { titulo: "Cultura de reconhecimento", descricao: "Criar modelos diversificados pode fortalecer a motivação indo além de metas financeiras." },
+            { titulo: "Engajamento e retenção", descricao: "Traduzir informações sobre o clima em ações efetivas, como trilhas personalizadas." },
+            { titulo: "Agenda ESG no RH", descricao: "Empresas que integram ESG de forma estratégica ganham vantagem competitiva na atração." },
+            { titulo: "Capacitação em análise de dados", descricao: "Treinamentos em estatística e dados aceleram a adoção do People Analytics." },
+            { titulo: "Integração de dados", descricao: "Investir em soluções que consolidem dados de diferentes fontes e garantam a governança." },
+            { titulo: "Modelos preditivos", descricao: "Prever riscos de turnover e embasar estratégias são diferenciais do mercado atual." },
+            { titulo: "Estratégia para IA no RH", descricao: "Definir um plano estratégico maximiza o impacto, indo além de simples automação." },
+            { titulo: "Mudança cultural e IA", descricao: "A resistência à IA pode ser reduzida com projeções práticas de como a tecnologia complementa o trabalho." }
         ];
 
         function shuffleArray(array) {
@@ -491,25 +556,44 @@ var RHDiagnostico = SuperWidget.extend({
             return array;
         }
 
-        var randomInsights = shuffleArray(listaInsights).slice(0, 5);
+        var randomInsights = shuffleArray(listaInsights).slice(0, 4);
+        this.chosenInsights = randomInsights; 
+        
         var htmlInsights = "";
         for (var idx1 = 0; idx1 < randomInsights.length; idx1++) {
             var r1 = randomInsights[idx1];
-            htmlInsights += '<div class="rec-item"><i class="flaticon flaticon-lightbulb"></i><div><h6>' + r1.titulo + '</h6><p>' + r1.descricao + '</p></div></div>';
+            
+            htmlInsights += 
+                '<div class="rec-item">' +
+                    '<h6>' + r1.titulo + '</h6>' +
+                    '<p>' + r1.descricao + '</p>' +
+                '</div>';
         }
         $("#recommendations-list").html(htmlInsights);
 
         var randomOportunidades = shuffleArray(listaOportunidades).slice(0, 3);
+        this.chosenOpportunities = randomOportunidades; 
+        
         var htmlOportunidades = "";
         for (var idx2 = 0; idx2 < randomOportunidades.length; idx2++) {
             var r2 = randomOportunidades[idx2];
-            htmlOportunidades += '<div class="rec-item" style="border-left: 4px solid #f39c12;"><i class="flaticon flaticon-trending-up" style="color: #f39c12;"></i><div><h6>' + r2.titulo + '</h6><p>' + r2.descricao + '</p></div></div>';
+            
+            var isHighlighted = (idx2 === 1); 
+            var extraClass = isHighlighted ? ' highlight-card' : '';
+            var badgeHtml = isHighlighted ? '<span class="badge-popular">Prioridade</span>' : '';
+
+            htmlOportunidades += 
+                '<div class="rec-item' + extraClass + '">' +
+                    badgeHtml +
+                    '<h6>' + r2.titulo + '</h6>' +
+                    '<p>' + r2.descricao + '</p>' +
+                '</div>';
         }
         $("#opportunities-list").html(htmlOportunidades);
     },
 
     sendToWhatsApp: function() {
-        var whatsappNumber = "5531998377928"; // Lembre-se de mudar para o seu número
+        var whatsappNumber = "5531998377928"; 
 
         var company = this.userAnswers['company_name'] || "Empresa Não Informada";
         var user = this.userAnswers['user_name'] || "Usuário";
@@ -567,6 +651,9 @@ var RHDiagnostico = SuperWidget.extend({
                 "score_final": finalScore.toString(),
                 "nivel_maturidade": classification,
                 "json_respostas": JSON.stringify(this.userAnswers),
+                
+                "json_insights": JSON.stringify(this.chosenInsights || []),
+                "json_oportunidades": JSON.stringify(this.chosenOpportunities || []),
  
                 "process_formal": this.userAnswers['process_formal'] || "Não informado",
                 "use_ats": this.userAnswers['use_ats'] || "Não informado",

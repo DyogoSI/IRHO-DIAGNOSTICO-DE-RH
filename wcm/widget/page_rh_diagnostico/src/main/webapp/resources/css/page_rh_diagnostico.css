@@ -8,11 +8,22 @@
 
 .landing-wrapper {
     font-family: 'Poppins', sans-serif;
-    background-color: #f4f7f9;
+    background-color: #ffffff;
     min-height: 100vh;
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
+}
+
+.landing-wrapper .container {
+    width: 100% !important;
+    max-width: 1600px !important; 
+    margin: 0 auto !important;
+    padding: 0 20px !important;
+}
+
+.landing-header .container {
+    padding: 0 45px !important; 
 }
 
 /* Test Helper */
@@ -72,15 +83,17 @@
 
 .landing-main {
     flex: 1;
-    padding: 40px 15px;
+    padding: 40px 0;
 }
 
+/* CONTAINER PRINCIPAL */
 .content-box {
     background: #fff;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    box-shadow: none !important;
     padding: 45px;
-    max-width: 1250px; /* ALARGADO PARA PREENCHER MAIS A TELA */
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
     border-top: 6px solid #1eaad9;
     transition: all 0.3s ease;
@@ -313,18 +326,22 @@
     border-radius: 12px;
     border: 1px solid #e1eef7;
     margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: none !important; 
 }
 
 .score-radial {
-    width: 110px;
-    height: 110px;
+    width: 130px;
+    height: 130px;
     border-radius: 50%;
-    border: 8px solid #1eaad9;
+    border: 10px solid #1eaad9;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 15px;
-    font-size: 26px;
+    font-size: 32px;
     font-weight: 800;
     color: #004b8d;
 }
@@ -335,62 +352,220 @@
     border-bottom: 2px solid #f0f4f7;
     padding-bottom: 12px;
     margin-bottom: 25px;
+    margin-top: 0;
 }
 
-/* Estrutura base dos Cards (Mobile) */
-#recommendations-list,
+
+/* =========================================
+   CARDS DE JORNADA DE MATURIDADE (NOVO)
+   ========================================= */
+
+#maturity-levels-list {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 15px !important;
+    margin-bottom: 40px;
+    align-items: stretch;
+}
+
+.level-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    background: linear-gradient(135deg, #2b9fda 0%, #177aa0 100%) !important; /* Azul médio/claro vibrante */
+    border: 1px solid #58c2f1 !important; 
+    border-radius: 12px !important; 
+    padding: 25px 15px !important;
+    margin-bottom: 0 !important;
+    box-shadow: 0 10px 25px rgba(23, 122, 160, 0.2) !important; /* Efeito Flutuante Alto */
+    height: 100% !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    position: relative !important;
+    overflow: visible !important;
+}
+
+.level-card:hover {
+    transform: translateY(-8px) !important; 
+    box-shadow: 0 15px 35px rgba(23, 122, 160, 0.4) !important;
+    border-color: #ffffff !important;
+}
+
+/* DESTAQUE DO NÍVEL ATUAL DO USUÁRIO */
+.level-card.current-level-card {
+    background: linear-gradient(135deg, #f39c12 0%, #d68910 100%) !important; 
+    border: 1px solid #f5b041 !important; 
+    box-shadow: 0 15px 30px rgba(243, 156, 18, 0.4) !important; 
+    transform: scale(1.05) translateY(-5px) !important; 
+    z-index: 2 !important;
+}
+
+.level-card.current-level-card:hover {
+    transform: scale(1.05) translateY(-10px) !important;
+}
+
+.level-card h6 {
+    margin: 0 0 15px 0 !important;
+    font-weight: 700 !important;
+    color: #ffffff !important; 
+    font-size: 1rem !important; 
+    line-height: 1.3 !important;
+    text-align: center !important;
+    width: 100% !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+    padding-bottom: 12px !important;
+}
+
+/* CHECKLIST COM CORES VERDES E VERMELHAS */
+.level-checklist {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+}
+
+.level-checklist li {
+    display: flex !important;
+    align-items: flex-start !important;
+    font-size: 0.8rem !important;
+    color: #ffffff !important;
+    margin-bottom: 10px !important;
+    line-height: 1.3 !important;
+}
+
+.level-checklist li i {
+    font-size: 1.1rem !important;
+    margin-right: 6px !important;
+    margin-top: 1px !important;
+}
+
+/* Ícone Verde (Atingido) */
+.level-checklist li.achieved i {
+    color: #2ecc71 !important;
+    text-shadow: 0 0 8px rgba(46, 204, 113, 0.5) !important;
+}
+
+/* Ícone Vermelho (Faltante) */
+.level-checklist li.missing i {
+    color: #e74c3c !important;
+}
+.level-checklist li.missing span {
+    color: rgba(255, 255, 255, 0.6) !important; /* Texto um pouco opaco para dar contraste */
+}
+
+
+.level-card.current-level-card .badge-popular {
+    position: absolute !important;
+    top: -12px !important; 
+    right: 50% !important;
+    transform: translateX(50%) !important;
+    font-size: 0.65rem !important;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+    white-space: nowrap !important;
+}
+
+
+/* =========================================
+   CARDS DE INSIGHTS E OPORTUNIDADES
+   ========================================= */
+
+#recommendations-list {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important; 
+    gap: 25px !important; 
+    margin-bottom: 35px;
+    align-items: stretch;
+}
+
 #opportunities-list {
-    display: grid;
-    gap: 15px;
-    margin-bottom: 25px;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important; 
+    gap: 25px !important;
+    margin-bottom: 35px;
+    align-items: stretch;
 }
 
 .rec-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    background: #fff;
-    border-left: 5px solid #1eaad9;
-    padding: 18px;
-    margin-bottom: 0; 
-    border-radius: 0 8px 8px 0;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
-    height: 100%; 
-    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    background: linear-gradient(135deg, #004b8d 0%, #002d5a 100%) !important;
+    border: 1px solid #003a70 !important; 
+    border-radius: 12px !important; 
+    padding: 25px 20px !important;
+    margin-bottom: 0 !important;
+    box-shadow: 0 8px 20px rgba(0, 45, 90, 0.15) !important;
+    min-height: auto !important; 
+    height: 100% !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+    gap: 0 !important;
 }
 
 .rec-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-}
-
-.rec-item i {
-    color: #1eaad9;
-    font-size: 1.4rem;
-    margin-top: 2px;
+    transform: translateY(-6px) !important;
+    box-shadow: 0 15px 35px rgba(0, 45, 90, 0.3) !important;
+    border-color: #1eaad9 !important; 
 }
 
 .rec-item h6 {
-    margin: 0 0 5px 0;
-    font-weight: 700;
-    color: #333;
-    font-size: 14px;
+    margin: 0 0 10px 0 !important;
+    font-weight: 600 !important;
+    color: #ffffff !important; 
+    font-size: 1.1rem !important; 
+    line-height: 1.3 !important;
 }
 
 .rec-item p {
-    margin: 0;
-    font-size: 13px;
-    color: #777;
-    line-height: 1.5;
+    margin: 0 !important; 
+    font-size: 0.9rem !important;
+    color: #e3eef7 !important; 
+    line-height: 1.6 !important;
 }
 
-/* CTA Box */
+.rec-item.highlight-card {
+    background: linear-gradient(135deg, #1eaad9 0%, #0077b6 100%) !important; 
+    border: 1px solid #3ebff8 !important; 
+    box-shadow: 0 0 25px rgba(30, 170, 217, 0.3) !important; 
+    transform: scale(1.03) !important; 
+    z-index: 2 !important;
+}
+
+.rec-item.highlight-card:hover {
+    transform: scale(1.03) translateY(-6px) !important;
+}
+
+.rec-item.highlight-card p {
+    color: #ffffff !important; 
+}
+
+.badge-popular {
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    background: #f39c12 !important; 
+    color: #fff !important;
+    font-size: 0.65rem !important;
+    padding: 5px 12px !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+}
+
+/* =========================================
+   CTA BOX (Desafio Estratégico)
+   ========================================= */
 .cta-box {
     background: #004b8d;
     color: #fff;
     border-radius: 12px;
     padding: 35px 30px;
-    margin-top: 25px;
+    margin-top: 40px;
     box-shadow: 0 8px 20px rgba(0, 75, 141, 0.15);
     display: flex;
     flex-direction: column;
@@ -483,66 +658,55 @@
 
 
 /* =========================================
-   LAYOUT DESKTOP: DASHBOARD FULL WIDTH LADO A LADO
+   LAYOUT DESKTOP: EMPILHADO PARA APROVEITAR LARGURA TOTAL
    ========================================= */
 @media (min-width: 769px) {
-    /* BLINDAGEM: Quebra forçada do grid do Bootstrap para usarmos a tela toda */
+    
     .dashboard-container .row {
         display: flex !important;
         flex-direction: column !important;
         margin: 0 !important;
     }
 
-    /* Linha Superior: Score (Esq) + Gráfico (Dir) */
     .dashboard-container .col-md-5 {
         width: 100% !important;
         max-width: 100% !important;
         flex: 0 0 100% !important;
         padding: 0 !important;
         display: grid !important;
-        grid-template-columns: 1fr 2fr !important;
-        grid-template-rows: auto auto !important;
+        grid-template-columns: 350px 1fr !important; 
+        grid-template-rows: auto 1fr !important;
         gap: 20px 40px !important;
-        margin-bottom: 40px !important;
+        margin-bottom: 50px !important;
     }
 
     .dashboard-container .col-md-5 .score-card {
         grid-column: 1;
         grid-row: 1;
         height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
         margin-bottom: 0 !important;
     }
 
-    .dashboard-container .col-md-5 #strategic-vision {
-        grid-column: 1;
-        grid-row: 2;
-        margin-top: 0 !important;
-        height: 100%;
-    }
-
-    .dashboard-container .col-md-5 .mt-4 { /* Container do Gráfico */
+    .dashboard-container .col-md-5 .mt-4 { 
         grid-column: 2;
-        grid-row: 1 / span 2;
+        grid-row: 1 / span 2; 
         margin-top: 0 !important;
         background: #fff;
         border-radius: 12px;
-        padding: 20px;
+        padding: 30px;
         border: 1px solid #e1eef7;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+        box-shadow: none !important; 
         display: flex;
         align-items: center;
         justify-content: center;
+        min-height: 450px; 
     }
 
     canvas#maturityChart {
-        max-height: 400px !important;
+        max-height: 430px !important;
         width: 100% !important;
     }
 
-    /* Linha Inferior: Listas e CTA */
     .dashboard-container .col-md-7 {
         width: 100% !important;
         max-width: 100% !important;
@@ -550,178 +714,54 @@
         padding: 0 !important;
         display: block !important;
     }
-
-    /* Força as listas a terem 2 colunas */
-    #recommendations-list,
-    #opportunities-list {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 20px !important;
-    }
-
-    .col-md-7 .cta-box { 
-        margin-top: 40px !important;
-    }
 }
 
 
 /* =========================================
-   RESPONSIVIDADE (MOBILE FIRST)
+   RESPONSIVIDADE PARA CELULAR E TABLET
    ========================================= */
+
+@media (max-width: 1024px) {
+    #recommendations-list { grid-template-columns: repeat(2, 1fr) !important; }
+    #opportunities-list { grid-template-columns: repeat(2, 1fr) !important; }
+    #maturity-levels-list { grid-template-columns: repeat(3, 1fr) !important; }
+}
+
 @media (max-width: 768px) {
-    /* Ajustes Gerais de Layout */
-    .landing-main {
-        padding: 20px 10px;
-    }
+    .landing-main { padding: 20px 10px; }
+    .content-box { padding: 25px 15px; margin: 0; border-radius: 8px; }
+    .main-title { font-size: 1.6rem; }
+    .brand-logo { max-height: 35px; }
+
+    .header-content { justify-content: center !important; width: 100%; }
+    .header-content .brand { display: flex !important; justify-content: center !important; align-items: center !important; width: 100% !important; margin: 0 !important; }
     
-    .content-box {
-        padding: 25px 15px;
-        margin: 0;
-        border-radius: 8px;
-    }
+    .wizard-stepper { margin-bottom: 30px; }
+    .step-circle { width: 28px; height: 28px; font-size: 12px; }
+    .step-label { display: none; }
+
+    .form-group .form-control { width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }
+    select.form-control { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
     
-    /* Textos na tela inicial */
-    .main-title {
-        font-size: 1.6rem;
-    }
+    .radio-group { display: flex; flex-direction: column; gap: 10px; }
+    .radio-group label { display: block; margin-right: 0; padding: 12px 15px; background: #f8fbff; border: 1px solid #e1eef7; border-radius: 8px; width: 100%; }
     
-    .main-subtitle {
-        font-size: 0.95rem;
-    }
+    .btn-start { width: 100%; }
+    #quiz-navigation { flex-direction: column-reverse; gap: 15px; align-items: stretch !important; }
+    #btn-next-step, #btn-prev-step { width: 100%; margin: 0; }
 
-    .brand-logo {
-        max-height: 35px; /* Logo um pouco menor no celular */
-    }
+    .dashboard-container .col-md-5 { display: flex !important; flex-direction: column !important; }
 
-    /* Centralizar a Logo na Navbar */
-    .header-content {
-        justify-content: center !important; 
-        width: 100%;
-    }
+    #maturity-levels-list { grid-template-columns: 1fr !important; }
+    .level-card.current-level-card { transform: scale(1) translateY(0) !important; }
+    .level-card.current-level-card:hover { transform: scale(1) translateY(-4px) !important; }
 
-    .header-content .brand {
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        width: 100% !important;
-        margin: 0 !important;
-    }
-    
-    /* Otimização da Barra de Progresso (Stepper) para caber na tela */
-    .wizard-stepper {
-        margin-bottom: 30px;
-    }
-    
-    .step-circle {
-        width: 28px;
-        height: 28px;
-        font-size: 12px;
-    }
-    
-    .step-label {
-        display: none; 
-    }
+    #recommendations-list, #opportunities-list { margin-bottom: 20px; grid-template-columns: 1fr !important; }
 
-    /* Ajuste para campos e selects vazando da tela */
-    .form-group .form-control {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-    }
+    .rec-item.highlight-card { transform: scale(1) !important; }
+    .rec-item.highlight-card:hover { transform: translateY(-4px) !important; }
 
-    select.form-control {
-        text-overflow: ellipsis; 
-        white-space: nowrap;
-        overflow: hidden;
-    }
-    
-    /* Otimização dos Radio Buttons (Sim/Não) para toque com o dedo */
-    .radio-group {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .radio-group label {
-        display: block;
-        margin-right: 0;
-        padding: 12px 15px;
-        background: #f8fbff;
-        border: 1px solid #e1eef7;
-        border-radius: 8px;
-        width: 100%;
-        transition: background 0.2s;
-    }
-
-    .radio-group label:active {
-        background: #e1eef7;
-    }
-    
-    /* Botões 100% de largura no mobile */
-    .btn-start {
-        width: 100%;
-    }
-
-    #quiz-navigation {
-        flex-direction: column-reverse; 
-        gap: 15px;
-        align-items: stretch !important;
-    }
-    
-    #btn-next-step, 
-    #btn-prev-step {
-        width: 100%;
-        margin: 0;
-    }
-
-    /* Mobile Dashboard Layout */
-    #recommendations-list, 
-    #opportunities-list { 
-        margin-bottom: 20px; 
-        grid-template-columns: 1fr !important; /* Força 1 coluna no celular */
-    }
-
-    /* Ajustes para o Card Azul (CTA Box) no mobile */
-    .cta-box {
-        padding: 25px 15px !important; 
-        text-align: center !important;
-        width: 100% !important;
-    }
-
-    .cta-box h5 {
-        font-size: 1.35rem !important; 
-        line-height: 1.3 !important;
-    }
-
-    .cta-box p {
-        font-size: 0.9rem !important;
-        margin-bottom: 20px !important;
-    }
-
-    .cta-box .form-group {
-        width: 100% !important; 
-        margin-bottom: 20px !important;
-    }
-
-    .cta-box .form-group label {
-        display: block;
-        text-align: center !important; 
-        font-size: 13px !important;
-        margin-bottom: 10px !important;
-    }
-
-    .cta-box .btn-success {
-        width: 100% !important;
-        padding: 8px 10px !important; 
-        font-size: 12px !important; 
-        height: auto !important; 
-        line-height: 1.2 !important; 
-    }
-    
-    /* Helper Bar (Preenchimento rápido) */
-    .test-helper-bar {
-        flex-wrap: wrap;
-        justify-content: center;
-        padding: 10px;
-    }
+    .cta-box { padding: 25px 15px !important; text-align: center !important; width: 100% !important; }
+    .cta-box h5 { font-size: 1.35rem !important; line-height: 1.3 !important; }
+    .cta-box .btn-success { width: 100% !important; padding: 8px 10px !important; font-size: 12px !important; height: auto !important; line-height: 1.2 !important; }
 }

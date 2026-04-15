@@ -10,30 +10,30 @@
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
         body { 
-            background-color: #f4f7f9; 
+            background-color: #ffffff; 
             padding-bottom: 30px;
         }
         
         .landing-wrapper {
             font-family: 'Poppins', sans-serif;
-            background-color: transparent;
+            background-color: #ffffff; 
             padding: 20px 0;
         }
 
-        /* --- ESTILO DOS CARDS (VERTICAL) --- */
+        /* --- ESTILO DAS CAIXAS DE CONTEÚDO --- */
         .card-section {
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            box-shadow: none !important; 
             padding: 35px 40px;
-            max-width: 1100px;
+            max-width: 1400px;
             margin: 0 auto 25px auto;
             border-top: 5px solid #1eaad9;
         }
 
         .card-results {
             border-top: 5px solid #004b8d;
-            background: linear-gradient(to bottom right, #ffffff, #f8fbff);
+            background: #ffffff;
         }
 
         .form-section-title { 
@@ -50,23 +50,19 @@
         .form-group label { 
             font-weight: 600; 
             font-size: 13px; 
-            color: #333; /* Deixei a pergunta mais escura para dar contraste */
+            color: #333; 
             margin-bottom: 8px; 
             display: block;
         }
         
-        /* =========================================================================
-           BLINDAGEM CONTRA O FLUIG: FORÇANDO AS CAIXAS DE TEXTO
-           Isso garante que o Fluig não apague as bordas no modo Visualização
-           ========================================================================= */
         .fluig-style-guide .card-section .form-group .form-control,
         .fluig-style-guide .card-section .form-group input[readonly], 
         .fluig-style-guide .card-section .form-group textarea[readonly],
         .fluig-style-guide .card-section .form-group span[id^="_"] { 
-            background-color: #f0f4f8 !important; /* Fundo cinza azulado bem visível */
-            border: 1px solid #c9d3df !important; /* Borda forte */
+            background-color: #f0f4f8 !important; 
+            border: 1px solid #c9d3df !important; 
             border-radius: 8px !important;
-            color: #004b8d !important; /* Cor do texto (Laranja ou Azul escuro) */
+            color: #004b8d !important; 
             font-weight: 600 !important; 
             font-size: 14px !important;
             padding: 12px 18px !important; 
@@ -80,14 +76,18 @@
             line-height: 1.4 !important;
         }
 
-        /* Resultados */
+        /* Resultados Iniciais */
         .score-card { 
-            background: #fff; 
+            background: #f8fbff; 
             padding: 30px; 
             border-radius: 12px; 
             border: 1px solid #e1eef7; 
             text-align: center; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            box-shadow: none !important; 
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .score-radial { 
             width: 130px; 
@@ -103,9 +103,103 @@
             color: #004b8d; 
         }
 
+        /* =========================================
+           CARDS COMPACTOS
+           ========================================= */
+        
+        #recommendations-list {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important; 
+            gap: 25px !important;
+            margin-bottom: 35px;
+            align-items: stretch;
+        }
+
+        #opportunities-list {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important; 
+            gap: 25px !important;
+            margin-bottom: 35px;
+            align-items: stretch;
+        }
+
+        .rec-item {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            background: linear-gradient(135deg, #004b8d 0%, #002d5a 100%) !important;
+            border: 1px solid #003a70 !important; 
+            border-radius: 12px !important; 
+            padding: 25px 20px !important; 
+            margin-bottom: 0 !important;
+            box-shadow: 0 8px 20px rgba(0, 45, 90, 0.15) !important;
+            min-height: auto !important; 
+            height: 100% !important;
+            transition: all 0.3s ease !important;
+            position: relative !important;
+            overflow: hidden !important;
+            gap: 0 !important;
+        }
+
+        .rec-item:hover {
+            transform: translateY(-6px) !important;
+            box-shadow: 0 15px 35px rgba(0, 45, 90, 0.3) !important;
+            border-color: #1eaad9 !important; 
+        }
+
+        .rec-item h6 {
+            margin: 0 0 10px 0 !important;
+            font-weight: 600 !important;
+            color: #ffffff !important; 
+            font-size: 1.1rem !important;
+            line-height: 1.3 !important;
+        }
+
+        .rec-item p {
+            margin: 0 !important; 
+            font-size: 0.9rem !important;
+            color: #e3eef7 !important; 
+            line-height: 1.6 !important;
+        }
+
+        .rec-item.highlight-card {
+            background: linear-gradient(135deg, #1eaad9 0%, #0077b6 100%) !important; 
+            border: 1px solid #3ebff8 !important; 
+            box-shadow: 0 0 25px rgba(30, 170, 217, 0.3) !important; 
+            transform: scale(1.03) !important; 
+            z-index: 2 !important;
+        }
+
+        .rec-item.highlight-card:hover { transform: scale(1.03) translateY(-6px) !important; }
+        .rec-item.highlight-card p { color: #ffffff !important; }
+
+        .badge-popular {
+            position: absolute !important;
+            top: 15px !important;
+            right: 15px !important;
+            background: #f39c12 !important; 
+            color: #fff !important;
+            font-size: 0.65rem !important;
+            padding: 5px 12px !important;
+            border-radius: 6px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+        }
+
+        @media (max-width: 1024px) {
+            #recommendations-list, #opportunities-list { grid-template-columns: repeat(2, 1fr) !important; }
+            .card-section { padding: 30px; }
+        }
+
         @media (max-width: 768px) {
-            .card-section { padding: 25px 20px; }
+            #recommendations-list, #opportunities-list { grid-template-columns: 1fr !important; }
+            .card-section { padding: 25px 15px; }
             .col-md-6 { margin-bottom: 20px; }
+            .rec-item.highlight-card { transform: scale(1) !important; }
+            .rec-item.highlight-card:hover { transform: translateY(-4px) !important; }
+            .card-results .row { flex-direction: column !important; }
+            .card-results .col-md-4 { width: 100% !important; margin-bottom: 20px; }
         }
     </style>
 </head>
@@ -116,32 +210,42 @@
             <input type="hidden" name="score_final" id="score_final">
             <input type="hidden" name="nivel_maturidade" id="nivel_maturidade">
             <input type="hidden" name="json_respostas" id="json_respostas">
+            <input type="hidden" name="json_insights" id="json_insights">
+            <input type="hidden" name="json_oportunidades" id="json_oportunidades">
 
-            <div class="panel panel-primary" style="max-width: 1100px; margin: 20px auto 0;">
+            <div class="panel panel-primary" style="max-width: 1400px; margin: 20px auto 0;">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="flaticon flaticon-speaker icon-sm"></i> Visualização de Diagnóstico de RH</h3>
                 </div>
             </div>
 
             <div class="landing-wrapper">
-                <div class="container-fluid">
+                <div class="container-fluid" style="padding: 0;">
                     
                     <div class="card-section card-results">
                         <h4 class="form-section-title">Performance e Maturidade Digital</h4>
-                        <div class="row">
-                            <div class="col-md-4 text-center">
+                        <div class="row" style="display: flex; align-items: stretch; flex-wrap: wrap;">
+                            <div class="col-md-4 text-center" style="display: flex; flex-direction: column;">
                                 <div class="score-card">
                                     <div class="score-radial"><span id="lbl_score">0%</span></div>
                                     <h3 id="lbl_nivel" style="color: #004b8d; font-weight: 700; margin-top: 15px;">Carregando...</h3>
-                                    <p class="text-muted small mt-2">Classificação atual do RH baseado nas respostas</p>
+                                    <p id="result-description" class="text-muted small mt-2">Classificação atual do RH baseado nas respostas</p>
                                 </div>
                             </div>
                             <div class="col-md-8">
-                                <div style="max-height: 350px; display: flex; justify-content: center;">
+                                <div style="min-height: 380px; display: flex; flex-direction: column; justify-content: center; position: relative;">
                                     <canvas id="maturityChartViewer"></canvas>
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="card-section" style="background: transparent; box-shadow: none; border: none; padding: 0; max-width: 1400px;">
+                        <h4 class="form-section-title" style="margin-top: 10px;">Sugestões de Melhoria com Insights</h4>
+                        <div id="recommendations-list"></div>
+                        
+                        <h4 class="form-section-title" style="margin-top: 35px;">Oportunidades Estratégicas</h4>
+                        <div id="opportunities-list"></div>
                     </div>
 
                     <div class="card-section">
@@ -263,26 +367,82 @@
         var viewChart = null;
 
         $(document).ready(function() {
-            // Renderiza o gráfico e preenche os dados direto no carregamento da tela
             renderChartAndResults();
+            renderCards(); 
         });
 
-        // Reconstrói o Gráfico Radar Lendo o JSON que veio do Widget
+        function renderCards() {
+            var strInsights = $("#json_insights").val();
+            var strOportunidades = $("#json_oportunidades").val();
+
+            if (strInsights && strInsights.length > 5) {
+                try {
+                    var insights = JSON.parse(strInsights);
+                    var htmlInsights = "";
+                    for (var i = 0; i < insights.length; i++) {
+                        htmlInsights += 
+                            '<div class="rec-item">' +
+                                '<h6>' + insights[i].titulo + '</h6>' +
+                                '<p>' + insights[i].descricao + '</p>' +
+                            '</div>';
+                    }
+                    $("#recommendations-list").html(htmlInsights);
+                } catch(e) {
+                    console.error("Erro ao ler JSON de Insights", e);
+                }
+            } else {
+                $("#recommendations-list").html("<p class='text-muted'>Nenhum insight gravado.</p>");
+            }
+
+            if (strOportunidades && strOportunidades.length > 5) {
+                try {
+                    var oportunidades = JSON.parse(strOportunidades);
+                    var htmlOportunidades = "";
+                    for (var j = 0; j < oportunidades.length; j++) {
+                        var isHighlighted = (j === 1); 
+                        var extraClass = isHighlighted ? ' highlight-card' : '';
+                        var badgeHtml = isHighlighted ? '<span class="badge-popular">Prioridade</span>' : '';
+
+                        htmlOportunidades += 
+                            '<div class="rec-item' + extraClass + '">' +
+                                badgeHtml +
+                                '<h6>' + oportunidades[j].titulo + '</h6>' +
+                                '<p>' + oportunidades[j].descricao + '</p>' +
+                            '</div>';
+                    }
+                    $("#opportunities-list").html(htmlOportunidades);
+                } catch(e) {
+                    console.error("Erro ao ler JSON de Oportunidades", e);
+                }
+            } else {
+                $("#opportunities-list").html("<p class='text-muted'>Nenhuma oportunidade gravada.</p>");
+            }
+        }
+
         function renderChartAndResults() {
             var scoreFinal = $("#score_final").val() || "0";
             var nivelMaturidade = $("#nivel_maturidade").val() || "Não Classificado";
             var jsonString = $("#json_respostas").val();
 
-            // Atualiza os Textos de Resultados no Card do Topo
             $("#lbl_score").text(scoreFinal + "%");
             $("#lbl_nivel").text(nivelMaturidade);
+            
+            // Textos descritivos simulando a leitura real 
+            var descricoes = {
+                "Tradicional": "Foco em processos operacionais e burocráticos. Há um grande potencial para iniciar a automação e ganhar agilidade.",
+                "Ágil": "Busca por eficiência e rapidez, iniciando a transição para processos mais dinâmicos e menos engessados.",
+                "Digital": "Uso de tecnologia e automação consolidados. O próximo passo é equilibrar as ferramentas com a valorização da experiência humana.",
+                "Humanizado": "Une tecnologia avançada e foco genuíno nas pessoas, promovendo uma excelente experiência para o colaborador.",
+                "Estratégico": "O setor atua como parceiro de negócios, focando em análise de dados, métricas e retenção profunda de talentos."
+            };
 
-            // Tenta gerar o Gráfico de Radar
+            var descr = descricoes[nivelMaturidade] || "Nível gerado a partir do Score.";
+            $("#result-description").html("Sua operação foi classificada como <strong>" + nivelMaturidade + "</strong>.<br><span style='font-size:12px; color:#666; margin-top:5px; display:block;'>" + descr + "</span>");
+
             if (jsonString && jsonString.length > 5) {
                 try {
                     var answers = JSON.parse(jsonString);
                     
-                    // Recalcula as médias por área para o gráfico
                     var scores = {
                         'Recrutamento': calcPillar(answers, ['process_formal', 'use_ats', 'dedicated_team']),
                         'Admissão': calcPillar(answers, ['has_digital_admission', 'use_admission_portal', 'has_electronic_signature', 'has_integration_program', 'is_admission_secure']),
@@ -296,33 +456,66 @@
                     var ctx = document.getElementById('maturityChartViewer').getContext('2d');
                     if (viewChart) viewChart.destroy();
                     
+                    var gradientFill = ctx.createLinearGradient(0, 0, 0, 400);
+                    gradientFill.addColorStop(0, 'rgba(30, 170, 217, 0.5)');
+                    gradientFill.addColorStop(1, 'rgba(0, 0, 0, 0.05)');
+
                     viewChart = new Chart(ctx, {
                         type: 'radar',
                         data: {
                             labels: Object.keys(scores),
                             datasets: [{
-                                label: 'Maturidade do Lead (%)',
+                                label: 'Maturidade (%)',
                                 data: Object.values(scores),
-                                backgroundColor: 'rgba(30, 170, 217, 0.2)',
+                                backgroundColor: gradientFill,
                                 borderColor: '#1eaad9',
-                                pointBackgroundColor: '#004b8d',
-                                pointHoverBackgroundColor: '#fff',
-                                pointHoverBorderColor: '#1eaad9'
+                                borderWidth: 3,
+                                pointBackgroundColor: '#2b2b2b',
+                                pointBorderColor: '#f39c12',
+                                pointBorderWidth: 3,
+                                pointRadius: 5,
+                                pointHoverRadius: 8,
+                                pointHoverBackgroundColor: '#f39c12',
+                                pointHoverBorderColor: '#ffffff',
+                                tension: 0.1
                             }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            scale: { 
-                                ticks: { beginAtZero: true, max: 100, display: false },
-                                pointLabels: { fontSize: 13, fontColor: '#485363', fontStyle: '600' }
-                            },
-                            legend: { display: false },
-                            tooltips: {
-                                callbacks: {
-                                    label: function(tooltipItem, data) {
-                                        return data.datasets[tooltipItem.datasetIndex].label + ': ' + Math.round(tooltipItem.yLabel) + '%';
+                            animation: { duration: 2200, easing: 'easeOutExpo' },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(10, 20, 30, 0.95)',
+                                    titleFont: { size: 14, family: "'Poppins', sans-serif" },
+                                    bodyFont: { size: 14, weight: 'normal', family: "'Poppins', sans-serif" },
+                                    padding: 14,
+                                    cornerRadius: 4,
+                                    displayColors: false,
+                                    callbacks: {
+                                        label: function(context) { 
+                                            var val = context.raw;
+                                            var lbl = '';
+                                            if (val <= 20) lbl = 'Tradicional';
+                                            else if (val <= 40) lbl = 'Ágil';
+                                            else if (val <= 60) lbl = 'Digital';
+                                            else if (val <= 80) lbl = 'Humanizado';
+                                            else lbl = 'Estratégico';
+                                            return ' SCORE: ' + Math.round(val) + '% - Nível: ' + lbl; 
+                                        }
                                     }
+                                }
+                            },
+                            scales: {
+                                r: {
+                                    angleLines: { display: true, color: 'rgba(30, 170, 217, 0.2)', lineWidth: 1 },
+                                    grid: { circular: false, color: 'rgba(30, 170, 217, 0.15)', lineWidth: 1.5 },
+                                    pointLabels: {
+                                        font: { size: 12, family: "'Poppins', sans-serif", weight: '700' },
+                                        color: '#333'
+                                    },
+                                    ticks: { beginAtZero: true, max: 100, stepSize: 20, display: false }
                                 }
                             }
                         }
@@ -334,7 +527,6 @@
             }
         }
 
-        // Helper para o Gráfico
         function calcPillar(answersObj, keys) {
             var count = 0;
             keys.forEach(function (k) { if (answersObj[k] === 'sim') count++; });
