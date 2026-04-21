@@ -260,7 +260,7 @@ var RHDiagnostico = SuperWidget.extend({
     renderTD: function ($c) { $c.html('<h4 class="form-section-title">Treinamento e Desenvolvimento</h4><div class="form-group mb-4"><label>A empresa possui uma estratégia clara de desenvolvimento de pessoas?</label><div class="radio-group mt-2"><label><input type="radio" name="td_strategy_clear" value="sim"> Sim</label><label><input type="radio" name="td_strategy_clear" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Os treinamentos estão alinhados aos objetivos estratégicos da empresa?</label><div class="radio-group mt-2"><label><input type="radio" name="td_aligned_goals" value="sim"> Sim</label><label><input type="radio" name="td_aligned_goals" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe planejamento anual de capacitação?</label><div class="radio-group mt-2"><label><input type="radio" name="td_annual_planning" value="sim"> Sim</label><label><input type="radio" name="td_annual_planning" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>A Alta Gestão participa da definição dos treinamentos?</label><div class="radio-group mt-2"><label><input type="radio" name="td_management_participation" value="sim"> Sim</label><label><input type="radio" name="td_management_participation" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existem indicadores ou avaliações que mostram onde estão as lacunas de competência?</label><div class="radio-group mt-2"><label><input type="radio" name="td_gap_indicators" value="sim"> Sim</label><label><input type="radio" name="td_gap_indicators" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Os líderes contribuem com informações sobre as necessidades de capacitação?</label><div class="radio-group mt-2"><label><input type="radio" name="td_leaders_contribution" value="sim"> Sim</label><label><input type="radio" name="td_leaders_contribution" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existem indicadores para avaliar o impacto dos treinamentos na performance?</label><div class="radio-group mt-2"><label><input type="radio" name="td_impact_indicators" value="sim"> Sim</label><label><input type="radio" name="td_impact_indicators" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe correlação entre treinamento e melhoria de resultados da empresa?</label><div class="radio-group mt-2"><label><input type="radio" name="td_results_correlation" value="sim"> Sim</label><label><input type="radio" name="td_results_correlation" value="nao"> Não</label></div></div>'); },
     renderCultura: function ($c) { $c.html('<h4 class="form-section-title">Cultura Organizacional</h4><div class="form-group mb-4"><label>As ações do dia a dia são condizentes com a cultura divulgada?</label><div class="radio-group mt-2"><label><input type="radio" name="culture_alignment" value="sim"> Sim</label><label><input type="radio" name="culture_alignment" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Há liberdade e canais seguros para expressão de ideias?</label><div class="radio-group mt-2"><label><input type="radio" name="expression_freedom" value="sim"> Sim</label><label><input type="radio" name="expression_freedom" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>A cultura é centrada na valorização das pessoas?</label><div class="radio-group mt-2"><label><input type="radio" name="people_valuation" value="sim"> Sim</label><label><input type="radio" name="people_valuation" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>A estrutura de cargos, salários e hierarquias é clara?</label><div class="radio-group mt-2"><label><input type="radio" name="defined_hierarchy" value="sim"> Sim</label><label><input type="radio" name="defined_hierarchy" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Como os novos colaboradores são introduzidos à cultura organizacional?</label><input type="text" id="culture_intro" name="culture_intro" class="form-control" placeholder="Descreva brevemente..."></div><div class="form-group mb-4"><label>Realiza pesquisa de clima organizacional?</label><div class="radio-group mt-2"><label><input type="radio" name="climate_survey" value="sim"> Sim</label><label><input type="radio" name="climate_survey" value="nao"> Não</label></div></div>'); },
     renderAnalytics: function ($c) { $c.html('<h4 class="form-section-title">Indicadores e Analytics</h4><div class="form-group mb-4"><label>O RH possui indicadores (turnover, absenteísmo, tempo médio de contratação, etc.) e são acompanhados?</label><div class="radio-group mt-2"><label><input type="radio" name="has_rh_indicators" value="sim"> Sim</label><label><input type="radio" name="has_rh_indicators" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>O RH utiliza dashboards para auxílio na tomada de decisão?</label><div class="radio-group mt-2"><label><input type="radio" name="use_dashboards" value="sim"> Sim</label><label><input type="radio" name="use_dashboards" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Realiza a análise de custo por colaborador e por área?</label><div class="radio-group mt-2"><label><input type="radio" name="cost_per_employee" value="sim"> Sim</label><label><input type="radio" name="cost_per_employee" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Quais ferramentas usa para indicadores?</label><input type="text" id="indicator_tools" name="indicator_tools" class="form-control" placeholder="PowerBI, Excel, GoodData, Sistema próprio..."></div><div class="form-group mb-4"><label>Existe integração dos indicadores de RH com os indicadores estratégicos da empresa?</label><div class="radio-group mt-2"><label><input type="radio" name="indicators_integration" value="sim"> Sim</label><label><input type="radio" name="indicators_integration" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe um processo estruturado de avaliação de desempenho (360°, metas, competências)?</label><div class="radio-group mt-2"><label><input type="radio" name="structured_performance_eval" value="sim"> Sim</label><label><input type="radio" name="structured_performance_eval" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe acompanhamento da produtividade por área ou função?</label><div class="radio-group mt-2"><label><input type="radio" name="productivity_tracking" value="sim"> Sim</label><label><input type="radio" name="productivity_tracking" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>O custo de benefícios é comparado com o nível de satisfação dos colaboradores? E com a produtividade?</label><div class="radio-group mt-2"><label><input type="radio" name="benefits_cost_comparison" value="sim"> Sim</label><label><input type="radio" name="benefits_cost_comparison" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe análise de custo de rotatividade (contratação, desligamento, treinamento, afastamento)?</label><div class="radio-group mt-2"><label><input type="radio" name="turnover_cost_analysis" value="sim"> Sim</label><label><input type="radio" name="turnover_cost_analysis" value="nao"> Não</label></div></div>'); },
-    renderTecnologia: function ($c) { $c.html('<h4 class="form-section-title">Tecnologia e Inovação</h4><div class="form-group mb-4"><label>Já utiliza Inteligência Artificial (IA) nos processos de RH?</label><div class="radio-group mt-2"><label><input type="radio" name="use_ai_rh" value="sim"> Sim</label><label><input type="radio" name="use_ai_rh" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Os dados organizacionais estão integrados com as demais áreas da empresa e sistemas?</label><div class="radio-group mt-2"><label><input type="radio" name="integrated_data" value="sim"> Sim</label><label><input type="radio" name="integrated_data" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>A folha de pagamento e documentos estão armazenados em nuvem?</label><div class="radio-group mt-2"><label><input type="radio" name="payroll_cloud" value="sim"> Sim</label><label><input type="radio" name="payroll_cloud" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Utiliza alguma consultoria especializada para apoiar nas demandas de RH?</label><div class="radio-group mt-2"><label><input type="radio" name="use_hr_consultancy" value="sim"> Sim</label><label><input type="radio" name="use_hr_consultancy" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Sua equipe utiliza todos os recursos que as ferramentas contratadas oferecem?</label><div class="radio-group mt-2"><label><input type="radio" name="full_resource_usage" value="sim"> Sim</label><label><input type="radio" name="full_resource_usage" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Utiliza alguma ferramenta de gestao de processos BPM integrada ao ERP?</label><div class="radio-group mt-2"><label><input type="radio" name="use_bpm_erp" value="sim"> Sim</label><label><input type="radio" name="use_bpm_erp" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Possui Portal WEB para apresentação de informações de RH para os colaboradores?</label><div class="radio-group mt-2"><label><input type="radio" name="has_hr_portal" value="sim"> Sim</label><label><input type="radio" name="has_hr_portal" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Aplica ciência dos dados para otimizar os processos de RH?</label><div class="radio-group mt-2"><label><input type="radio" name="apply_data_science" value="sim"> Sim</label><label><input type="radio" name="apply_data_science" value="nao"> Não</label></div></div>'); },
+    renderTecnologia: function ($c) { $c.html('<h4 class="form-section-title">Tecnologia e Inovação</h4><div class="form-group mb-4"><label>Já utiliza Inteligência Artificial (IA) nos processos de RH?</label><div class="radio-group mt-2"><label><input type="radio" name="use_ai_rh" value="sim"> Sim</label><label><input type="radio" name="use_ai_rh" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Os dados organizacionais estão integrados com as demais áreas da empresa e sistemas?</label><div class="radio-group mt-2"><label><input type="radio" name="integrated_data" value="sim"> Sim</label><label><input type="radio" name="integrated_data" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>A folha de pagamento e documentos estão armazenados em nuvem?</label><div class="radio-group mt-2"><label><input type="radio" name="payroll_cloud" value="sim"> Sim</label><label><input type="radio" name="payroll_cloud" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Utiliza alguma consultoria especializada para apoiar nas demandas de RH?</label><div class="radio-group mt-2"><label><input type="radio" name="use_hr_consultancy" value="sim"> Sim</label><label><input type="radio" name="use_hr_consultancy" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Sua equipe utiliza todos os recursos que as ferramentas contratadas oferecem?</label><div class="radio-group mt-2"><label><input type="radio" name="full_resource_usage" value="sim"> Sim</label><label><input type="radio" name="full_resource_usage" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Utiliza alguma ferramenta de gestao de processos BPM integrada ao ERP?</label><div class="radio-group mt-2"><label><input type="radio" name="use_bpm_erp" value="sim"> Sim</label><label><input type="radio" name="use_bpm_erp" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Possui Portal WEB para apresentação de informações de RH para os colaboradores?</label><div class="radio-group mt-2"><label><input type="radio" name="has_hr_portal" value="sim"> Sim</label><label><input type="radio" name="has_hr_portal" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Aplica ciência dos dados para otimizar processos?</label><div class="radio-group mt-2"><label><input type="radio" name="apply_data_science" value="sim"> Sim</label><label><input type="radio" name="apply_data_science" value="nao"> Não</label></div></div>'); },
  
     showResult: function () {
         var that = this;
@@ -342,20 +342,21 @@ var RHDiagnostico = SuperWidget.extend({
             html2pdf().set(opt).from(element).outputPdf('datauristring').then(function(pdfBase64) {
                 var rawBase64 = pdfBase64.split(',')[1];
                 
-                that.uploadPdfToECM(rawBase64, nomeEmpresa, function(documentId) {
-                    that.saveLeadToFluig(roundedAvg, title, scores, documentId, myLoading);
+                that.uploadPdfToECM(rawBase64, nomeEmpresa, function(documentId, linkPublico) {
+                    that.saveLeadToFluig(roundedAvg, title, scores, documentId, linkPublico, rawBase64, myLoading);
                 });
             })["catch"](function(err) {
                 console.error("Erro ao gerar PDF:", err);
-                that.saveLeadToFluig(roundedAvg, title, scores, null, myLoading);
+                that.saveLeadToFluig(roundedAvg, title, scores, null, "", "", myLoading);
             });
             
         }, 1000); 
     },
 
+    // FUNÇÃO ATUALIZADA: FAZ UPLOAD E GERA LINK PÚBLICO DE DOWNLOAD DIRETO SEM LOGIN
     uploadPdfToECM: function(base64Content, nomeEmpresa, callback) {
         var that = this;
-        var pastaDestinoECM = 214; // <--- ATENÇÃO: COLOQUE O ID DA PASTA DE DESTINO AQUI
+        var pastaDestinoECM = 214; 
         var baseUrl = this.authConfig.url || WCMAPI.getServerURL();
         
         var nomeSanitizado = nomeEmpresa.replace(/[^a-zA-Z0-9]/g, "_");
@@ -413,47 +414,46 @@ var RHDiagnostico = SuperWidget.extend({
                             docId = response.content.documentId;
                         }
 
-                        // --- INÍCIO DA NOVA ALTERAÇÃO (OBTER URL PÚBLICA DE COMPARTILHAMENTO) ---
                         if (docId) {
-                            // A API V2 Content Management recupera a URL oficial do "Compartilhar Externamente"
-                            var endpointExternalLink = baseUrl + "/content-management/api/v2/documents/" + docId + "?expand=publicUrl";
-                            var authHeaderExternal = that.getOAuthData(endpointExternalLink, 'GET');
+                            // FAZ A CHAMADA PARA BUSCAR A URL PÚBLICA DE DOWNLOAD DIRETO DO VOLUME (SEM LOGIN)
+                            var endpointDownloadUrl = baseUrl + "/api/public/2.0/documents/getDownloadURL/" + docId;
+                            var authHeaderDownload = that.getOAuthData(endpointDownloadUrl, 'GET');
 
                             $.ajax({
-                                url: endpointExternalLink,
+                                url: endpointDownloadUrl,
                                 type: 'GET',
-                                headers: authHeaderExternal,
+                                headers: authHeaderDownload,
                                 crossDomain: true,
-                                success: function (resExternal) {
-                                    // Pega o campo 'publicUrl' do retorno da API
-                                    var linkPublico = resExternal.publicUrl || (resExternal.content && resExternal.content.publicUrl);
-                                    
-                                    if(linkPublico) {
-                                        console.log("LINK EXTERNO OFICIAL GERADO: ", linkPublico);
-                                        // Pode atribuir este link a algum elemento na sua tela de Resultados
+                                success: function (resUrl) {
+                                    var linkPublico = "";
+                                    if (resUrl && resUrl.content) {
+                                        linkPublico = resUrl.content; // Ex: http://ip/volume/stream/...
                                     } else {
-                                        console.log("Atenção: A propriedade publicUrl não foi retornada.");
+                                        linkPublico = baseUrl + "/portal/p/1/documentdownload?documentId=" + docId + "&version=1000";
                                     }
+                                    console.log("LINK PUBLICO GERADO PARA O EMAIL: ", linkPublico);
+                                    callback(docId, linkPublico);
                                 },
                                 error: function (xhr) {
-                                    console.error("Erro ao buscar URL externa nativa:", xhr.responseText);
+                                    console.error("Erro ao buscar URL publica, caindo para fallback:", xhr.responseText);
+                                    var linkDireto = baseUrl + "/portal/p/1/documentdownload?documentId=" + docId + "&version=1000";
+                                    callback(docId, linkDireto);
                                 }
                             });
+                        } else {
+                            callback(null, "");
                         }
-                        // --- FIM DA NOVA ALTERAÇÃO ---
-
-                        callback(docId);
                     },
                     error: function (xhr) {
                         console.error("Erro na Publicação do Documento GED:", xhr.responseText);
-                        callback(null);
+                        callback(null, "");
                     }
                 });
                 
             },
             error: function (xhr) {
                 console.error("Erro no Upload Físico OAuth:", xhr.responseText);
-                callback(null); 
+                callback(null, ""); 
             }
         });
     },
@@ -647,7 +647,7 @@ var RHDiagnostico = SuperWidget.extend({
         var listaOportunidades = [
             { titulo: "Desempenho e Crescimento", descricao: "Empresas com planos claros de ascensão tendem a ter maior engajamento. Um framework sólido é diferencial." },
             { titulo: "Treinamento e desenvolvimento", descricao: "Expandir a visão: iniciativas como mentoria e job rotation equilibram a qualificação." },
-            { titulo: "Novos formatos de benefícios", descricao: "Modelos híbridos de remuneração e personalização aumentam o engajamento sem elevar os custos." },
+            { titulo: "Novos formatos de benefícios", descricao: "Modelos híbridos de remuneração e personalização aumentam o engajamento sem elevating custos." },
             { titulo: "Personalização dos benefícios", descricao: "Permite que os colaboradores escolham pacotes que atendam melhor às suas necessidades individuais." },
             { titulo: "Estratégia de cultura organizacional", descricao: "Empresas que equilibram inovação e pertencimento tendem a ter melhores resultados." },
             { titulo: "Política de bônus", descricao: "A retenção de talentos estratégicos em níveis técnicos especializados pode gerar vantagens." },
@@ -740,7 +740,8 @@ var RHDiagnostico = SuperWidget.extend({
         return oauth.toHeader(oauth.authorize({ url: url, method: method, data: {} }, { key: this.authConfig.token, secret: this.authConfig.tokenSecret }));
     },
  
-    saveLeadToFluig: function (finalScore, classification, pillarScores, documentId, myLoading) {
+    // FUNÇÃO DE SAVE COM O CHUNKING DO BASE64
+    saveLeadToFluig: function (finalScore, classification, pillarScores, documentId, linkPublico, rawBase64, myLoading) {
         var that = this;
  
         var phoneVal = this.userAnswers['telefone'] || "";
@@ -820,9 +821,22 @@ var RHDiagnostico = SuperWidget.extend({
                 "has_hr_portal": this.userAnswers['has_hr_portal'] || "Não informado",
                 "apply_data_science": this.userAnswers['apply_data_science'] || "Não informado",
                 
-                "id_pdf_diagnostico": documentId ? documentId.toString() : ""
+                "id_pdf_diagnostico": documentId ? documentId.toString() : "",
+                "link_pdf_publico": linkPublico ? linkPublico : ""
             }
         };
+
+        // FRAGMENTAÇÃO DO BASE64: Evita o erro 'Texto do campo muito extenso' no banco de dados do Fluig
+        // O Base64 é cortado em fatias de 50.000 caracteres e passado para as 20 variáveis criadas no HTML
+        var chunkBase64 = rawBase64 || "";
+        var chunkSize = 50000;
+        for (var i = 0; i < 20; i++) {
+            var chunk = "";
+            if (chunkBase64 && chunkBase64.length > i * chunkSize) {
+                chunk = chunkBase64.substring(i * chunkSize, (i + 1) * chunkSize);
+            }
+            apiPayload.formFields["pdf_base64_" + (i + 1)] = chunk;
+        }
  
         var authHeader = this.getOAuthData(endpoint, 'POST');
  

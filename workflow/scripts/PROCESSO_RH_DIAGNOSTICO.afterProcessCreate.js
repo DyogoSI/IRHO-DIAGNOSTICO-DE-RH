@@ -1,135 +1,151 @@
 function afterProcessCreate(processId) {
-    log.info(">>> DIAGNOSTICO RH: Iniciando disparo de email customizado. Processo ID: " + processId);
+    log.info(">>> DIAGNOSTICO RH: Iniciando envio de email COM ANEXO. Processo ID: " + processId);
 
     try {
-        var docIdAnexo = hAPI.getCardValue("id_pdf_diagnostico");
-        var pdfBytes = null; // Variável que receberá os bytes do PDF
-
-        // --- LÓGICA PARA ANEXAR O PDF E EXTRAIR OS BYTES ---
-        if (docIdAnexo != null && docIdAnexo != "") {
-            // 1. Anexa ao processo interno do Fluig
-            hAPI.attachDocument(parseInt(docIdAnexo));
-            log.info(">>> DIAGNOSTICO RH: PDF (ID: " + docIdAnexo + ") anexado com sucesso ao processo!");
-            
-            // 2. Extrai os bytes do documento usando a função proxy
-            pdfBytes = baixarBytesInterno(docIdAnexo, null);
-            
-            if (pdfBytes != null) {
-                log.info(">>> DIAGNOSTICO RH: Bytes do PDF extraídos com sucesso. Tamanho: " + pdfBytes.length + " bytes.");
-            }
-        }
-        // ---------------------------------------------------
-
-        // 1. Recupera os dados que foram injetados no formulário pela Widget via API
-        var nomeContato = hAPI.getCardValue("nome_contato");
         var emailContato = hAPI.getCardValue("email_contato");
+        if (!emailContato || emailContato == "" || emailContato == "anonimo@teste.com") {
+            log.warn(">>> DIAGNOSTICO RH: Email invalido. Cancelando envio.");
+            return;
+        }
+
+        var nomeContato = hAPI.getCardValue("nome_contato");
         var empresa = hAPI.getCardValue("empresa");
         var scoreFinal = hAPI.getCardValue("score_final");
         var maturidade = hAPI.getCardValue("nivel_maturidade");
+        var linkPdfPublico = hAPI.getCardValue("link_pdf_publico"); 
+        var docIdAnexo = hAPI.getCardValue("id_pdf_diagnostico");
 
-        // 2. Validação: Apenas envia se houver um e-mail válido 
-        // Ignora o fallback "anonimo@teste.com" preenchido pela widget
-        if (emailContato != null && emailContato != "" && emailContato != "anonimo@teste.com") {
+        // Reconstrói a String Base64 juntando as 20 partes separadas para burlar o limite do DB
+        var base64String = "";
+        for (var i = 1; i <= 20; i++) {
+            var pedaco = hAPI.getCardValue("pdf_base64_" + i);
+            if (pedaco != null && pedaco.trim() != "") {
+                base64String += pedaco;
+            }
+        }
 
-            // 3. Preparação dos parâmetros para o Template HTML
+        // 1. Anexa o documento fisicamente ao processo
+        if (docIdAnexo) {
+            try { hAPI.attachDocument(parseInt(docIdAnexo)); } catch(e) {}
+        }
+
+        // 2. Extrai os bytes do PDF da String Base64 remontada
+        var pdfBytes = null;
+        if (base64String && base64String.trim() !== "") {
+            log.info(">>> DIAGNOSTICO RH: Convertendo PDF via Base64 enviado em partes pelo Form...");
+            pdfBytes = java.util.Base64.getDecoder().decode(new java.lang.String(base64String).getBytes("UTF-8"));
+        } else if (linkPdfPublico != null && linkPdfPublico.indexOf("http") !== -1) {
+            log.info(">>> DIAGNOSTICO RH: Baixando PDF da URL publica para anexar...");
+            pdfBytes = baixarBytesDaUrl(linkPdfPublico);
+        }
+
+        var assuntoEmail = "Resultado do seu Diagnóstico de RH: " + maturidade;
+        var nomeArquivo = "Diagnostico_" + String(empresa).replace(/[^a-zA-Z0-9]/g, "_") + ".pdf";
+        
+        var htmlBody = "<div style='font-family: Arial, sans-serif; color: #333;'>" +
+                       "<h2>Olá, " + nomeContato + "!</h2>" +
+                       "<p>Agradecemos por realizar o Diagnóstico InteRHativa para a empresa <strong>" + empresa + "</strong>.</p>" +
+                       "<div style='padding: 15px; background-color: #f8fbff; border-left: 4px solid #1eaad9; margin: 20px 0;'>" +
+                       "<h3 style='margin: 0; color: #1eaad9;'>Seu Score Global: " + scoreFinal + "%</h3>" +
+                       "<p style='margin: 5px 0 0 0; font-size: 16px;'>Nível de Maturidade: <strong>" + maturidade + "</strong></p>" +
+                       "</div>" +
+                       "<p><strong>O seu relatório completo segue em anexo a este e-mail (PDF).</strong> Basta descarregá-lo diretamente da sua caixa de entrada.</p>" +
+                       "<p>Nossos especialistas avaliarão as suas respostas e entrarão em contacto para apresentar as melhores oportunidades de desenvolvimento e transformação.</p>" +
+                       "<p>Abraço,<br>Equipa de Especialistas em RH.</p>" +
+                       "</div>";
+
+        // =========================================================
+        // TENTATIVA 1: Enviar com Anexo Físico (JavaMail)
+        // =========================================================
+        try {
+            enviarEmailComAnexo(emailContato, assuntoEmail, htmlBody, nomeArquivo, pdfBytes);
+            log.info(">>> DIAGNOSTICO RH: Email COM ANEXO enviado com sucesso!");
+            
+        } catch (mailError) {
+            log.error(">>> DIAGNOSTICO RH: Servidor SMTP bloqueou o JavaMail. Executando plano de fallback... Erro: " + mailError);
+            
+            // =========================================================
+            // TENTATIVA 2: Fallback de Segurança (Fluig Nativo)
+            // =========================================================
             var parametros = new java.util.HashMap();
-
-            // Variáveis que serão trocadas no HTML do email
             parametros.put("NOME_CONTATO", nomeContato);
             parametros.put("NOME_EMPRESA", empresa);
             parametros.put("SCORE_FINAL", scoreFinal + "%");
             parametros.put("MATURIDADE", maturidade);
-            
-            // Assunto do E-mail (Requerido pelo Fluig)
-            var assuntoEmail = "Resultado do seu Diagnóstico de RH: " + maturidade;
+            parametros.put("LINK_PDF", linkPdfPublico); 
             parametros.put("subject", assuntoEmail);
-            parametros.put("SUBJECT", assuntoEmail);
-
-            // 4. Configuração de Destinatários
+            
             var destinatarios = new java.util.ArrayList();
-            // Remove espaços acidentais que possam causar o erro "Invalid Addresses"
             destinatarios.add(String(emailContato).trim());
-
-            // 5. Disparo do E-mail
-            var remetente = "guilherme-af"; // Usuário remetente padrão
-            var idTemplate = "TPL_DIAGNOSTICO_RESULTADO"; // Nome do template cadastrado no painel de controle
             
-            log.info(">>> DIAGNOSTICO RH: Tentando enviar e-mail para: " + emailContato);
-            
-            /*
-             * NOTA SOBRE ANEXO NO E-MAIL:
-             * A variável 'pdfBytes' agora contém o arquivo físico. O 'notifier.notify' padrão 
-             * não aceita os bytes nativamente na assinatura abaixo. Se a sua intenção for anexar 
-             * o arquivo no e-mail, você precisará construir o envio via 'javax.mail' ou usar
-             * o 'com.totvs.technology.foundation.mail.EMailAttachmentVO'. 
-             */
-            notifier.notify(remetente, idTemplate, parametros, destinatarios, "text/html");
-
-            log.info(">>> DIAGNOSTICO RH: E-mail enviado com sucesso!");
-
-        } else {
-            log.warn(">>> DIAGNOSTICO RH: E-mail não preenchido ou é anônimo. Envio cancelado.");
+            notifier.notify("guilherme-af", "TPL_DIAGNOSTICO_RESULTADO", parametros, destinatarios, "text/html");
+            log.info(">>> DIAGNOSTICO RH: Email de seguranca enviado com sucesso via notifier!");
         }
 
     } catch (e) {
-        log.error(">>> DIAGNOSTICO RH: ERRO FATAL AO PROCESSAR AFTER CREATE: " + e);
-        if (e.toString) log.error(e.toString());
+        log.error(">>> DIAGNOSTICO RH: ERRO FATAL NO SCRIPT: " + e.toString());
     }
 }
 
 /**
- * Função responsável por bypassar a API pública e extrair os bytes 
- * de um documento armazenado no volume interno do Fluig (GED).
+ * Constrói o e-mail utilizando as configurações nativas do servidor e anexa o PDF
  */
-function baixarBytesInterno(docId, config) {
+function enviarEmailComAnexo(destinatario, assunto, htmlBody, nomeArquivo, pdfBytes) {
+    var initialContext = new javax.naming.InitialContext();
+    var session = initialContext.lookup("java:/mail/MailSession");
+    
+    var msg = new javax.mail.internet.MimeMessage(session);
+    
+    var fromAddress = session.getProperty("mail.from");
+    if (fromAddress != null && fromAddress.trim() != "") {
+        msg.setFrom(new javax.mail.internet.InternetAddress(fromAddress));
+    }
+    
+    msg.setRecipients(javax.mail.Message.RecipientType.TO, javax.mail.internet.InternetAddress.parse(destinatario));
+    msg.setSubject(assunto, "UTF-8");
+
+    var multipart = new javax.mail.internet.MimeMultipart();
+
+    // Parte de Texto
+    var htmlPart = new javax.mail.internet.MimeBodyPart();
+    htmlPart.setContent(htmlBody, "text/html; charset=utf-8");
+    multipart.addBodyPart(htmlPart);
+
+    // Parte de Anexo
+    if (pdfBytes != null) {
+        var attachmentPart = new javax.mail.internet.MimeBodyPart();
+        var dataSource = new javax.mail.util.ByteArrayDataSource(pdfBytes, "application/pdf");
+        attachmentPart.setDataHandler(new javax.activation.DataHandler(dataSource));
+        attachmentPart.setFileName(nomeArquivo);
+        multipart.addBodyPart(attachmentPart);
+    }
+
+    msg.setContent(multipart);
+    javax.mail.Transport.send(msg);
+}
+
+/**
+ * Lê os bytes do ficheiro PDF via HTTP utilizando a URL pública
+ */
+function baixarBytesDaUrl(urlStr) {
     try {
-        var docIdInt = parseInt(docId, 10);
+        var url = new java.net.URL(urlStr);
+        var conn = url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setConnectTimeout(5000); 
+        conn.setReadTimeout(10000);   
         
-        // MÁGICA AQUI: Pede ao serviço interno do Fluig a URL de download. 
-        // Essa URL gerada internamente já bypassa o bloqueio do /api/public/
-        var downloadUrl = fluigAPI.getDocumentService().getDownloadURL(docIdInt);
-
-        if (!downloadUrl) {
-            log.error(">>> [PROXY LOTE] A fluigAPI interna não retornou URL para o doc " + docId);
+        if (conn.getResponseCode() >= 300) {
+            log.error(">>> DIAGNOSTICO RH: URL HTTP recusou a entrega do ficheiro.");
             return null;
         }
-
-        // Garante que a URL seja absoluta
-        if (downloadUrl.indexOf("http") !== 0) {
-            var serverUrl = "";
-            try { 
-                serverUrl = fluigAPI.getPageService().getServerURL(); 
-            } catch (ex) { 
-                serverUrl = "http://localhost:8080"; 
-            }
-            downloadUrl = serverUrl + downloadUrl;
-        }
-
-        log.info(">>> [PROXY LOTE] Acessando volume interno do Fluig para o doc " + docId);
-
-        // Abre a conexão com a URL gerada (que já é confiável para o servidor local)
-        var fileConn = new java.net.URL(downloadUrl).openConnection();
-        fileConn.setRequestMethod("GET");
         
-        var responseCode = fileConn.getResponseCode();
-        if (responseCode >= 300) {
-            var errScanner = new java.util.Scanner(fileConn.getErrorStream(), "UTF-8").useDelimiter("\\A");
-            var errMsg = errScanner.hasNext() ? errScanner.next() : "";
-            log.error(">>> [PROXY LOTE] Falha ao extrair stream (HTTP " + responseCode + "): " + errMsg);
-            errScanner.close();
-            return null;
-        }
-
-        // Extrai os bytes puros do PDF
-        var isFile = fileConn.getInputStream();
-        var bytes = org.apache.commons.io.IOUtils.toByteArray(isFile);
-        isFile.close();
-        
+        var is = conn.getInputStream();
+        var bytes = org.apache.commons.io.IOUtils.toByteArray(is);
+        is.close();
         return bytes;
-        
-    } catch(e) {
-        log.error(">>> [PROXY LOTE] Erro fatal ao extrair PDF ID " + docId + " via fluigAPI - " + e.toString());
+    } catch (e) {
+        log.error(">>> DIAGNOSTICO RH: Falha ao baixar o PDF - " + e.toString());
         return null;
     }
 }
-
