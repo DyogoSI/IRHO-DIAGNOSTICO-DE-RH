@@ -6,20 +6,23 @@
     box-sizing: border-box;
 }
 
+/* FUNDO TOTALMENTE TRANSPARENTE: Para fundir 100% com o fundo branco da página do Fluig */
 .landing-wrapper {
     font-family: 'Poppins', sans-serif;
-    background-color: #ffffff;
+    background-color: transparent !important; 
     min-height: 100vh;
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 .landing-wrapper .container {
     width: 100% !important;
     max-width: 1600px !important; 
     margin: 0 auto !important;
-    padding: 0 20px !important;
+    padding: 0 15px !important;
 }
 
 .landing-header .container {
@@ -83,19 +86,20 @@
 
 .landing-main {
     flex: 1;
-    padding: 40px 0;
+    padding: 30px 0;
 }
 
-/* CONTAINER PRINCIPAL */
+/* CONTAINER PRINCIPAL - AGORA TOTALMENTE INVISÍVEL PARA NÃO FORMAR QUADRADO */
 .content-box {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: none !important;
-    padding: 45px;
+    background: transparent !important; 
+    padding: 10px 0 !important; 
     width: 100%;
     max-width: 100%;
     margin: 0 auto;
-    border-top: 6px solid #1eaad9;
+    border: none !important; 
+    box-shadow: none !important; 
+    outline: none !important;
+    position: relative;
     transition: all 0.3s ease;
 }
 
@@ -159,8 +163,8 @@
 
 /* LGPD Container */
 .terms-container {
-    background: #fdfdfd;
-    border: 1px solid #e9ecef;
+    background: transparent;
+    border: 1px solid rgba(0,0,0,0.05);
     border-radius: 6px;
     padding: 18px 22px;
     margin-bottom: 30px;
@@ -239,7 +243,7 @@
 #quiz-navigation {
     padding-top: 30px;
     margin-top: 40px;
-    border-top: 1px solid #e9ecef;
+    border-top: 1px solid rgba(0,0,0,0.05);
 }
 
 #btn-next-step {
@@ -319,12 +323,12 @@
     transform: translateX(-5px);
 }
 
-/* --- DASHBOARD E RESULTADOS --- */
+/* --- DASHBOARD E RESULTADOS (AGORA SEM QUADRADOS) --- */
 .score-card {
-    background: #f8fbff;
-    padding: 30px;
-    border-radius: 12px;
-    border: 1px solid #e1eef7;
+    background: transparent !important; 
+    padding: 20px 10px;
+    border-radius: 0;
+    border: none !important; 
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
@@ -333,15 +337,15 @@
 }
 
 .score-radial {
-    width: 130px;
-    height: 130px;
+    width: 140px;
+    height: 140px;
     border-radius: 50%;
     border: 10px solid #1eaad9;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 15px;
-    font-size: 32px;
+    font-size: 34px;
     font-weight: 800;
     color: #004b8d;
 }
@@ -349,7 +353,7 @@
 .section-subtitle {
     font-weight: 700;
     color: #004b8d;
-    border-bottom: 2px solid #f0f4f7;
+    border-bottom: 2px solid rgba(0,0,0,0.05); 
     padding-bottom: 12px;
     margin-bottom: 25px;
     margin-top: 0;
@@ -357,7 +361,7 @@
 
 
 /* =========================================
-   CARDS DE JORNADA DE MATURIDADE (NOVO)
+   CARDS DE JORNADA DE MATURIDADE
    ========================================= */
 
 #maturity-levels-list {
@@ -372,12 +376,12 @@
     display: flex !important;
     flex-direction: column !important;
     align-items: flex-start !important;
-    background: linear-gradient(135deg, #2b9fda 0%, #177aa0 100%) !important; /* Azul médio/claro vibrante */
-    border: 1px solid #58c2f1 !important; 
+    background: linear-gradient(135deg, #2b9fda 0%, #177aa0 100%) !important; 
+    border: none !important; 
     border-radius: 12px !important; 
     padding: 25px 15px !important;
     margin-bottom: 0 !important;
-    box-shadow: 0 10px 25px rgba(23, 122, 160, 0.2) !important; /* Efeito Flutuante Alto */
+    box-shadow: 0 10px 25px rgba(23, 122, 160, 0.15) !important; 
     height: 100% !important;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
     position: relative !important;
@@ -386,15 +390,14 @@
 
 .level-card:hover {
     transform: translateY(-8px) !important; 
-    box-shadow: 0 15px 35px rgba(23, 122, 160, 0.4) !important;
-    border-color: #ffffff !important;
+    box-shadow: 0 15px 35px rgba(23, 122, 160, 0.3) !important;
 }
 
 /* DESTAQUE DO NÍVEL ATUAL DO USUÁRIO */
 .level-card.current-level-card {
     background: linear-gradient(135deg, #f39c12 0%, #d68910 100%) !important; 
-    border: 1px solid #f5b041 !important; 
-    box-shadow: 0 15px 30px rgba(243, 156, 18, 0.4) !important; 
+    border: none !important; 
+    box-shadow: 0 15px 30px rgba(243, 156, 18, 0.3) !important; 
     transform: scale(1.05) translateY(-5px) !important; 
     z-index: 2 !important;
 }
@@ -411,7 +414,7 @@
     line-height: 1.3 !important;
     text-align: center !important;
     width: 100% !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
     padding-bottom: 12px !important;
 }
 
@@ -438,20 +441,17 @@
     margin-top: 1px !important;
 }
 
-/* Ícone Verde (Atingido) */
 .level-checklist li.achieved i {
     color: #2ecc71 !important;
     text-shadow: 0 0 8px rgba(46, 204, 113, 0.5) !important;
 }
 
-/* Ícone Vermelho (Faltante) */
 .level-checklist li.missing i {
     color: #e74c3c !important;
 }
 .level-checklist li.missing span {
-    color: rgba(255, 255, 255, 0.6) !important; /* Texto um pouco opaco para dar contraste */
+    color: rgba(255, 255, 255, 0.6) !important; 
 }
-
 
 .level-card.current-level-card .badge-popular {
     position: absolute !important;
@@ -493,11 +493,11 @@
     flex-direction: column !important;
     align-items: flex-start !important;
     background: linear-gradient(135deg, #004b8d 0%, #002d5a 100%) !important;
-    border: 1px solid #003a70 !important; 
+    border: none !important; 
     border-radius: 12px !important; 
     padding: 25px 20px !important;
     margin-bottom: 0 !important;
-    box-shadow: 0 8px 20px rgba(0, 45, 90, 0.15) !important;
+    box-shadow: 0 8px 20px rgba(0, 45, 90, 0.1) !important; 
     min-height: auto !important; 
     height: 100% !important;
     transition: all 0.3s ease !important;
@@ -508,8 +508,7 @@
 
 .rec-item:hover {
     transform: translateY(-6px) !important;
-    box-shadow: 0 15px 35px rgba(0, 45, 90, 0.3) !important;
-    border-color: #1eaad9 !important; 
+    box-shadow: 0 15px 35px rgba(0, 45, 90, 0.25) !important;
 }
 
 .rec-item h6 {
@@ -529,8 +528,8 @@
 
 .rec-item.highlight-card {
     background: linear-gradient(135deg, #1eaad9 0%, #0077b6 100%) !important; 
-    border: 1px solid #3ebff8 !important; 
-    box-shadow: 0 0 25px rgba(30, 170, 217, 0.3) !important; 
+    border: none !important; 
+    box-shadow: 0 0 25px rgba(30, 170, 217, 0.25) !important; 
     transform: scale(1.03) !important; 
     z-index: 2 !important;
 }
@@ -570,6 +569,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    border: none;
 }
 
 .cta-box h5 {
@@ -609,18 +609,19 @@
 
 .btn-restart {
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.4);
-    color: #fff;
+    border: 1px solid rgba(0,0,0,0.2);
+    color: #004b8d;
     padding: 8px 25px;
     border-radius: 50px;
     font-size: 0.85rem;
     margin-top: 15px;
     transition: all 0.3s;
+    font-weight: 600;
 }
 
 .btn-restart:hover {
-    background: rgba(255,255,255,0.1);
-    color: #fff;
+    background: rgba(0,75,141,0.05);
+    color: #004b8d;
 }
 
 /* Typography & Forms */
@@ -658,7 +659,7 @@
 
 
 /* =========================================
-   LAYOUT DESKTOP: EMPILHADO PARA APROVEITAR LARGURA TOTAL
+   LAYOUT DESKTOP: EMPILHADO SEM BORDAS
    ========================================= */
 @media (min-width: 769px) {
     
@@ -691,10 +692,10 @@
         grid-column: 2;
         grid-row: 1 / span 2; 
         margin-top: 0 !important;
-        background: #fff;
-        border-radius: 12px;
-        padding: 30px;
-        border: 1px solid #e1eef7;
+        background: transparent !important; 
+        border-radius: 0;
+        padding: 10px;
+        border: none !important; 
         box-shadow: none !important; 
         display: flex;
         align-items: center;
@@ -728,8 +729,9 @@
 }
 
 @media (max-width: 768px) {
-    .landing-main { padding: 20px 10px; }
-    .content-box { padding: 25px 15px; margin: 0; border-radius: 8px; }
+    .landing-main { padding: 20px 0; }
+    .content-box { padding: 10px 0 !important; }
+    
     .main-title { font-size: 1.6rem; }
     .brand-logo { max-height: 35px; }
 
@@ -744,7 +746,7 @@
     select.form-control { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
     
     .radio-group { display: flex; flex-direction: column; gap: 10px; }
-    .radio-group label { display: block; margin-right: 0; padding: 12px 15px; background: #f8fbff; border: 1px solid #e1eef7; border-radius: 8px; width: 100%; }
+    .radio-group label { display: block; margin-right: 0; padding: 12px 15px; background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05); border-radius: 8px; width: 100%; }
     
     .btn-start { width: 100%; }
     #quiz-navigation { flex-direction: column-reverse; gap: 15px; align-items: stretch !important; }

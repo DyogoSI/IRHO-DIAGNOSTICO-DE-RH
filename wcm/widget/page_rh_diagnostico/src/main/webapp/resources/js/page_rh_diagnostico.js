@@ -263,17 +263,12 @@ var RHDiagnostico = SuperWidget.extend({
     renderTecnologia: function ($c) { $c.html('<h4 class="form-section-title">Tecnologia e Inovação</h4><div class="form-group mb-4"><label>Já utiliza Inteligência Artificial (IA) nos processos de RH?</label><div class="radio-group mt-2"><label><input type="radio" name="use_ai_rh" value="sim"> Sim</label><label><input type="radio" name="use_ai_rh" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Os dados organizacionais estão integrados com as demais áreas da empresa e sistemas?</label><div class="radio-group mt-2"><label><input type="radio" name="integrated_data" value="sim"> Sim</label><label><input type="radio" name="integrated_data" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>A folha de pagamento e documentos estão armazenados em nuvem?</label><div class="radio-group mt-2"><label><input type="radio" name="payroll_cloud" value="sim"> Sim</label><label><input type="radio" name="payroll_cloud" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Utiliza alguma consultoria especializada para apoiar nas demandas de RH?</label><div class="radio-group mt-2"><label><input type="radio" name="use_hr_consultancy" value="sim"> Sim</label><label><input type="radio" name="use_hr_consultancy" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Sua equipe utiliza todos os recursos que as ferramentas contratadas oferecem?</label><div class="radio-group mt-2"><label><input type="radio" name="full_resource_usage" value="sim"> Sim</label><label><input type="radio" name="full_resource_usage" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Utiliza alguma ferramenta de gestao de processos BPM integrada ao ERP?</label><div class="radio-group mt-2"><label><input type="radio" name="use_bpm_erp" value="sim"> Sim</label><label><input type="radio" name="use_bpm_erp" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Possui Portal WEB para apresentação de informações de RH para os colaboradores?</label><div class="radio-group mt-2"><label><input type="radio" name="has_hr_portal" value="sim"> Sim</label><label><input type="radio" name="has_hr_portal" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Aplica ciência dos dados para otimizar os processos de RH?</label><div class="radio-group mt-2"><label><input type="radio" name="apply_data_science" value="sim"> Sim</label><label><input type="radio" name="apply_data_science" value="nao"> Não</label></div></div>'); },
  
     showResult: function () {
+        var that = this;
         this.isNavigating = true;
-        $("#landing-quiz").hide();
         
-        $("#landing-result").show().addClass("vibrant-tech-entrance");
+        $("#landing-quiz").hide();
+        $("#landing-result").show();
 
-        if (window.innerWidth <= 768) {
-            $('html, body').animate({
-                scrollTop: $(".content-box").offset().top - 80 
-            }, 300);
-        }
- 
         var scores = {
             'Recrutamento': this.calcPillar(['process_formal', 'use_ats', 'dedicated_team']),
             'Admissão': this.calcPillar(['has_digital_admission', 'use_admission_portal', 'has_electronic_signature', 'has_integration_program', 'is_admission_secure']),
@@ -298,7 +293,6 @@ var RHDiagnostico = SuperWidget.extend({
  
         var title = "";
         var currentStateDescription = "";
-        
         var visionToStrategic = "Para alcançar o patamar de <strong>RH Estratégico</strong>, o setor deve atuar como parceiro direto do negócio. Isso exige o uso de <em>People Analytics</em> preditivo para antecipar cenários, alinhamento total das metas de pessoas com os objetivos financeiros da empresa e uma cultura contínua de inovação.";
 
         if (roundedAvg <= 20) {
@@ -320,22 +314,150 @@ var RHDiagnostico = SuperWidget.extend({
         
         this.finalClassification = title;
  
-        // --- RESTAURADO O TEXTO DE DESCRIÇÃO E TÍTULO ORIGINAL ---
-        $("#final-score-pct").text("0%");
+        $("#final-score-pct").text(roundedAvg + "%");
         $("#result-title").text(title);
         $("#result-description").html("<span style='font-size:14px;'>Sua operação foi classificada como <strong>" + title + "</strong>.</span><br><span style='font-size:12px; color:#666; margin-top:5px; display:block;'>" + currentStateDescription + "</span>");
-        
         $("#vision-text").html(visionToStrategic);
  
-        this.renderRadarChart(scores);
         this.generateMaturityLevels(title); 
         this.generateRecommendations();
-        this.saveLeadToFluig(roundedAvg, title, scores);
         
-        this.animateScoreCounter(roundedAvg, 1500);
+        var myLoading = FLUIGC.loading(window, { textMessage: 'Avaliando dados e gerando relatório do seu RH...', title: 'Aguarde' });
+        myLoading.show();
+
+        this.renderRadarChart(scores, false);
+        
+        setTimeout(function() {
+            var element = document.getElementById('landing-result');
+            var nomeEmpresa = (that.userAnswers['company_name'] || 'RH').replace(/\s+/g, '_');
+            
+            var opt = {
+                margin:       10,
+                filename:     'Diagnostico_' + nomeEmpresa + '.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).outputPdf('datauristring').then(function(pdfBase64) {
+                var rawBase64 = pdfBase64.split(',')[1];
+                
+                that.uploadPdfToECM(rawBase64, nomeEmpresa, function(documentId) {
+                    that.saveLeadToFluig(roundedAvg, title, scores, documentId, myLoading);
+                });
+            })["catch"](function(err) {
+                console.error("Erro ao gerar PDF:", err);
+                that.saveLeadToFluig(roundedAvg, title, scores, null, myLoading);
+            });
+            
+        }, 1000); 
     },
 
-    // --- FUNÇÃO GERADORA DE NÍVEIS COM LÓGICA DE VERDE/VERMELHO DINÂMICA ---
+    uploadPdfToECM: function(base64Content, nomeEmpresa, callback) {
+        var that = this;
+        var pastaDestinoECM = 214; // <--- ATENÇÃO: COLOQUE O ID DA PASTA DE DESTINO AQUI
+        var baseUrl = this.authConfig.url || WCMAPI.getServerURL();
+        
+        var nomeSanitizado = nomeEmpresa.replace(/[^a-zA-Z0-9]/g, "_");
+        var fileName = 'Diagnostico_' + nomeSanitizado + '.pdf';
+
+        var byteCharacters = atob(base64Content);
+        var byteNumbers = new Array(byteCharacters.length);
+        for (var i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        var byteArray = new Uint8Array(byteNumbers);
+        var blob = new Blob([byteArray], {type: 'application/pdf'});
+
+        var endpointUpload = baseUrl + "/api/public/2.0/contentfiles/upload/?fileName=" + encodeURIComponent(fileName);
+        var authHeaderUpload = that.getOAuthData(endpointUpload, 'POST');
+
+        $.ajax({
+            url: endpointUpload,
+            type: 'POST',
+            data: blob,
+            processData: false,
+            contentType: 'application/octet-stream',
+            headers: authHeaderUpload,
+            crossDomain: true,
+            success: function (resUpload) {
+                
+                var payload = {
+                    "description": fileName,
+                    "parentId": pastaDestinoECM,
+                    "downloadEnabled": true,    
+                    "internalVisualizer": true, 
+                    "isPrivate": false, 
+                    "publicDocument": true,     
+                    "attachments": [{
+                        "fileName": fileName,
+                        "principal": true
+                    }]
+                };
+
+                var endpointCreate = baseUrl + "/api/public/ecm/document/createDocument";
+                var authHeaderCreate = that.getOAuthData(endpointCreate, 'POST');
+
+                $.ajax({
+                    url: endpointCreate,
+                    type: 'POST',
+                    data: JSON.stringify(payload),
+                    contentType: 'application/json',
+                    headers: authHeaderCreate,
+                    crossDomain: true,
+                    success: function (response) {
+                        var docId = null;
+                        if (response && response.content && response.content.id) {
+                            docId = response.content.id;
+                        } else if (response && response.content && response.content.documentId) {
+                            docId = response.content.documentId;
+                        }
+
+                        // --- INÍCIO DA NOVA ALTERAÇÃO (OBTER URL PÚBLICA DE COMPARTILHAMENTO) ---
+                        if (docId) {
+                            // A API V2 Content Management recupera a URL oficial do "Compartilhar Externamente"
+                            var endpointExternalLink = baseUrl + "/content-management/api/v2/documents/" + docId + "?expand=publicUrl";
+                            var authHeaderExternal = that.getOAuthData(endpointExternalLink, 'GET');
+
+                            $.ajax({
+                                url: endpointExternalLink,
+                                type: 'GET',
+                                headers: authHeaderExternal,
+                                crossDomain: true,
+                                success: function (resExternal) {
+                                    // Pega o campo 'publicUrl' do retorno da API
+                                    var linkPublico = resExternal.publicUrl || (resExternal.content && resExternal.content.publicUrl);
+                                    
+                                    if(linkPublico) {
+                                        console.log("LINK EXTERNO OFICIAL GERADO: ", linkPublico);
+                                        // Pode atribuir este link a algum elemento na sua tela de Resultados
+                                    } else {
+                                        console.log("Atenção: A propriedade publicUrl não foi retornada.");
+                                    }
+                                },
+                                error: function (xhr) {
+                                    console.error("Erro ao buscar URL externa nativa:", xhr.responseText);
+                                }
+                            });
+                        }
+                        // --- FIM DA NOVA ALTERAÇÃO ---
+
+                        callback(docId);
+                    },
+                    error: function (xhr) {
+                        console.error("Erro na Publicação do Documento GED:", xhr.responseText);
+                        callback(null);
+                    }
+                });
+                
+            },
+            error: function (xhr) {
+                console.error("Erro no Upload Físico OAuth:", xhr.responseText);
+                callback(null); 
+            }
+        });
+    },
+
     generateMaturityLevels: function (currentLevel) {
         var levels = [
             { titulo: "Tradicional", requisitos: ["Requisito 1", "Requisito 2", "Requisito 3", "Requisito 4"] },
@@ -358,11 +480,6 @@ var RHDiagnostico = SuperWidget.extend({
 
             var reqHtml = '<ul class="level-checklist">';
             for(var j=0; j<lvl.requisitos.length; j++) {
-                
-                // Lógica Dinâmica: 
-                // Se o card for de um nível que ele já passou (ex: ele é Digital, e o card é Tradicional) -> Fica tudo Verde
-                // Se o card for o nível atual -> Metade verde, metade vermelho
-                // Se o card for de um nível futuro -> Fica tudo vermelho
                 var status = 'missing'; 
                 if (i < currentIndex) {
                     status = 'achieved'; 
@@ -418,7 +535,7 @@ var RHDiagnostico = SuperWidget.extend({
         return (count / keys.length) * 100;
     },
  
-    renderRadarChart: function (scores) {
+    renderRadarChart: function (scores, animate) {
         var canvas = document.getElementById('maturityChart');
         var ctx = canvas.getContext('2d');
         if (this.myChart) this.myChart.destroy();
@@ -435,6 +552,8 @@ var RHDiagnostico = SuperWidget.extend({
                 chartData.push(scores[key]);
             }
         }
+        
+        var durationMs = animate === false ? 0 : 2200; 
 
         this.myChart = new Chart(ctx, {
             type: 'radar',
@@ -458,7 +577,7 @@ var RHDiagnostico = SuperWidget.extend({
             },
             options: {
                 responsive: true,
-                animation: { duration: 2200, easing: 'easeOutExpo' },
+                animation: { duration: durationMs, easing: 'easeOutExpo' },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
@@ -621,11 +740,8 @@ var RHDiagnostico = SuperWidget.extend({
         return oauth.toHeader(oauth.authorize({ url: url, method: method, data: {} }, { key: this.authConfig.token, secret: this.authConfig.tokenSecret }));
     },
  
-    saveLeadToFluig: function (finalScore, classification, pillarScores) {
+    saveLeadToFluig: function (finalScore, classification, pillarScores, documentId, myLoading) {
         var that = this;
- 
-        var myLoading = FLUIGC.loading(window, { textMessage: 'Enviando diagnóstico...', title: 'Aguarde' });
-        myLoading.show();
  
         var phoneVal = this.userAnswers['telefone'] || "";
         var email = this.userAnswers['user_email'] || "anonimo@teste.com";
@@ -702,7 +818,9 @@ var RHDiagnostico = SuperWidget.extend({
                 "full_resource_usage": this.userAnswers['full_resource_usage'] || "Não informado",
                 "use_bpm_erp": this.userAnswers['use_bpm_erp'] || "Não informado",
                 "has_hr_portal": this.userAnswers['has_hr_portal'] || "Não informado",
-                "apply_data_science": this.userAnswers['apply_data_science'] || "Não informado"
+                "apply_data_science": this.userAnswers['apply_data_science'] || "Não informado",
+                
+                "id_pdf_diagnostico": documentId ? documentId.toString() : ""
             }
         };
  
@@ -716,12 +834,28 @@ var RHDiagnostico = SuperWidget.extend({
             headers: authHeader,
             crossDomain: true,
             success: function (response) {
-                myLoading.hide();
+                if(myLoading) myLoading.hide();
                 console.log('Sucesso! Diagnóstico enviado (ID ' + response.processInstanceId + ').');
+
+                $("#landing-result").addClass("vibrant-tech-entrance");
+                
+                if (window.innerWidth <= 768) {
+                    $('html, body').animate({ scrollTop: $(".content-box").offset().top - 80 }, 300);
+                }
+
+                that.renderRadarChart(pillarScores, true);
+
+                $("#final-score-pct").text("0%");
+                that.animateScoreCounter(finalScore, 1500);
             },
             error: function (xhr, status, error) {
-                myLoading.hide();
-                console.error("Erro API:", xhr.responseText);
+                if(myLoading) myLoading.hide();
+                console.error("Erro API BPM:", xhr.responseText);
+                
+                $("#landing-result").addClass("vibrant-tech-entrance");
+                that.renderRadarChart(pillarScores, true);
+                $("#final-score-pct").text("0%");
+                that.animateScoreCounter(finalScore, 1500);
             }
         });
     }

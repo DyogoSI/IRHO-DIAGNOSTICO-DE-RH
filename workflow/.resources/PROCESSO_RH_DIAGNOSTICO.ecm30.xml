@@ -28,7 +28,7 @@
     <processDefinitionVersionPK>
       <companyId>1</companyId>
       <processId>PROCESSO_RH_DIAGNOSTICO</processId>
-      <version>7</version>
+      <version>31</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
     <formId>6</formId>
@@ -247,6 +247,24 @@
     log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Iniciando disparo de email customizado. Processo ID: &quot; + processId);
 
     try {
+        var docIdAnexo = hAPI.getCardValue(&quot;id_pdf_diagnostico&quot;);
+        var pdfBytes = null; // Variável que receberá os bytes do PDF
+
+        // --- LÓGICA PARA ANEXAR O PDF E EXTRAIR OS BYTES ---
+        if (docIdAnexo != null &amp;&amp; docIdAnexo != &quot;&quot;) {
+            // 1. Anexa ao processo interno do Fluig
+            hAPI.attachDocument(parseInt(docIdAnexo));
+            log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: PDF (ID: &quot; + docIdAnexo + &quot;) anexado com sucesso ao processo!&quot;);
+            
+            // 2. Extrai os bytes do documento usando a função proxy
+            pdfBytes = baixarBytesInterno(docIdAnexo, null);
+            
+            if (pdfBytes != null) {
+                log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Bytes do PDF extraídos com sucesso. Tamanho: &quot; + pdfBytes.length + &quot; bytes.&quot;);
+            }
+        }
+        // ---------------------------------------------------
+
         // 1. Recupera os dados que foram injetados no formulário pela Widget via API
         var nomeContato = hAPI.getCardValue(&quot;nome_contato&quot;);
         var emailContato = hAPI.getCardValue(&quot;email_contato&quot;);
@@ -283,6 +301,13 @@
             
             log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Tentando enviar e-mail para: &quot; + emailContato);
             
+            /*
+             * NOTA SOBRE ANEXO NO E-MAIL:
+             * A variável &apos;pdfBytes&apos; agora contém o arquivo físico. O &apos;notifier.notify&apos; padrão 
+             * não aceita os bytes nativamente na assinatura abaixo. Se a sua intenção for anexar 
+             * o arquivo no e-mail, você precisará construir o envio via &apos;javax.mail&apos; ou usar
+             * o &apos;com.totvs.technology.foundation.mail.EMailAttachmentVO&apos;. 
+             */
             notifier.notify(remetente, idTemplate, parametros, destinatarios, &quot;text/html&quot;);
 
             log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: E-mail enviado com sucesso!&quot;);
@@ -292,10 +317,68 @@
         }
 
     } catch (e) {
-        log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: ERRO FATAL AO ENVIAR EMAIL: &quot; + e);
-        log.error(e.toString());
+        log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: ERRO FATAL AO PROCESSAR AFTER CREATE: &quot; + e);
+        if (e.toString) log.error(e.toString());
     }
-}</eventDescription>
+}
+
+/**
+ * Função responsável por bypassar a API pública e extrair os bytes 
+ * de um documento armazenado no volume interno do Fluig (GED).
+ */
+function baixarBytesInterno(docId, config) {
+    try {
+        var docIdInt = parseInt(docId, 10);
+        
+        // MÁGICA AQUI: Pede ao serviço interno do Fluig a URL de download. 
+        // Essa URL gerada internamente já bypassa o bloqueio do /api/public/
+        var downloadUrl = fluigAPI.getDocumentService().getDownloadURL(docIdInt);
+
+        if (!downloadUrl) {
+            log.error(&quot;&gt;&gt;&gt; [PROXY LOTE] A fluigAPI interna não retornou URL para o doc &quot; + docId);
+            return null;
+        }
+
+        // Garante que a URL seja absoluta
+        if (downloadUrl.indexOf(&quot;http&quot;) !== 0) {
+            var serverUrl = &quot;&quot;;
+            try { 
+                serverUrl = fluigAPI.getPageService().getServerURL(); 
+            } catch (ex) { 
+                serverUrl = &quot;http://localhost:8080&quot;; 
+            }
+            downloadUrl = serverUrl + downloadUrl;
+        }
+
+        log.info(&quot;&gt;&gt;&gt; [PROXY LOTE] Acessando volume interno do Fluig para o doc &quot; + docId);
+
+        // Abre a conexão com a URL gerada (que já é confiável para o servidor local)
+        var fileConn = new java.net.URL(downloadUrl).openConnection();
+        fileConn.setRequestMethod(&quot;GET&quot;);
+        
+        var responseCode = fileConn.getResponseCode();
+        if (responseCode &gt;= 300) {
+            var errScanner = new java.util.Scanner(fileConn.getErrorStream(), &quot;UTF-8&quot;).useDelimiter(&quot;\\A&quot;);
+            var errMsg = errScanner.hasNext() ? errScanner.next() : &quot;&quot;;
+            log.error(&quot;&gt;&gt;&gt; [PROXY LOTE] Falha ao extrair stream (HTTP &quot; + responseCode + &quot;): &quot; + errMsg);
+            errScanner.close();
+            return null;
+        }
+
+        // Extrai os bytes puros do PDF
+        var isFile = fileConn.getInputStream();
+        var bytes = org.apache.commons.io.IOUtils.toByteArray(isFile);
+        isFile.close();
+        
+        return bytes;
+        
+    } catch(e) {
+        log.error(&quot;&gt;&gt;&gt; [PROXY LOTE] Erro fatal ao extrair PDF ID &quot; + docId + &quot; via fluigAPI - &quot; + e.toString());
+        return null;
+    }
+}
+
+</eventDescription>
     </WorkflowProcessEvent>
   </list>
   <list/>
