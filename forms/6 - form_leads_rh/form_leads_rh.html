@@ -5,10 +5,8 @@
     <script type="text/javascript" src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
     <script type="text/javascript" src="/style-guide/js/fluig-style-guide.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
         body { 
             background-color: #ffffff; 
             padding-bottom: 30px;
@@ -19,7 +17,6 @@
             background-color: #ffffff; 
             padding: 20px 0;
         }
-
         /* --- ESTILO DAS CAIXAS DE CONTEÚDO --- */
         .card-section {
             background: #fff;
@@ -30,12 +27,10 @@
             margin: 0 auto 25px auto;
             border-top: 5px solid #1eaad9;
         }
-
         .card-results {
             border-top: 5px solid #004b8d;
             background: #ffffff;
         }
-
         .form-section-title { 
             font-size: 1.2rem; 
             font-weight: 700; 
@@ -46,7 +41,6 @@
             display: flex;
             align-items: center;
         }
-
         .form-group label { 
             font-weight: 600; 
             font-size: 13px; 
@@ -75,7 +69,6 @@
             opacity: 1 !important;
             line-height: 1.4 !important;
         }
-
         /* Resultados Iniciais */
         .score-card { 
             background: #f8fbff; 
@@ -104,7 +97,90 @@
         }
 
         /* =========================================
-           CARDS COMPACTOS
+           CARDS DA JORNADA DE EVOLUÇÃO
+           ========================================= */
+        #maturity-levels-list {
+            display: grid !important;
+            grid-template-columns: repeat(5, 1fr) !important;
+            gap: 15px !important;
+            margin-bottom: 40px;
+            align-items: stretch;
+        }
+        .level-card {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            background: linear-gradient(135deg, #2b9fda 0%, #177aa0 100%) !important;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 25px 15px !important;
+            box-shadow: 0 10px 25px rgba(23, 122, 160, 0.15) !important;
+            height: 100% !important;
+            position: relative !important;
+            overflow: visible !important;
+        }
+        .level-card.current-level-card {
+            background: linear-gradient(135deg, #f39c12 0%, #d68910 100%) !important;
+            box-shadow: 0 15px 30px rgba(243, 156, 18, 0.3) !important;
+            transform: scale(1.05) translateY(-5px) !important;
+            z-index: 2 !important;
+        }
+        .level-card h6 {
+            margin: 0 0 15px 0 !important;
+            font-weight: 700 !important;
+            color: #ffffff !important;
+            font-size: 1rem !important;
+            line-height: 1.3 !important;
+            text-align: center !important;
+            width: 100% !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+            padding-bottom: 12px !important;
+        }
+        .level-checklist {
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+        }
+        .level-checklist li {
+            display: flex !important;
+            align-items: flex-start !important;
+            font-size: 0.8rem !important;
+            color: #ffffff !important;
+            margin-bottom: 10px !important;
+            line-height: 1.3 !important;
+        }
+        .level-checklist li i {
+            font-size: 1.1rem !important;
+            margin-right: 6px !important;
+            margin-top: 1px !important;
+        }
+        .level-checklist li.achieved i {
+            color: #2ecc71 !important;
+            text-shadow: 0 0 8px rgba(46, 204, 113, 0.5) !important;
+        }
+        .level-checklist li.missing i {
+            color: #e74c3c !important;
+        }
+        .level-checklist li.missing span {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+        .level-card.current-level-card .badge-popular {
+            position: absolute !important;
+            top: -12px !important;
+            right: 50% !important;
+            transform: translateX(50%) !important;
+            font-size: 0.65rem !important;
+            padding: 4px 10px !important;
+            border-radius: 6px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+            white-space: nowrap !important;
+        }
+
+        /* =========================================
+           CARDS COMPACTOS (INSIGHTS E OPORTUNIDADES)
            ========================================= */
         
         #recommendations-list {
@@ -114,7 +190,6 @@
             margin-bottom: 35px;
             align-items: stretch;
         }
-
         #opportunities-list {
             display: grid !important;
             grid-template-columns: repeat(3, 1fr) !important; 
@@ -122,7 +197,6 @@
             margin-bottom: 35px;
             align-items: stretch;
         }
-
         .rec-item {
             display: flex !important;
             flex-direction: column !important;
@@ -140,13 +214,11 @@
             overflow: hidden !important;
             gap: 0 !important;
         }
-
         .rec-item:hover {
             transform: translateY(-6px) !important;
             box-shadow: 0 15px 35px rgba(0, 45, 90, 0.3) !important;
             border-color: #1eaad9 !important; 
         }
-
         .rec-item h6 {
             margin: 0 0 10px 0 !important;
             font-weight: 600 !important;
@@ -154,14 +226,12 @@
             font-size: 1.1rem !important;
             line-height: 1.3 !important;
         }
-
         .rec-item p {
             margin: 0 !important; 
             font-size: 0.9rem !important;
             color: #e3eef7 !important; 
             line-height: 1.6 !important;
         }
-
         .rec-item.highlight-card {
             background: linear-gradient(135deg, #1eaad9 0%, #0077b6 100%) !important; 
             border: 1px solid #3ebff8 !important; 
@@ -169,7 +239,6 @@
             transform: scale(1.03) !important; 
             z-index: 2 !important;
         }
-
         .rec-item.highlight-card:hover { transform: scale(1.03) translateY(-6px) !important; }
         .rec-item.highlight-card p { color: #ffffff !important; }
 
@@ -189,11 +258,13 @@
 
         @media (max-width: 1024px) {
             #recommendations-list, #opportunities-list { grid-template-columns: repeat(2, 1fr) !important; }
+            #maturity-levels-list { grid-template-columns: repeat(3, 1fr) !important; }
             .card-section { padding: 30px; }
         }
-
         @media (max-width: 768px) {
             #recommendations-list, #opportunities-list { grid-template-columns: 1fr !important; }
+            #maturity-levels-list { grid-template-columns: 1fr !important; }
+            .level-card.current-level-card { transform: scale(1) translateY(0) !important; }
             .card-section { padding: 25px 15px; }
             .col-md-6 { margin-bottom: 20px; }
             .rec-item.highlight-card { transform: scale(1) !important; }
@@ -264,7 +335,10 @@
                     </div>
 
                     <div class="card-section" style="background: transparent; box-shadow: none; border: none; padding: 0; max-width: 1400px;">
-                        <h4 class="form-section-title" style="margin-top: 10px;">Sugestões de Melhoria com Insights</h4>
+                        <h4 class="form-section-title" style="margin-top: 10px;">Jornada de Evolução</h4>
+                        <div id="maturity-levels-list"></div>
+                        
+                        <h4 class="form-section-title" style="margin-top: 35px;">Sugestões de Melhoria com Insights</h4>
                         <div id="recommendations-list"></div>
                         
                         <h4 class="form-section-title" style="margin-top: 35px;">Oportunidades Estratégicas</h4>
@@ -343,7 +417,7 @@
                         <h4 class="form-section-title">Cultura Organizacional</h4>
                         <div class="row">
                             <div class="col-md-6"><div class="form-group"><label>Ações do dia a dia condizentes com a cultura divulgada?</label><input type="text" name="culture_alignment" class="form-control" readonly></div></div>
-                            <div class="col-md-6"><div class="form-group"><label>Liberdade e canais seguros para expressão de ideias?</label><input type="text" name="expression_freedom" class="form-control" readonly></div></div>
+                            <div class="col-md-6"><div class="form-group"><label>Há liberdade e canais seguros para expressão de ideias?</label><input type="text" name="expression_freedom" class="form-control" readonly></div></div>
                             <div class="col-md-6"><div class="form-group"><label>Cultura é centrada na valorização das pessoas?</label><input type="text" name="people_valuation" class="form-control" readonly></div></div>
                             <div class="col-md-6"><div class="form-group"><label>A estrutura de cargos, salários e hierarquias é clara?</label><input type="text" name="defined_hierarchy" class="form-control" readonly></div></div>
                             <div class="col-md-6"><div class="form-group"><label>Realiza pesquisa de clima organizacional?</label><input type="text" name="climate_survey" class="form-control" readonly></div></div>
@@ -382,7 +456,6 @@
 
                 </div>
             </div>
-
         </form>
     </div>
 
@@ -393,6 +466,59 @@
             renderChartAndResults();
             renderCards(); 
         });
+
+        function generateMaturityLevels(currentLevel, score) {
+            var levels = [
+                { titulo: "Tradicional", requisitos: ["Foco em Tarefas Administrativas e Burocráticas", "Recrutamento e Seleção Operacionais", "Gestão Reativa de Pessoas", "Estrutura Hierárquica e Verticalizada"] },
+                { titulo: "Ágil", requisitos: ["Ciclos Curtos e Entregas Iterativas", "Adaptabilidade em vez de Prescrição", "Transparência e Comunicação Eficaz", "Redes Colaborativas sobre Hierarquias Rígidas"] },
+                { titulo: "Digital", requisitos: ["Automação de Processos Operacionais", "Gestão Baseada em Dados (People Analytics)", "Foco na Experiência do Colaborador (Employee Experience)", "Armazenamento em Nuvem e Segurança (LGPD)"] },
+                { titulo: "Humanizado", requisitos: ["Escuta Ativa com Feedback Digital Contínuo", "Tecnologia como Meio, não como Fim", "Personalização da Experiência (Hiper-personalização)", "Cultura de Segurança Psicológica e Ética de Dados"] },
+                { titulo: "Estratégico", requisitos: ["Alinhamento com os Objetivos do Negócio", "Visão de Longo Prazo e Planejamento Sucessório", "Cultura de Indicadores e Resultados (KPIs)", "Gestão da Mudança e Transformação Organizacional"] }
+            ];
+
+            var levelNames = ["Tradicional", "Ágil", "Digital", "Humanizado", "Estratégico"];
+            var currentIndex = levelNames.indexOf(currentLevel);
+
+            var baseScore = currentIndex * 20;
+            var progressInLevel = score - baseScore;
+            var reqsCumpridosNesteNivel = Math.ceil(progressInLevel / 5);
+            
+            if (reqsCumpridosNesteNivel < 0) reqsCumpridosNesteNivel = 0;
+            if (reqsCumpridosNesteNivel > 4) reqsCumpridosNesteNivel = 4;
+
+            var html = "";
+            for (var i = 0; i < levels.length; i++) {
+                var lvl = levels[i];
+                
+                var isCurrent = (lvl.titulo === currentLevel);
+                var extraClass = isCurrent ? ' current-level-card' : '';
+                var badgeHtml = isCurrent ? '<span class="badge-popular" style="background:#ffffff; color:#d68910;">Você está aqui</span>' : '';
+
+                var reqHtml = '<ul class="level-checklist">';
+                for(var j=0; j<lvl.requisitos.length; j++) {
+                    var status = 'missing'; 
+                    
+                    if (i < currentIndex) {
+                        status = 'achieved'; 
+                    } else if (i === currentIndex && j < reqsCumpridosNesteNivel) {
+                        status = 'achieved'; 
+                    }
+
+                    var iconClass = status === 'achieved' ? 'flaticon-check-circle' : 'flaticon-cancel';
+                    reqHtml += '<li class="' + status + '"><i class="flaticon ' + iconClass + '"></i><span>' + lvl.requisitos[j] + '</span></li>';
+                }
+                reqHtml += '</ul>';
+
+                html += 
+                    '<div class="level-card' + extraClass + '">' +
+                        badgeHtml +
+                        '<h6>' + lvl.titulo + '</h6>' +
+                        reqHtml +
+                    '</div>';
+            }
+
+            $("#maturity-levels-list").html(html);
+        }
 
         function renderCards() {
             var strInsights = $("#json_insights").val();
@@ -450,7 +576,7 @@
             $("#lbl_score").text(scoreFinal + "%");
             $("#lbl_nivel").text(nivelMaturidade);
             
-            // Textos descritivos simulando a leitura real 
+            // Textos descritivos simulando a leitura real
             var descricoes = {
                 "Tradicional": "Foco em processos operacionais e burocráticos. Há um grande potencial para iniciar a automação e ganhar agilidade.",
                 "Ágil": "Busca por eficiência e rapidez, iniciando a transição para processos mais dinâmicos e menos engessados.",
@@ -458,9 +584,12 @@
                 "Humanizado": "Une tecnologia avançada e foco genuíno nas pessoas, promovendo uma excelente experiência para o colaborador.",
                 "Estratégico": "O setor atua como parceiro de negócios, focando em análise de dados, métricas e retenção profunda de talentos."
             };
-
             var descr = descricoes[nivelMaturidade] || "Nível gerado a partir do Score.";
+
             $("#result-description").html("Sua operação foi classificada como <strong>" + nivelMaturidade + "</strong>.<br><span style='font-size:12px; color:#666; margin-top:5px; display:block;'>" + descr + "</span>");
+
+            // --- GERA OS CARDS DA JORNADA ---
+            generateMaturityLevels(nivelMaturidade, parseInt(scoreFinal));
 
             if (jsonString && jsonString.length > 5) {
                 try {
@@ -553,7 +682,8 @@
         function calcPillar(answersObj, keys) {
             var count = 0;
             keys.forEach(function (k) { if (answersObj[k] === 'sim') count++; });
-            return (count / keys.length) * 100;
+            // Regra de negócio: Score máximo travado em 80% para não atingir o nível Estratégico
+            return (count / keys.length) * 80;
         }
     </script>
 </body>

@@ -8,7 +8,7 @@ var RHDiagnostico = SuperWidget.extend({
     finalScoreGlobal: 0,
     chosenInsights: [], 
     chosenOpportunities: [], 
- 
+
     authConfig: {
         url: 'http://177.39.21.75:8080',
         consumerKey: 'integracao_widget_diagnostico',
@@ -16,7 +16,7 @@ var RHDiagnostico = SuperWidget.extend({
         token: '7e4f7fdb-b394-4385-8a88-95a87d475f41',
         tokenSecret: '9e9dcd7e-c8d2-4dd7-a69d-5f5083b9e2c0ec33ebf8-fa20-4ded-9376-0885093c95cf'
     },
- 
+
     init: function () {
         this.currentStep = 1;
         this.userAnswers = {};
@@ -38,7 +38,6 @@ var RHDiagnostico = SuperWidget.extend({
                 "  text-shadow: 0 0 15px rgba(243, 156, 18, 0.6); " +
                 "  transition: all 0.3s ease-out; " +
                 "}";
-
             $("<style id='tech-animations-css'>")
                 .prop("type", "text/css")
                 .html(techCss)
@@ -47,52 +46,52 @@ var RHDiagnostico = SuperWidget.extend({
 
         this.bindings();
     },
- 
+
     bindings: function () {
         var that = this;
         var $dom = $(this.DOM);
- 
+
         $dom.off(".rhDiag");
- 
+
         $dom.on("change.rhDiag", "[data-privacy-check]", function () {
             $dom.find("[data-start-quiz]").prop("disabled", !$(this).is(":checked"));
         });
- 
+
         $dom.on("click.rhDiag", "[data-start-quiz]", function (e) {
             e.preventDefault();
             if (that.isNavigating) return;
             that.startFlow();
         });
-       
+        
         $dom.on("click.rhDiag", "[data-next-step]", function (e) {
             e.preventDefault();
             if (that.isNavigating) return;
             that.processNextStep();
         });
-       
+        
         $dom.on("click.rhDiag", "[data-prev-step]", function (e) {
             e.preventDefault();
             if (that.isNavigating) return;
             that.processPrevStep();
         });
- 
+
         $dom.on("input.rhDiag change.rhDiag", "#company_name, #user_name, #user_email", function() {
             $(this).css({"border-color": "", "box-shadow": ""});
         });
- 
+
         $dom.on("change.rhDiag", "input[name='use_ats']", function () {
             $(this).val() === "sim" ? $("#ats-name-container").slideDown() : $("#ats-name-container").slideUp();
         });
-       
+        
         $dom.on("change.rhDiag", "input[name='has_digital_admission']", function () {
             $(this).val() === "sim" ? $(".conditional-admission").slideDown() : $(".conditional-admission").slideUp();
         });
- 
+
         $dom.on("click.rhDiag", "#btn-add-phone", function (e) {
             e.preventDefault();
             $("#phone-container").append('<div class="phone-input-group mt-2" style="display:flex; gap:5px;"><input type="tel" class="form-control phone-field" placeholder="(00) 00000-0000"><button type="button" class="btn btn-danger btn-xs remove-phone">X</button></div>');
         });
-       
+        
         $dom.on("click.rhDiag", ".remove-phone", function (e) {
             e.preventDefault();
             $(this).parent().remove();
@@ -103,10 +102,11 @@ var RHDiagnostico = SuperWidget.extend({
             that.sendToWhatsApp();
         });
     },
- 
+
     startFlow: function () {
         var that = this;
         this.isNavigating = true;
+
         $("#landing-intro").fadeOut(300, function() {
             $("#landing-quiz").fadeIn(300);
             that.currentStep = 1;
@@ -114,14 +114,14 @@ var RHDiagnostico = SuperWidget.extend({
             that.isNavigating = false;
         });
     },
- 
+
     processNextStep: function () {
         this.isNavigating = true;
- 
+
         if (this.currentStep === 1) {
             var isValid = true;
             var requiredFields = ['#company_name', '#user_name', '#user_email'];
- 
+            
             requiredFields.forEach(function(selector) {
                 var $input = $(selector);
                 if (!$input.val() || $input.val().trim() === "") {
@@ -131,16 +131,16 @@ var RHDiagnostico = SuperWidget.extend({
                     $input.css({"border-color": "", "box-shadow": ""});
                 }
             });
- 
+
             if (!isValid) {
                 this.isNavigating = false;
                 return;
             }
         }
- 
+
         this.next();
     },
- 
+
     next: function () {
         var that = this;
         this.saveCurrentData();
@@ -150,10 +150,10 @@ var RHDiagnostico = SuperWidget.extend({
             this.currentStep++;
             this.renderStep();
         }
-       
+        
         setTimeout(function() { that.isNavigating = false; }, 400);
     },
- 
+
     processPrevStep: function () {
         var that = this;
         this.isNavigating = true;
@@ -164,7 +164,7 @@ var RHDiagnostico = SuperWidget.extend({
         }
         setTimeout(function() { that.isNavigating = false; }, 400);
     },
- 
+
     saveCurrentData: function () {
         var that = this;
         $("#step-content-container").find("input, select, textarea").each(function () {
@@ -179,7 +179,7 @@ var RHDiagnostico = SuperWidget.extend({
                 }
             }
         });
- 
+
         if (this.currentStep === 1) {
             var phones = [];
             $("#step-content-container").find(".phone-field").each(function() {
@@ -189,19 +189,19 @@ var RHDiagnostico = SuperWidget.extend({
             that.userAnswers['telefone'] = phones.length > 0 ? phones.join(" / ") : "";
         }
     },
- 
+
     renderStep: function () {
         var that = this;
         var $container = $("#step-content-container");
- 
+
         $(".step-item").removeClass("active completed").each(function (i) {
             if (i + 1 < that.currentStep) $(this).addClass("completed");
             else if (i + 1 === that.currentStep) $(this).addClass("active");
         });
- 
+
         $("#btn-prev-step").css("visibility", this.currentStep === 1 ? "hidden" : "visible");
         $("#btn-next-step").html(this.currentStep === 8 ? '<span>Finalizar Diagnóstico</span> <i class="flaticon flaticon-chevron-right icon-sm"></i>' : '<span>Próximo Passo</span> <i class="flaticon flaticon-chevron-right icon-sm"></i>');
- 
+
         switch (this.currentStep) {
             case 1: this.renderEmpresa($container); break;
             case 2: this.renderRecrutamento($container); break;
@@ -212,14 +212,14 @@ var RHDiagnostico = SuperWidget.extend({
             case 7: this.renderAnalytics($container); break;
             case 8: this.renderTecnologia($container); break;
         }
-       
+        
         this.restoreData();
- 
+
         if (this.currentStep === 1 && this.userAnswers['telefone']) {
             var phonesArray = this.userAnswers['telefone'].split(" / ");
             var $phoneContainer = $("#phone-container");
             $phoneContainer.empty();
- 
+            
             phonesArray.forEach(function(phone, index) {
                 if (index === 0) {
                     $phoneContainer.append('<div class="phone-input-group"><input type="tel" class="form-control phone-field" placeholder="(00) 00000-0000" value="'+phone+'"><button type="button" id="btn-add-phone" class="btn-add-phone">+</button></div>');
@@ -235,7 +235,7 @@ var RHDiagnostico = SuperWidget.extend({
             }, 300);
         }
     },
- 
+
     restoreData: function () {
         var that = this;
         $.each(this.userAnswers, function (k, v) {
@@ -252,16 +252,16 @@ var RHDiagnostico = SuperWidget.extend({
             }
         });
     },
- 
+
     renderEmpresa: function ($c) { $c.html('<div class="row"><div class="col-md-6"><h4 class="form-section-title">Dados da Empresa</h4><div class="form-group"><label>Empresa*</label><input type="text" id="company_name" name="company_name" class="form-control" placeholder="Nome da sua empresa"></div><div class="form-group"><label>Segmento</label><select id="company_segment" name="company_segment" class="form-control"><option value="">Selecione...</option><option value="industria">Indústria</option><option value="comercio">Comércio</option><option value="servicos">Serviços</option><option value="tecnologia">Tecnologia</option><option value="outros">Outros</option></select></div><div class="form-group"><label>Número de Funcionários</label><select id="company_size" name="company_size" class="form-control"><option value="0-50">De 0 a 50</option><option value="51-200">51 a 200</option><option value="201-500">201 a 500</option><option value="501+">Mais de 500</option></select></div><div class="form-group"><label>Site</label><input type="text" id="company_site" name="company_site" class="form-control" placeholder="www.suaempresa.com.br"></div><div class="form-group"><label>Pessoas no RH atualmente?</label><select id="rh_team_size" name="rh_team_size" class="form-control"><option value="1-2">1 a 2</option><option value="3-5">3 a 5</option><option value="6+">Mais de 5</option></select></div></div><div class="col-md-6"><h4 class="form-section-title">Identificação do Contato</h4><div class="form-group"><label>Seu Nome*</label><input type="text" id="user_name" name="user_name" class="form-control"></div><div class="form-group"><label>Email Corporativo*</label><input type="email" id="user_email" name="user_email" class="form-control"></div><div class="form-group"><label>Telefone(s)</label><div id="phone-container"><div class="phone-input-group"><input type="tel" class="form-control phone-field" placeholder="(00) 00000-0000"><button type="button" id="btn-add-phone" class="btn-add-phone">+</button></div></div></div><div class="form-group"><label>Seu Cargo / Setor</label><select id="user_role" name="user_role" class="form-control"><option value="rh">Gestor de RH / DP</option><option value="analista_rh">Analista de RH</option><option value="ti">TI / Tecnologia</option><option value="ceo">Diretoria / CEO</option><option value="outros">Outros</option></select></div></div></div>'); },
     renderRecrutamento: function ($c) { $c.html('<h4 class="form-section-title">Recrutamento e Seleção</h4><div class="form-group mb-4"><label>Sua empresa possui um processo formal e documentado de recrutamento e seleção?</label><div class="radio-group mt-2"><label><input type="radio" name="process_formal" value="sim"> Sim</label><label><input type="radio" name="process_formal" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Utiliza plataforma de ATS (Applicant Tracking System) para gerir o processo?</label><div class="radio-group mt-2"><label><input type="radio" name="use_ats" value="sim"> Sim</label><label><input type="radio" name="use_ats" value="nao"> Não</label></div></div><div id="ats-name-container" style="display:none;"><label>Qual plataforma de ATS utiliza?</label><input type="text" id="ats_name" name="ats_name" class="form-control" placeholder="Ex: Gupy, Kenoby, Sólides..."></div><div class="form-group mt-4"><label>Em quais canais as vagas são divulgadas atualmente?</label><input type="text" id="job_channels" name="job_channels" class="form-control" placeholder="LinkedIn, Vagas.com, Facebook..."></div><div class="form-group mt-4"><label>Possui equipe destinada apenas para R&S?</label><div class="radio-group mt-2"><label><input type="radio" name="dedicated_team" value="sim"> Sim</label><label><input type="radio" name="dedicated_team" value="nao"> Não</label></div></div><div class="form-group mt-4"><label>Volume médio de contratações por mês?</label><select id="hiring_volume" name="hiring_volume" class="form-control"><option value="1-10">1 a 10</option><option value="11-20">11 a 20</option><option value="20+">Mais de 20</option></select></div>'); },
     renderAdmissao: function ($c) { $c.html('<h4 class="form-section-title">Admissão e Onboarding</h4><div class="form-group mb-4"><label>O processo de Admissão é feito de forma digital?</label><div class="radio-group mt-2"><label><input type="radio" name="has_digital_admission" value="sim"> Sim</label><label><input type="radio" name="has_digital_admission" value="nao"> Não</label></div></div><div class="conditional-admission" style="display:none;"><div class="form-group mb-4"><label>Utiliza Portal para o candidato enviar documentos (Pré-admissão)?</label><div class="radio-group mt-2"><label><input type="radio" name="use_admission_portal" value="sim"> Sim</label><label><input type="radio" name="use_admission_portal" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Possui Assinatura Eletrônica de contratos?</label><div class="radio-group mt-2"><label><input type="radio" name="has_electronic_signature" value="sim"> Sim</label><label><input type="radio" name="has_electronic_signature" value="nao"> Não</label></div></div></div><div class="form-group mb-4"><label>Os novos colaboradores passam por um programa de integração estruturado(onboarding)?</label><div class="radio-group mt-2"><label><input type="radio" name="has_integration_program" value="sim"> Sim</label><label><input type="radio" name="has_integration_program" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Considera o processo de admissão atual seguro contra fraudes?</label><div class="radio-group mt-2"><label><input type="radio" name="is_admission_secure" value="sim"> Sim</label><label><input type="radio" name="is_admission_secure" value="nao"> Não</label></div></div>'); },
     renderDP: function ($c) { $c.html('<h4 class="form-section-title">Departamento Pessoal</h4><div class="form-group mb-4"><label>Qual o sistema ERP/Folha utilizado atualmente?</label><input type="text" id="dp_system" name="dp_system" class="form-control" placeholder="Ex: TOTVS RM, Protheus, Senior..."></div><div class="form-group mb-4"><label>Quem é o responsável pelo processamento da folha?</label><select id="payroll_responsible" name="payroll_responsible" class="form-control"><option value="interna">Equipe interna</option><option value="terceirizada">Contabilidade Terceirizada</option><option value="bpo">BPO de Folha</option><option value="outros">Outros</option></select></div><div class="form-group mb-4"><label>Os processos de solicitação de férias/benefícios são automatizados?</label><div class="radio-group mt-2"><label><input type="radio" name="dp_automated" value="sim"> Sim</label><label><input type="radio" name="dp_automated" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>A empresa atende a todas as exigências do eSocial sem processos manuais?</label><div class="radio-group mt-2"><label><input type="radio" name="esocial_compliant" value="sim"> Sim</label><label><input type="radio" name="esocial_compliant" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Utiliza planilhas como ferramentas auxiliares nos processos de Folha?</label><div class="radio-group mt-2"><label><input type="radio" name="use_sheets_payroll" value="sim"> Sim</label><label><input type="radio" name="use_sheets_payroll" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existem fluxos de trabalho definidos para cada atividade do DP?</label><div class="radio-group mt-2"><label><input type="radio" name="defined_dp_workflows" value="sim"> Sim</label><label><input type="radio" name="defined_dp_workflows" value="nao"> Não</label></div></div>'); },
     renderTD: function ($c) { $c.html('<h4 class="form-section-title">Treinamento e Desenvolvimento</h4><div class="form-group mb-4"><label>A empresa possui uma estratégia clara de desenvolvimento de pessoas?</label><div class="radio-group mt-2"><label><input type="radio" name="td_strategy_clear" value="sim"> Sim</label><label><input type="radio" name="td_strategy_clear" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Os treinamentos estão alinhados aos objetivos estratégicos da empresa?</label><div class="radio-group mt-2"><label><input type="radio" name="td_aligned_goals" value="sim"> Sim</label><label><input type="radio" name="td_aligned_goals" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe planejamento anual de capacitação?</label><div class="radio-group mt-2"><label><input type="radio" name="td_annual_planning" value="sim"> Sim</label><label><input type="radio" name="td_annual_planning" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>A Alta Gestão participa da definição dos treinamentos?</label><div class="radio-group mt-2"><label><input type="radio" name="td_management_participation" value="sim"> Sim</label><label><input type="radio" name="td_management_participation" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existem indicadores ou avaliações que mostram onde estão as lacunas de competência?</label><div class="radio-group mt-2"><label><input type="radio" name="td_gap_indicators" value="sim"> Sim</label><label><input type="radio" name="td_gap_indicators" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Os líderes contribuem com informações sobre as necessidades de capacitação?</label><div class="radio-group mt-2"><label><input type="radio" name="td_leaders_contribution" value="sim"> Sim</label><label><input type="radio" name="td_leaders_contribution" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existem indicadores para avaliar o impacto dos treinamentos na performance?</label><div class="radio-group mt-2"><label><input type="radio" name="td_impact_indicators" value="sim"> Sim</label><label><input type="radio" name="td_impact_indicators" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe correlação entre treinamento e melhoria de resultados da empresa?</label><div class="radio-group mt-2"><label><input type="radio" name="td_results_correlation" value="sim"> Sim</label><label><input type="radio" name="td_results_correlation" value="nao"> Não</label></div></div>'); },
     renderCultura: function ($c) { $c.html('<h4 class="form-section-title">Cultura Organizacional</h4><div class="form-group mb-4"><label>As ações do dia a dia são condizentes com a cultura divulgada?</label><div class="radio-group mt-2"><label><input type="radio" name="culture_alignment" value="sim"> Sim</label><label><input type="radio" name="culture_alignment" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Há liberdade e canais seguros para expressão de ideias?</label><div class="radio-group mt-2"><label><input type="radio" name="expression_freedom" value="sim"> Sim</label><label><input type="radio" name="expression_freedom" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>A cultura é centrada na valorização das pessoas?</label><div class="radio-group mt-2"><label><input type="radio" name="people_valuation" value="sim"> Sim</label><label><input type="radio" name="people_valuation" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>A estrutura de cargos, salários e hierarquias é clara?</label><div class="radio-group mt-2"><label><input type="radio" name="defined_hierarchy" value="sim"> Sim</label><label><input type="radio" name="defined_hierarchy" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Como os novos colaboradores são introduzidos à cultura organizacional?</label><input type="text" id="culture_intro" name="culture_intro" class="form-control" placeholder="Descreva brevemente..."></div><div class="form-group mb-4"><label>Realiza pesquisa de clima organizacional?</label><div class="radio-group mt-2"><label><input type="radio" name="climate_survey" value="sim"> Sim</label><label><input type="radio" name="climate_survey" value="nao"> Não</label></div></div>'); },
-    renderAnalytics: function ($c) { $c.html('<h4 class="form-section-title">Indicadores e Analytics</h4><div class="form-group mb-4"><label>O RH possui indicadores (turnover, absenteísmo, tempo médio de contratação, etc.) e são acompanhados?</label><div class="radio-group mt-2"><label><input type="radio" name="has_rh_indicators" value="sim"> Sim</label><label><input type="radio" name="has_rh_indicators" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>O RH utiliza dashboards para auxílio na tomada de decisão?</label><div class="radio-group mt-2"><label><input type="radio" name="use_dashboards" value="sim"> Sim</label><label><input type="radio" name="use_dashboards" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Realiza a análise de custo por colaborador e por área?</label><div class="radio-group mt-2"><label><input type="radio" name="cost_per_employee" value="sim"> Sim</label><label><input type="radio" name="cost_per_employee" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Quais ferramentas usa para indicadores?</label><input type="text" id="indicator_tools" name="indicator_tools" class="form-control" placeholder="PowerBI, Excel, GoodData, Sistema próprio..."></div><div class="form-group mb-4"><label>Existe integração dos indicadores de RH com os indicadores estratégicos da empresa?</label><div class="radio-group mt-2"><label><input type="radio" name="indicators_integration" value="sim"> Sim</label><label><input type="radio" name="indicators_integration" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe um processo estruturado de avaliação de desempenho (360°, metas, competências)?</label><div class="radio-group mt-2"><label><input type="radio" name="structured_performance_eval" value="sim"> Sim</label><label><input type="radio" name="structured_performance_eval" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe acompanhamento da produtividade por área ou função?</label><div class="radio-group mt-2"><label><input type="radio" name="productivity_tracking" value="sim"> Sim</label><label><input type="radio" name="productivity_tracking" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>O custo de benefícios é comparado com o nível de satisfação dos colaboradores? E com a produtividade?</label><div class="radio-group mt-2"><label><input type="radio" name="benefits_cost_comparison" value="sim"> Sim</label><label><input type="radio" name="benefits_cost_comparison" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe análise de custo de rotatividade (contratação, desligamento, treinamento, afastamento)?</label><div class="radio-group mt-2"><label><input type="radio" name="turnover_cost_analysis" value="sim"> Sim</label><label><input type="radio" name="turnover_cost_analysis" value="nao"> Não</label></div></div>'); },
+    renderAnalytics: function ($c) { $c.html('<h4 class="form-section-title">Indicadores e Analytics</h4><div class="form-group mb-4"><label>O RH possui indicadores (turnover, absenteísmo, tempo médio de contratação, etc.) e são acompanhados?</label><div class="radio-group mt-2"><label><input type="radio" name="has_rh_indicators" value="sim"> Sim</label><label><input type="radio" name="has_rh_indicators" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>O RH utiliza dashboards para auxílio na tomada de decisão?</label><div class="radio-group mt-2"><label><input type="radio" name="use_dashboards" value="sim"> Sim</label><label><input type="radio" name="use_dashboards" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Realiza a análise de custo por colaborador e por área?</label><div class="radio-group mt-2"><label><input type="radio" name="cost_per_employee" value="sim"> Sim</label><label><input type="radio" name="cost_per_employee" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Quais ferramentas usa para indicadores?</label><input type="text" id="indicator_tools" name="indicator_tools" class="form-control" placeholder="PowerBI, Excel, GoodData, Sistema próprio..."></div><div class="form-group mb-4"><label>Existe integração dos indicadores de RH com os indicadores estratégicos da empresa?</label><div class="radio-group mt-2"><label><input type="radio" name="indicators_integration" value="sim"> Sim</label><label><input type="radio" name="indicators_integration" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe um processo estruturado de avaliação de desempenho (360º, metas, competências)?</label><div class="radio-group mt-2"><label><input type="radio" name="structured_performance_eval" value="sim"> Sim</label><label><input type="radio" name="structured_performance_eval" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe acompanhamento da produtividade por área ou função?</label><div class="radio-group mt-2"><label><input type="radio" name="productivity_tracking" value="sim"> Sim</label><label><input type="radio" name="productivity_tracking" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>O custo de benefícios é comparado com o nível de satisfação dos colaboradores? E com a produtividade?</label><div class="radio-group mt-2"><label><input type="radio" name="benefits_cost_comparison" value="sim"> Sim</label><label><input type="radio" name="benefits_cost_comparison" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Existe análise de custo de rotatividade (contratação, desligamento, treinamento, afastamento)?</label><div class="radio-group mt-2"><label><input type="radio" name="turnover_cost_analysis" value="sim"> Sim</label><label><input type="radio" name="turnover_cost_analysis" value="nao"> Não</label></div></div>'); },
     renderTecnologia: function ($c) { $c.html('<h4 class="form-section-title">Tecnologia e Inovação</h4><div class="form-group mb-4"><label>Já utiliza Inteligência Artificial (IA) nos processos de RH?</label><div class="radio-group mt-2"><label><input type="radio" name="use_ai_rh" value="sim"> Sim</label><label><input type="radio" name="use_ai_rh" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Os dados organizacionais estão integrados com as demais áreas da empresa e sistemas?</label><div class="radio-group mt-2"><label><input type="radio" name="integrated_data" value="sim"> Sim</label><label><input type="radio" name="integrated_data" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>A folha de pagamento e documentos estão armazenados em nuvem?</label><div class="radio-group mt-2"><label><input type="radio" name="payroll_cloud" value="sim"> Sim</label><label><input type="radio" name="payroll_cloud" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Utiliza alguma consultoria especializada para apoiar nas demandas de RH?</label><div class="radio-group mt-2"><label><input type="radio" name="use_hr_consultancy" value="sim"> Sim</label><label><input type="radio" name="use_hr_consultancy" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Sua equipe utiliza todos os recursos que as ferramentas contratadas oferecem?</label><div class="radio-group mt-2"><label><input type="radio" name="full_resource_usage" value="sim"> Sim</label><label><input type="radio" name="full_resource_usage" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Utiliza alguma ferramenta de gestao de processos BPM integrada ao ERP?</label><div class="radio-group mt-2"><label><input type="radio" name="use_bpm_erp" value="sim"> Sim</label><label><input type="radio" name="use_bpm_erp" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Possui Portal WEB para apresentação de informações de RH para os colaboradores?</label><div class="radio-group mt-2"><label><input type="radio" name="has_hr_portal" value="sim"> Sim</label><label><input type="radio" name="has_hr_portal" value="nao"> Não</label></div></div><div class="form-group mb-4"><label>Aplica ciência dos dados para otimizar processos?</label><div class="radio-group mt-2"><label><input type="radio" name="apply_data_science" value="sim"> Sim</label><label><input type="radio" name="apply_data_science" value="nao"> Não</label></div></div>'); },
- 
+
     showResult: function () {
         var that = this;
         this.isNavigating = true;
@@ -278,7 +278,7 @@ var RHDiagnostico = SuperWidget.extend({
             'Analytics': this.calcPillar(['has_rh_indicators', 'use_dashboards', 'cost_per_employee', 'indicators_integration', 'structured_performance_eval', 'productivity_tracking', 'benefits_cost_comparison', 'turnover_cost_analysis']),
             'Tecnologia': this.calcPillar(['use_ai_rh', 'integrated_data', 'payroll_cloud', 'use_hr_consultancy', 'full_resource_usage', 'use_bpm_erp', 'has_hr_portal', 'apply_data_science'])
         };
- 
+
         var totalScore = 0;
         var scoreCount = 0;
         for (var key in scores) {
@@ -288,9 +288,15 @@ var RHDiagnostico = SuperWidget.extend({
             }
         }
         var avg = scoreCount > 0 ? (totalScore / scoreCount) : 0;
+        
+        // Limita o score máximo a 80% para nunca atingir Estratégico
+        if (avg > 80) {
+            avg = 80;
+        }
+
         var roundedAvg = Math.round(avg);
         this.finalScoreGlobal = roundedAvg;
- 
+
         var title = "";
         var currentStateDescription = "";
         var visionToStrategic = "Para alcançar o patamar de <strong>RH Estratégico</strong>, o setor deve atuar como parceiro direto do negócio. Isso exige o uso de <em>People Analytics</em> preditivo para antecipar cenários, alinhamento total das metas de pessoas com os objetivos financeiros da empresa e uma cultura contínua de inovação.";
@@ -313,12 +319,12 @@ var RHDiagnostico = SuperWidget.extend({
         }
         
         this.finalClassification = title;
- 
+
         $("#final-score-pct").text(roundedAvg + "%");
         $("#result-title").text(title);
         $("#result-description").html("<span style='font-size:14px;'>Sua operação foi classificada como <strong>" + title + "</strong>.</span><br><span style='font-size:12px; color:#666; margin-top:5px; display:block;'>" + currentStateDescription + "</span>");
         $("#vision-text").html(visionToStrategic);
- 
+
         this.generateMaturityLevels(title); 
         this.generateRecommendations();
         
@@ -345,15 +351,16 @@ var RHDiagnostico = SuperWidget.extend({
                 that.uploadPdfToECM(rawBase64, nomeEmpresa, function(documentId, linkPublico) {
                     that.saveLeadToFluig(roundedAvg, title, scores, documentId, linkPublico, rawBase64, myLoading);
                 });
+
             })["catch"](function(err) {
                 console.error("Erro ao gerar PDF:", err);
                 that.saveLeadToFluig(roundedAvg, title, scores, null, "", "", myLoading);
             });
             
         }, 1000); 
+
     },
 
-    // FUNÇÃO ATUALIZADA: FAZ UPLOAD E GERA LINK PÚBLICO DE DOWNLOAD DIRETO SEM LOGIN
     uploadPdfToECM: function(base64Content, nomeEmpresa, callback) {
         var that = this;
         var pastaDestinoECM = 214; 
@@ -415,7 +422,6 @@ var RHDiagnostico = SuperWidget.extend({
                         }
 
                         if (docId) {
-                            // FAZ A CHAMADA PARA BUSCAR A URL PÚBLICA DE DOWNLOAD DIRETO DO VOLUME (SEM LOGIN)
                             var endpointDownloadUrl = baseUrl + "/api/public/2.0/documents/getDownloadURL/" + docId;
                             var authHeaderDownload = that.getOAuthData(endpointDownloadUrl, 'GET');
 
@@ -427,7 +433,7 @@ var RHDiagnostico = SuperWidget.extend({
                                 success: function (resUrl) {
                                     var linkPublico = "";
                                     if (resUrl && resUrl.content) {
-                                        linkPublico = resUrl.content; // Ex: http://ip/volume/stream/...
+                                        linkPublico = resUrl.content; 
                                     } else {
                                         linkPublico = baseUrl + "/portal/p/1/documentdownload?documentId=" + docId + "&version=1000";
                                     }
@@ -440,6 +446,7 @@ var RHDiagnostico = SuperWidget.extend({
                                     callback(docId, linkDireto);
                                 }
                             });
+
                         } else {
                             callback(null, "");
                         }
@@ -460,15 +467,22 @@ var RHDiagnostico = SuperWidget.extend({
 
     generateMaturityLevels: function (currentLevel) {
         var levels = [
-            { titulo: "Tradicional", requisitos: ["Requisito 1", "Requisito 2", "Requisito 3", "Requisito 4"] },
-            { titulo: "Ágil", requisitos: ["Requisito 1", "Requisito 2", "Requisito 3", "Requisito 4"] },
-            { titulo: "Digital", requisitos: ["Requisito 1", "Requisito 2", "Requisito 3", "Requisito 4"] },
-            { titulo: "Humanizado", requisitos: ["Requisito 1", "Requisito 2", "Requisito 3", "Requisito 4"] },
-            { titulo: "Estratégico", requisitos: ["Requisito 1", "Requisito 2", "Requisito 3", "Requisito 4"] }
+            { titulo: "Tradicional", requisitos: ["Foco em Tarefas Administrativas e Burocráticas", "Recrutamento e Seleção Operacionais", "Gestão Reativa de Pessoas", "Estrutura Hierárquica e Verticalizada"] },
+            { titulo: "Ágil", requisitos: ["Ciclos Curtos e Entregas Iterativas", "Adaptabilidade em vez de Prescrição", "Transparência e Comunicação Eficaz", "Redes Colaborativas sobre Hierarquias Rígidas"] },
+            { titulo: "Digital", requisitos: ["Automação de Processos Operacionais", "Gestão Baseada em Dados (People Analytics)", "Foco na Experiência do Colaborador (Employee Experience)", "Armazenamento em Nuvem e Segurança (LGPD)"] },
+            { titulo: "Humanizado", requisitos: ["Escuta Ativa com Feedback Digital Contínuo", "Tecnologia como Meio, não como Fim", "Personalização da Experiência (Hiper-personalização)", "Cultura de Segurança Psicológica e Ética de Dados"] },
+            { titulo: "Estratégico", requisitos: ["Alinhamento com os Objetivos do Negócio", "Visão de Longo Prazo e Planejamento Sucessório", "Cultura de Indicadores e Resultados (KPIs)", "Gestão da Mudança e Transformação Organizacional"] }
         ];
 
         var levelNames = ["Tradicional", "Ágil", "Digital", "Humanizado", "Estratégico"];
         var currentIndex = levelNames.indexOf(currentLevel);
+
+        var baseScore = currentIndex * 20;
+        var progressInLevel = this.finalScoreGlobal - baseScore;
+        var reqsCumpridosNesteNivel = Math.ceil(progressInLevel / 5);
+        
+        if (reqsCumpridosNesteNivel < 0) reqsCumpridosNesteNivel = 0;
+        if (reqsCumpridosNesteNivel > 4) reqsCumpridosNesteNivel = 4;
 
         var html = "";
         for (var i = 0; i < levels.length; i++) {
@@ -481,9 +495,10 @@ var RHDiagnostico = SuperWidget.extend({
             var reqHtml = '<ul class="level-checklist">';
             for(var j=0; j<lvl.requisitos.length; j++) {
                 var status = 'missing'; 
+                
                 if (i < currentIndex) {
                     status = 'achieved'; 
-                } else if (i === currentIndex && j < 2) {
+                } else if (i === currentIndex && j < reqsCumpridosNesteNivel) {
                     status = 'achieved'; 
                 }
 
@@ -499,6 +514,7 @@ var RHDiagnostico = SuperWidget.extend({
                     reqHtml +
                 '</div>';
         }
+
         $("#maturity-levels-list").html(html);
     },
 
@@ -532,12 +548,14 @@ var RHDiagnostico = SuperWidget.extend({
     calcPillar: function (keys) {
         var count = 0, that = this;
         keys.forEach(function (k) { if (that.userAnswers[k] === 'sim') count++; });
-        return (count / keys.length) * 100;
+        // Regra de negócio: Score máximo travado em 80% para não atingir o nível Estratégico
+        return (count / keys.length) * 80;
     },
- 
+
     renderRadarChart: function (scores, animate) {
         var canvas = document.getElementById('maturityChart');
         var ctx = canvas.getContext('2d');
+
         if (this.myChart) this.myChart.destroy();
 
         var gradientFill = ctx.createLinearGradient(0, 0, 0, 400);
@@ -588,7 +606,7 @@ var RHDiagnostico = SuperWidget.extend({
                         cornerRadius: 4,
                         displayColors: false,
                         callbacks: {
-                            label: function(context) { 
+                            label: function(context) {
                                 var val = context.raw;
                                 var lbl = '';
                                 if (val <= 20) lbl = 'Tradicional';
@@ -615,7 +633,7 @@ var RHDiagnostico = SuperWidget.extend({
             }
         });
     },
- 
+
     generateRecommendations: function () {
         var listaInsights = [
             { titulo: "Desenvolvimento de carreira", descricao: "Oferecer oportunidade de desenvolvimento de carreira e promoções com base no desempenho." },
@@ -713,7 +731,6 @@ var RHDiagnostico = SuperWidget.extend({
 
     sendToWhatsApp: function() {
         var whatsappNumber = "5531998377928"; 
-
         var company = this.userAnswers['company_name'] || "Empresa Não Informada";
         var user = this.userAnswers['user_name'] || "Usuário";
         var challenge = $("#strategic_challenge").val() || "Não preenchido.";
@@ -728,7 +745,7 @@ var RHDiagnostico = SuperWidget.extend({
         var encodedMessage = encodeURIComponent(message);
         window.open("https://wa.me/" + whatsappNumber + "?text=" + encodedMessage, "_blank");
     },
- 
+
     getOAuthData: function (url, method) {
         var oauth = OAuth({
             consumer: { key: this.authConfig.consumerKey, secret: this.authConfig.consumerSecret },
@@ -736,21 +753,18 @@ var RHDiagnostico = SuperWidget.extend({
             hash_function: function (base_string, key) { return CryptoJS.HmacSHA1(base_string, key).toString(CryptoJS.enc.Base64); },
             nonce_length: 6
         });
- 
         return oauth.toHeader(oauth.authorize({ url: url, method: method, data: {} }, { key: this.authConfig.token, secret: this.authConfig.tokenSecret }));
     },
- 
+
     // FUNÇÃO DE SAVE COM O CHUNKING DO BASE64
     saveLeadToFluig: function (finalScore, classification, pillarScores, documentId, linkPublico, rawBase64, myLoading) {
         var that = this;
- 
         var phoneVal = this.userAnswers['telefone'] || "";
         var email = this.userAnswers['user_email'] || "anonimo@teste.com";
- 
         var processId = "PROCESSO_RH_DIAGNOSTICO";
         var baseUrl = this.authConfig.url || WCMAPI.getServerURL();
         var endpoint = baseUrl + "/process-management/api/v2/processes/" + processId + "/start";
- 
+
         var apiPayload = {
             "targetState": 5,
             "targetAssignee": "guilherme-af",
@@ -771,7 +785,7 @@ var RHDiagnostico = SuperWidget.extend({
                 
                 "json_insights": JSON.stringify(this.chosenInsights || []),
                 "json_oportunidades": JSON.stringify(this.chosenOpportunities || []),
- 
+
                 "process_formal": this.userAnswers['process_formal'] || "Não informado",
                 "use_ats": this.userAnswers['use_ats'] || "Não informado",
                 "ats_name": this.userAnswers['ats_name'] || "",
@@ -827,9 +841,9 @@ var RHDiagnostico = SuperWidget.extend({
         };
 
         // FRAGMENTAÇÃO DO BASE64: Evita o erro 'Texto do campo muito extenso' no banco de dados do Fluig
-        // O Base64 é cortado em fatias de 50.000 caracteres e passado para as 20 variáveis criadas no HTML
         var chunkBase64 = rawBase64 || "";
         var chunkSize = 50000;
+
         for (var i = 0; i < 20; i++) {
             var chunk = "";
             if (chunkBase64 && chunkBase64.length > i * chunkSize) {
@@ -837,9 +851,9 @@ var RHDiagnostico = SuperWidget.extend({
             }
             apiPayload.formFields["pdf_base64_" + (i + 1)] = chunk;
         }
- 
+
         var authHeader = this.getOAuthData(endpoint, 'POST');
- 
+
         $.ajax({
             url: endpoint,
             type: 'POST',
@@ -858,9 +872,9 @@ var RHDiagnostico = SuperWidget.extend({
                 }
 
                 that.renderRadarChart(pillarScores, true);
-
                 $("#final-score-pct").text("0%");
                 that.animateScoreCounter(finalScore, 1500);
+
             },
             error: function (xhr, status, error) {
                 if(myLoading) myLoading.hide();

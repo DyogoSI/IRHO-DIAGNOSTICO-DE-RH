@@ -24,9 +24,22 @@ function afterProcessCreate(processId) {
             }
         }
 
-        // 1. Anexa o documento fisicamente ao processo
+        // 1. Anexa o documento fisicamente ao processo e FORÇA O COMPARTILHAMENTO EXTERNO
         if (docIdAnexo) {
-            try { hAPI.attachDocument(parseInt(docIdAnexo)); } catch(e) {}
+            try { 
+                // Anexa ao workflow
+                hAPI.attachDocument(parseInt(docIdAnexo)); 
+                
+                // Ativa o Compartilhamento Externo via API Nativa do Servidor
+                var doc = docAPI.getDocument(parseInt(docIdAnexo), 1000); // Pega a versão ativa
+                if (doc != null) {
+                    doc.setPublicDocument(true); // Ativa "Compartilhar Externamente"
+                    docAPI.updateDocument(doc);  // Atualiza no banco de dados do Fluig
+                    log.info(">>> DIAGNOSTICO RH: Compartilhamento externo ativado com sucesso para o ID: " + docIdAnexo);
+                }
+            } catch(e) {
+                log.error(">>> DIAGNOSTICO RH: Erro ao anexar documento ou ativar link publico: " + e.toString());
+            }
         }
 
         // 2. Extrai os bytes do PDF da String Base64 remontada
