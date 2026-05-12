@@ -17,7 +17,6 @@
             background-color: #ffffff; 
             padding: 20px 0;
         }
-        /* --- ESTILO DAS CAIXAS DE CONTEÚDO --- */
         .card-section {
             background: #fff;
             border-radius: 12px;
@@ -69,7 +68,6 @@
             opacity: 1 !important;
             line-height: 1.4 !important;
         }
-        /* Resultados Iniciais */
         .score-card { 
             background: #f8fbff; 
             padding: 30px; 
@@ -95,10 +93,6 @@
             font-weight: 800; 
             color: #004b8d; 
         }
-
-        /* =========================================
-           CARDS DA JORNADA DE EVOLUÇÃO
-           ========================================= */
         #maturity-levels-list {
             display: grid !important;
             grid-template-columns: repeat(5, 1fr) !important;
@@ -178,11 +172,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
             white-space: nowrap !important;
         }
-
-        /* =========================================
-           CARDS COMPACTOS (INSIGHTS E OPORTUNIDADES)
-           ========================================= */
-        
         #recommendations-list {
             display: grid !important;
             grid-template-columns: repeat(4, 1fr) !important; 
@@ -241,7 +230,6 @@
         }
         .rec-item.highlight-card:hover { transform: scale(1.03) translateY(-6px) !important; }
         .rec-item.highlight-card p { color: #ffffff !important; }
-
         .badge-popular {
             position: absolute !important;
             top: 15px !important;
@@ -255,7 +243,6 @@
             text-transform: uppercase !important;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
         }
-
         @media (max-width: 1024px) {
             #recommendations-list, #opportunities-list { grid-template-columns: repeat(2, 1fr) !important; }
             #maturity-levels-list { grid-template-columns: repeat(3, 1fr) !important; }
@@ -569,41 +556,53 @@
         }
 
         function renderChartAndResults() {
-            var scoreFinal = $("#score_final").val() || "0";
-            var nivelMaturidade = $("#nivel_maturidade").val() || "Não Classificado";
             var jsonString = $("#json_respostas").val();
-
-            $("#lbl_score").text(scoreFinal + "%");
-            $("#lbl_nivel").text(nivelMaturidade);
             
-            // Textos descritivos simulando a leitura real
-            var descricoes = {
-                "Tradicional": "Foco em processos operacionais e burocráticos. Há um grande potencial para iniciar a automação e ganhar agilidade.",
-                "Ágil": "Busca por eficiência e rapidez, iniciando a transição para processos mais dinâmicos e menos engessados.",
-                "Digital": "Uso de tecnologia e automação consolidados. O próximo passo é equilibrar as ferramentas com a valorização da experiência humana.",
-                "Humanizado": "Une tecnologia avançada e foco genuíno nas pessoas, promovendo uma excelente experiência para o colaborador.",
-                "Estratégico": "O setor atua como parceiro de negócios, focando em análise de dados, métricas e retenção profunda de talentos."
-            };
-            var descr = descricoes[nivelMaturidade] || "Nível gerado a partir do Score.";
-
-            $("#result-description").html("Sua operação foi classificada como <strong>" + nivelMaturidade + "</strong>.<br><span style='font-size:12px; color:#666; margin-top:5px; display:block;'>" + descr + "</span>");
-
-            // --- GERA OS CARDS DA JORNADA ---
-            generateMaturityLevels(nivelMaturidade, parseInt(scoreFinal));
-
             if (jsonString && jsonString.length > 5) {
                 try {
                     var answers = JSON.parse(jsonString);
                     
                     var scores = {
-                        'Recrutamento': calcPillar(answers, ['process_formal', 'use_ats', 'dedicated_team']),
-                        'Admissão': calcPillar(answers, ['has_digital_admission', 'use_admission_portal', 'has_electronic_signature', 'has_integration_program', 'is_admission_secure']),
-                        'DP': calcPillar(answers, ['dp_automated', 'esocial_compliant', 'defined_dp_workflows']), 
-                        'T&D': calcPillar(answers, ['td_strategy_clear', 'td_aligned_goals', 'td_annual_planning', 'td_management_participation', 'td_gap_indicators', 'td_leaders_contribution', 'td_impact_indicators', 'td_results_correlation']),
-                        'Cultura': calcPillar(answers, ['culture_alignment', 'expression_freedom', 'people_valuation', 'defined_hierarchy', 'climate_survey']),
-                        'Analytics': calcPillar(answers, ['has_rh_indicators', 'use_dashboards', 'cost_per_employee', 'indicators_integration', 'structured_performance_eval', 'productivity_tracking', 'benefits_cost_comparison', 'turnover_cost_analysis']),
-                        'Tecnologia': calcPillar(answers, ['use_ai_rh', 'integrated_data', 'payroll_cloud', 'use_hr_consultancy', 'full_resource_usage', 'use_bpm_erp', 'has_hr_portal', 'apply_data_science'])
+                        'Recrutamento': calcPillar('Recrutamento', answers, ['process_formal', 'use_ats', 'ats_name', 'job_channels', 'dedicated_team', 'hiring_volume']),
+                        'Admissão': calcPillar('Admissão', answers, ['has_digital_admission', 'use_admission_portal', 'has_electronic_signature', 'has_integration_program', 'is_admission_secure']),
+                        'DP': calcPillar('DP', answers, ['dp_system', 'payroll_responsible', 'dp_automated', 'esocial_compliant', 'use_sheets_payroll', 'defined_dp_workflows']),
+                        'T&D': calcPillar('T&D', answers, ['td_strategy_clear', 'td_aligned_goals', 'td_annual_planning', 'td_management_participation', 'td_gap_indicators', 'td_leaders_contribution', 'td_impact_indicators', 'td_results_correlation']),
+                        'Cultura': calcPillar('Cultura', answers, ['culture_alignment', 'expression_freedom', 'people_valuation', 'defined_hierarchy', 'culture_intro', 'climate_survey']),
+                        'Analytics': calcPillar('Analytics', answers, ['has_rh_indicators', 'use_dashboards', 'cost_per_employee', 'indicator_tools', 'indicators_integration', 'structured_performance_eval', 'productivity_tracking', 'benefits_cost_comparison', 'turnover_cost_analysis']),
+                        'Tecnologia': calcPillar('Tecnologia', answers, ['use_ai_rh', 'integrated_data', 'payroll_cloud', 'use_hr_consultancy', 'full_resource_usage', 'use_bpm_erp', 'has_hr_portal', 'apply_data_science'])
                     };
+
+                    var totalScore = 0;
+                    var scoreCount = 0;
+                    for (var key in scores) {
+                        totalScore += scores[key];
+                        scoreCount++;
+                    }
+                    var dynamicAvg = scoreCount > 0 ? Math.round(totalScore / scoreCount) : 0;
+                    if (dynamicAvg > 80) dynamicAvg = 80;
+
+                    var nivelMaturidade = "";
+                    if (dynamicAvg <= 20) nivelMaturidade = "Tradicional";
+                    else if (dynamicAvg <= 40) nivelMaturidade = "Ágil";
+                    else if (dynamicAvg <= 60) nivelMaturidade = "Digital";
+                    else if (dynamicAvg <= 80) nivelMaturidade = "Humanizado";
+                    else nivelMaturidade = "Estratégico";
+
+                    $("#lbl_score").text(dynamicAvg + "%");
+                    $("#lbl_nivel").text(nivelMaturidade);
+
+                    var descricoes = {
+                        "Tradicional": "Foco em processes operacionais e burocráticos. Há um grande potencial para iniciar a automação e ganhar agilidade.",
+                        "Ágil": "Busca por eficiência e rapidez, iniciando a transição para processos mais dinâmicos e menos engessados.",
+                        "Digital": "Uso de tecnologia e automação consolidados. O próximo passo é equilibrar as ferramentas com a valorização da experiência humana.",
+                        "Humanizado": "Une tecnologia avançada e foco genuíno nas pessoas, promovendo uma excelente experiência para o colaborador.",
+                        "Estratégico": "O setor atua como parceiro de negócios, focando em análise de dados, métricas e retenção profunda de talentos."
+                    };
+                    var descr = descricoes[nivelMaturidade] || "Nível gerado a partir do Score.";
+
+                    $("#result-description").html("Sua operação foi classificada como <strong>" + nivelMaturidade + "</strong>.<br><span style='font-size:12px; color:#666; margin-top:5px; display:block;'>" + descr + "</span>");
+
+                    generateMaturityLevels(nivelMaturidade, dynamicAvg);
 
                     var ctx = document.getElementById('maturityChartViewer').getContext('2d');
                     if (viewChart) viewChart.destroy();
@@ -676,14 +675,68 @@
                 } catch(e) {
                     console.error("Erro ao ler JSON de respostas para gerar gráfico.", e);
                 }
+            } else {
+                $("#lbl_score").text("0%");
+                $("#lbl_nivel").text("Em preenchimento");
+                $("#result-description").text("O cliente ainda não iniciou as respostas.");
             }
         }
 
-        function calcPillar(answersObj, keys) {
-            var count = 0;
-            keys.forEach(function (k) { if (answersObj[k] === 'sim') count++; });
-            // Regra de negócio: Score máximo travado em 80% para não atingir o nível Estratégico
-            return (count / keys.length) * 80;
+        function calcPillar(category, answersObj, keys) {
+            var score = 0;
+            
+            keys.forEach(function (k) { 
+                var v = answersObj[k];
+                if (v && v.toString().trim() !== '') {
+                    var resposta = v.toString().toLowerCase();
+
+                    if (resposta === 'nao' || resposta === 'não') {
+                        score += 0.15;
+                    }
+                    else if (k === 'hiring_volume') {
+                        if (resposta === '1-10') score += 0.33;
+                        else if (resposta === '11-20') score += 0.66;
+                        else if (resposta === '20+') score += 1;
+                        else score += 1;
+                    } 
+                    else if (k === 'payroll_responsible') {
+                        if (resposta === 'interna') score += 0.5;
+                        else if (resposta === 'terceirizada') score += 0.8;
+                        else if (resposta === 'bpo') score += 1;
+                        else score += 0.3;
+                    }
+                    else {
+                        score += 1;
+                    }
+                }
+            });
+
+            if (score === 0) return 0;
+
+            var map = [];
+            if (category === 'Recrutamento' || category === 'DP' || category === 'Cultura') {
+                map = [0, 21, 30, 40, 50, 60, 80];
+            } 
+            else if (category === 'Admissão') {
+                map = [0, 30, 40, 50, 60, 80];
+            }
+            else if (category === 'T&D' || category === 'Tecnologia') {
+                map = [0, 25, 30, 35, 40, 47, 54, 60, 80];
+            }
+            else if (category === 'Analytics') {
+                map = [0, 25, 30, 35, 40, 47, 54, 60, 70, 80];
+            }
+
+            var lowerBound = Math.floor(score);
+            var upperBound = Math.ceil(score);
+            
+            if (lowerBound >= map.length - 1) return map[map.length - 1];
+            if (lowerBound === upperBound) return map[lowerBound];
+            
+            var fraction = score - lowerBound;
+            var pct = map[lowerBound] + (fraction * (map[upperBound] - map[lowerBound]));
+            
+            return Math.round(pct);
         }
     </script>
 </body>

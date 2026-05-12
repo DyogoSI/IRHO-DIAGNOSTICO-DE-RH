@@ -1,51 +1,30 @@
-function afterProcessCreate(processId) {
-    log.info(">>> DIAGNOSTICO RH: Processo criado. ID: " + processId);
+function createDataset(fields, constraints, sortFields) {
+    var dataset = DatasetBuilder.newDataset();
+    dataset.addColumn("status");
+    dataset.addColumn("message");
+
+    var emailContato = "", nomeContato = "", empresa = "", scoreFinal = "", maturidade = "", linkPdfPublico = "";
+    
+    // Captura as variaveis enviadas pelo Widget
+    if (constraints != null) {
+        for (var i = 0; i < constraints.length; i++) {
+            if (constraints[i].fieldName == "emailContato") emailContato = constraints[i].initialValue;
+            if (constraints[i].fieldName == "nomeContato") nomeContato = constraints[i].initialValue;
+            if (constraints[i].fieldName == "empresa") empresa = constraints[i].initialValue;
+            if (constraints[i].fieldName == "scoreFinal") scoreFinal = constraints[i].initialValue;
+            if (constraints[i].fieldName == "maturidade") maturidade = constraints[i].initialValue;
+            if (constraints[i].fieldName == "linkPdfPublico") linkPdfPublico = constraints[i].initialValue;
+        }
+    }
+
+    if (emailContato == "") {
+        dataset.addRow(["ERROR", "Email nao informado"]);
+        return dataset;
+    }
 
     try {
-        var scoreFinal = hAPI.getCardValue("score_final");
-        
-        // TRAVA DE SEGURANÇA: Se não tem score, foi criado no Passo 1 (Carrinho Abandonado)
-        if (!scoreFinal || scoreFinal == "" || scoreFinal == "0") {
-            log.info(">>> DIAGNOSTICO RH: Solicitacao iniciada no Passo 1. Aguardando finalizacao para gerar PDF e enviar email.");
-            return; 
-        }
-
-        // Se por acaso foi criado de uma vez (fallback), o fluxo continua
-        var emailContato = hAPI.getCardValue("email_contato");
-        if (!emailContato || emailContato == "" || emailContato == "anonimo@teste.com") {
-            log.warn(">>> DIAGNOSTICO RH: Email invalido. Cancelando envio.");
-            return;
-        }
-
-        var nomeContato = hAPI.getCardValue("nome_contato");
-        var empresa = hAPI.getCardValue("empresa");
-        var maturidade = hAPI.getCardValue("nivel_maturidade");
-        var linkPdfPublico = hAPI.getCardValue("link_pdf_publico"); 
-        var docIdAnexo = hAPI.getCardValue("id_pdf_diagnostico");
-
-        var base64String = "";
-        for (var i = 1; i <= 20; i++) {
-            var pedaco = hAPI.getCardValue("pdf_base64_" + i);
-            if (pedaco != null && pedaco.trim() != "") {
-                base64String += pedaco;
-            }
-        }
-
-        if (docIdAnexo) {
-            try { 
-                hAPI.attachDocument(parseInt(docIdAnexo)); 
-                var doc = docAPI.getDocument(parseInt(docIdAnexo), 1000); 
-                if (doc != null) {
-                    doc.setPublicDocument(true); 
-                    docAPI.updateDocument(doc);  
-                }
-            } catch(e) {}
-        }
-
         var pdfBytes = null;
-        if (base64String && base64String.trim() !== "") {
-            pdfBytes = java.util.Base64.getDecoder().decode(new java.lang.String(base64String).getBytes("UTF-8"));
-        } else if (linkPdfPublico != null && linkPdfPublico.indexOf("http") !== -1) {
+        if (linkPdfPublico != "") {
             pdfBytes = baixarBytesDaUrl(linkPdfPublico);
         }
 
@@ -64,27 +43,48 @@ function afterProcessCreate(processId) {
                        "<p>Abraço,<br>Equipa de Especialistas em RH.</p>" +
                        "</div>";
 
+        // TENTATIVA 1: Enviar Email com Anexo embutido via JavaMail
         try {
             enviarEmailComAnexo(emailContato, assuntoEmail, htmlBody, nomeArquivo, pdfBytes);
-            log.info(">>> DIAGNOSTICO RH: Email COM ANEXO enviado com sucesso!");
+            dataset.addRow(["SUCCESS", "Email enviado com sucesso (Com Anexo)"]);
+            log.info(">>> DIAGNOSTICO RH: Dataset enviou email com sucesso para " + emailContato);
+            
         } catch (mailError) {
-            log.error(">>> DIAGNOSTICO RH: Erro JavaMail. Fallback...");
-            var parametros = new java.util.HashMap();
-            parametros.put("NOME_CONTATO", nomeContato);
-            parametros.put("NOME_EMPRESA", empresa);
-            parametros.put("SCORE_FINAL", scoreFinal + "%");
-            parametros.put("MATURIDADE", maturidade);
-            parametros.put("LINK_PDF", linkPdfPublico); 
-            parametros.put("subject", assuntoEmail);
-            var destinatarios = new java.util.ArrayList();
-            destinatarios.add(String(emailContato).trim());
-            notifier.notify("guilherme-af", "TPL_DIAGNOSTICO_RESULTADO", parametros, destinatarios, "text/html");
+            log.warn(">>> DIAGNOSTICO RH: Erro no JavaMail nativo. Acionando Fallback Notifier para: " + emailContato);
+            
+            // TENTATIVA 2: Fallback (Mesma logica de emergencia que funcionava no seu processo antigo)
+            try {
+                var parametros = new java.util.HashMap();
+                parametros.put("NOME_CONTATO", nomeContato);
+                parametros.put("NOME_EMPRESA", empresa);
+                parametros.put("SCORE_FINAL", scoreFinal + "%");
+                parametros.put("MATURIDADE", maturidade);
+                parametros.put("LINK_PDF", linkPdfPublico); 
+                parametros.put("subject", assuntoEmail);
+                
+                var destinatarios = new java.util.ArrayList();
+                destinatarios.add(String(emailContato).trim());
+                
+                // Dispara usando o motor de notificacao nativo do Fluig
+                notifier.notify("guilherme-af", "TPL_DIAGNOSTICO_RESULTADO", parametros, destinatarios, "text/html");
+                
+                dataset.addRow(["SUCCESS", "Email disparado com sucesso via Fallback Notifier"]);
+                log.info(">>> DIAGNOSTICO RH: Fallback Notifier concluido com sucesso!");
+                
+            } catch (fallbackError) {
+                log.error(">>> DIAGNOSTICO RH: Erro FATAL no Fallback de E-mail: " + fallbackError.toString());
+                dataset.addRow(["ERROR", "Falha nos dois metodos de envio: " + fallbackError.toString()]);
+            }
         }
+
     } catch (e) {
-        log.error(">>> DIAGNOSTICO RH: ERRO FATAL: " + e.toString());
+        log.error(">>> ERRO DATASET EMAIL: " + e.toString());
+        dataset.addRow(["ERROR", e.toString()]);
     }
+    return dataset;
 }
 
+// Funcao Auxiliar 1: Disparo JavaMail
 function enviarEmailComAnexo(destinatario, assunto, htmlBody, nomeArquivo, pdfBytes) {
     var initialContext = new javax.naming.InitialContext();
     var session = initialContext.lookup("java:/mail/MailSession");
@@ -108,6 +108,7 @@ function enviarEmailComAnexo(destinatario, assunto, htmlBody, nomeArquivo, pdfBy
     javax.mail.Transport.send(msg);
 }
 
+// Funcao Auxiliar 2: Baixar PDF do GED para embutir
 function baixarBytesDaUrl(urlStr) {
     try {
         var url = new java.net.URL(urlStr);

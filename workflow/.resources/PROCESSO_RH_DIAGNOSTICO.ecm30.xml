@@ -28,7 +28,7 @@
     <processDefinitionVersionPK>
       <companyId>1</companyId>
       <processId>PROCESSO_RH_DIAGNOSTICO</processId>
-      <version>44</version>
+      <version>50</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
     <formId>6</formId>
@@ -244,9 +244,18 @@
         <version>1</version>
       </workflowProcessEventPK>
       <eventDescription>function afterProcessCreate(processId) {
-    log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Iniciando envio de email COM ANEXO. Processo ID: &quot; + processId);
+    log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Processo criado. ID: &quot; + processId);
 
     try {
+        var scoreFinal = hAPI.getCardValue(&quot;score_final&quot;);
+        
+        // TRAVA DE SEGURANÇA: Se não tem score, foi criado no Passo 1 (Carrinho Abandonado)
+        if (!scoreFinal || scoreFinal == &quot;&quot; || scoreFinal == &quot;0&quot;) {
+            log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Solicitacao iniciada no Passo 1. Aguardando finalizacao para gerar PDF e enviar email.&quot;);
+            return; 
+        }
+
+        // Se por acaso foi criado de uma vez (fallback), o fluxo continua
         var emailContato = hAPI.getCardValue(&quot;email_contato&quot;);
         if (!emailContato || emailContato == &quot;&quot; || emailContato == &quot;anonimo@teste.com&quot;) {
             log.warn(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Email invalido. Cancelando envio.&quot;);
@@ -255,12 +264,10 @@
 
         var nomeContato = hAPI.getCardValue(&quot;nome_contato&quot;);
         var empresa = hAPI.getCardValue(&quot;empresa&quot;);
-        var scoreFinal = hAPI.getCardValue(&quot;score_final&quot;);
         var maturidade = hAPI.getCardValue(&quot;nivel_maturidade&quot;);
         var linkPdfPublico = hAPI.getCardValue(&quot;link_pdf_publico&quot;); 
         var docIdAnexo = hAPI.getCardValue(&quot;id_pdf_diagnostico&quot;);
 
-        // Reconstrói a String Base64 juntando as 20 partes separadas para burlar o limite do DB
         var base64String = &quot;&quot;;
         for (var i = 1; i &lt;= 20; i++) {
             var pedaco = hAPI.getCardValue(&quot;pdf_base64_&quot; + i);
@@ -269,31 +276,21 @@
             }
         }
 
-        // 1. Anexa o documento fisicamente ao processo e FORÇA O COMPARTILHAMENTO EXTERNO
         if (docIdAnexo) {
             try { 
-                // Anexa ao workflow
                 hAPI.attachDocument(parseInt(docIdAnexo)); 
-                
-                // Ativa o Compartilhamento Externo via API Nativa do Servidor
-                var doc = docAPI.getDocument(parseInt(docIdAnexo), 1000); // Pega a versão ativa
+                var doc = docAPI.getDocument(parseInt(docIdAnexo), 1000); 
                 if (doc != null) {
-                    doc.setPublicDocument(true); // Ativa &quot;Compartilhar Externamente&quot;
-                    docAPI.updateDocument(doc);  // Atualiza no banco de dados do Fluig
-                    log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Compartilhamento externo ativado com sucesso para o ID: &quot; + docIdAnexo);
+                    doc.setPublicDocument(true); 
+                    docAPI.updateDocument(doc);  
                 }
-            } catch(e) {
-                log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Erro ao anexar documento ou ativar link publico: &quot; + e.toString());
-            }
+            } catch(e) {}
         }
 
-        // 2. Extrai os bytes do PDF da String Base64 remontada
         var pdfBytes = null;
         if (base64String &amp;&amp; base64String.trim() !== &quot;&quot;) {
-            log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Convertendo PDF via Base64 enviado em partes pelo Form...&quot;);
             pdfBytes = java.util.Base64.getDecoder().decode(new java.lang.String(base64String).getBytes(&quot;UTF-8&quot;));
         } else if (linkPdfPublico != null &amp;&amp; linkPdfPublico.indexOf(&quot;http&quot;) !== -1) {
-            log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Baixando PDF da URL publica para anexar...&quot;);
             pdfBytes = baixarBytesDaUrl(linkPdfPublico);
         }
 
@@ -312,19 +309,11 @@
                        &quot;&lt;p&gt;Abraço,&lt;br&gt;Equipa de Especialistas em RH.&lt;/p&gt;&quot; +
                        &quot;&lt;/div&gt;&quot;;
 
-        // =========================================================
-        // TENTATIVA 1: Enviar com Anexo Físico (JavaMail)
-        // =========================================================
         try {
             enviarEmailComAnexo(emailContato, assuntoEmail, htmlBody, nomeArquivo, pdfBytes);
             log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Email COM ANEXO enviado com sucesso!&quot;);
-            
         } catch (mailError) {
-            log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Servidor SMTP bloqueou o JavaMail. Executando plano de fallback... Erro: &quot; + mailError);
-            
-            // =========================================================
-            // TENTATIVA 2: Fallback de Segurança (Fluig Nativo)
-            // =========================================================
+            log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Erro JavaMail. Fallback...&quot;);
             var parametros = new java.util.HashMap();
             parametros.put(&quot;NOME_CONTATO&quot;, nomeContato);
             parametros.put(&quot;NOME_EMPRESA&quot;, empresa);
@@ -332,44 +321,27 @@
             parametros.put(&quot;MATURIDADE&quot;, maturidade);
             parametros.put(&quot;LINK_PDF&quot;, linkPdfPublico); 
             parametros.put(&quot;subject&quot;, assuntoEmail);
-            
             var destinatarios = new java.util.ArrayList();
             destinatarios.add(String(emailContato).trim());
-            
             notifier.notify(&quot;guilherme-af&quot;, &quot;TPL_DIAGNOSTICO_RESULTADO&quot;, parametros, destinatarios, &quot;text/html&quot;);
-            log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Email de seguranca enviado com sucesso via notifier!&quot;);
         }
-
     } catch (e) {
-        log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: ERRO FATAL NO SCRIPT: &quot; + e.toString());
+        log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: ERRO FATAL: &quot; + e.toString());
     }
 }
 
-/**
- * Constrói o e-mail utilizando as configurações nativas do servidor e anexa o PDF
- */
 function enviarEmailComAnexo(destinatario, assunto, htmlBody, nomeArquivo, pdfBytes) {
     var initialContext = new javax.naming.InitialContext();
     var session = initialContext.lookup(&quot;java:/mail/MailSession&quot;);
-    
     var msg = new javax.mail.internet.MimeMessage(session);
-    
     var fromAddress = session.getProperty(&quot;mail.from&quot;);
-    if (fromAddress != null &amp;&amp; fromAddress.trim() != &quot;&quot;) {
-        msg.setFrom(new javax.mail.internet.InternetAddress(fromAddress));
-    }
-    
+    if (fromAddress != null &amp;&amp; fromAddress.trim() != &quot;&quot;) msg.setFrom(new javax.mail.internet.InternetAddress(fromAddress));
     msg.setRecipients(javax.mail.Message.RecipientType.TO, javax.mail.internet.InternetAddress.parse(destinatario));
     msg.setSubject(assunto, &quot;UTF-8&quot;);
-
     var multipart = new javax.mail.internet.MimeMultipart();
-
-    // Parte de Texto
     var htmlPart = new javax.mail.internet.MimeBodyPart();
     htmlPart.setContent(htmlBody, &quot;text/html; charset=utf-8&quot;);
     multipart.addBodyPart(htmlPart);
-
-    // Parte de Anexo
     if (pdfBytes != null) {
         var attachmentPart = new javax.mail.internet.MimeBodyPart();
         var dataSource = new javax.mail.util.ByteArrayDataSource(pdfBytes, &quot;application/pdf&quot;);
@@ -377,14 +349,10 @@ function enviarEmailComAnexo(destinatario, assunto, htmlBody, nomeArquivo, pdfBy
         attachmentPart.setFileName(nomeArquivo);
         multipart.addBodyPart(attachmentPart);
     }
-
     msg.setContent(multipart);
     javax.mail.Transport.send(msg);
 }
 
-/**
- * Lê os bytes do ficheiro PDF via HTTP utilizando a URL pública
- */
 function baixarBytesDaUrl(urlStr) {
     try {
         var url = new java.net.URL(urlStr);
@@ -392,21 +360,97 @@ function baixarBytesDaUrl(urlStr) {
         conn.setRequestMethod(&quot;GET&quot;);
         conn.setConnectTimeout(5000); 
         conn.setReadTimeout(10000);   
-        
-        if (conn.getResponseCode() &gt;= 300) {
-            log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: URL HTTP recusou a entrega do ficheiro.&quot;);
-            return null;
-        }
-        
+        if (conn.getResponseCode() &gt;= 300) return null;
         var is = conn.getInputStream();
         var bytes = org.apache.commons.io.IOUtils.toByteArray(is);
         is.close();
         return bytes;
-    } catch (e) {
-        log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Falha ao baixar o PDF - &quot; + e.toString());
-        return null;
-    }
+    } catch (e) { return null; }
 }</eventDescription>
+    </WorkflowProcessEvent>
+    <WorkflowProcessEvent>
+      <workflowProcessEventPK>
+        <companyId>1</companyId>
+        <eventId>ESP_LITERALS</eventId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+      </workflowProcessEventPK>
+      <eventDescription>#Fri May 08 14:14:21 BRT 2026
+4.name=In\u00EDcio
+process.description=PROCESSO_RH_DIAGNOSTICO
+5.name=Comercial
+8.return=
+6.name=Fim
+5.instructions=
+7.name=
+process.instructions=
+8.name=
+7.flow=
+1.name=Pool
+8.flow=
+2.name=Solicitante
+7.return=
+6.instructions=Atividade final do processo
+4.instructions=
+process.version.instructions=
+process.category=
+</eventDescription>
+    </WorkflowProcessEvent>
+    <WorkflowProcessEvent>
+      <workflowProcessEventPK>
+        <companyId>1</companyId>
+        <eventId>ENG_LITERALS</eventId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+      </workflowProcessEventPK>
+      <eventDescription>#Fri May 08 14:14:21 BRT 2026
+4.name=In\u00EDcio
+process.description=PROCESSO_RH_DIAGNOSTICO
+5.name=Comercial
+8.return=
+6.name=Fim
+5.instructions=
+7.name=
+process.instructions=
+8.name=
+7.flow=
+1.name=Pool
+8.flow=
+2.name=Solicitante
+7.return=
+6.instructions=Atividade final do processo
+4.instructions=
+process.version.instructions=
+process.category=
+</eventDescription>
+    </WorkflowProcessEvent>
+    <WorkflowProcessEvent>
+      <workflowProcessEventPK>
+        <companyId>1</companyId>
+        <eventId>POR_LITERALS</eventId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+      </workflowProcessEventPK>
+      <eventDescription>#Fri May 08 14:14:21 BRT 2026
+4.name=In\u00EDcio
+process.description=PROCESSO_RH_DIAGNOSTICO
+5.name=Comercial
+8.return=
+6.name=Fim
+5.instructions=
+7.name=
+process.instructions=
+8.name=
+7.flow=
+1.name=Pool
+8.flow=
+2.name=Solicitante
+7.return=
+6.instructions=Atividade final do processo
+4.instructions=
+process.version.instructions=
+process.category=
+</eventDescription>
     </WorkflowProcessEvent>
   </list>
   <list/>
