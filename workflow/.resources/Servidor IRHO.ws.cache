@@ -10,6 +10,263 @@
    </array>
   </void>
   <void method="put">
+   <string>camposFormulario, documentoId = 6</string>
+   <array class="java.lang.String" length="84">
+    <void index="0">
+     <string>apply_data_science</string>
+    </void>
+    <void index="1">
+     <string>ats_name</string>
+    </void>
+    <void index="2">
+     <string>benefits_cost_comparison</string>
+    </void>
+    <void index="3">
+     <string>climate_survey</string>
+    </void>
+    <void index="4">
+     <string>company_site</string>
+    </void>
+    <void index="5">
+     <string>cost_per_employee</string>
+    </void>
+    <void index="6">
+     <string>culture_alignment</string>
+    </void>
+    <void index="7">
+     <string>culture_intro</string>
+    </void>
+    <void index="8">
+     <string>dedicated_team</string>
+    </void>
+    <void index="9">
+     <string>defined_dp_workflows</string>
+    </void>
+    <void index="10">
+     <string>defined_hierarchy</string>
+    </void>
+    <void index="11">
+     <string>dp_automated</string>
+    </void>
+    <void index="12">
+     <string>dp_system</string>
+    </void>
+    <void index="13">
+     <string>email_contato</string>
+    </void>
+    <void index="14">
+     <string>empresa</string>
+    </void>
+    <void index="15">
+     <string>esocial_compliant</string>
+    </void>
+    <void index="16">
+     <string>expression_freedom</string>
+    </void>
+    <void index="17">
+     <string>full_resource_usage</string>
+    </void>
+    <void index="18">
+     <string>has_digital_admission</string>
+    </void>
+    <void index="19">
+     <string>has_electronic_signature</string>
+    </void>
+    <void index="20">
+     <string>has_hr_portal</string>
+    </void>
+    <void index="21">
+     <string>has_integration_program</string>
+    </void>
+    <void index="22">
+     <string>has_rh_indicators</string>
+    </void>
+    <void index="23">
+     <string>hiring_volume</string>
+    </void>
+    <void index="24">
+     <string>id_pdf_diagnostico</string>
+    </void>
+    <void index="25">
+     <string>indicator_tools</string>
+    </void>
+    <void index="26">
+     <string>indicators_integration</string>
+    </void>
+    <void index="27">
+     <string>integrated_data</string>
+    </void>
+    <void index="28">
+     <string>is_admission_secure</string>
+    </void>
+    <void index="29">
+     <string>job_channels</string>
+    </void>
+    <void index="30">
+     <string>json_insights</string>
+    </void>
+    <void index="31">
+     <string>json_oportunidades</string>
+    </void>
+    <void index="32">
+     <string>json_respostas</string>
+    </void>
+    <void index="33">
+     <string>link_pdf_publico</string>
+    </void>
+    <void index="34">
+     <string>nivel_maturidade</string>
+    </void>
+    <void index="35">
+     <string>nome_contato</string>
+    </void>
+    <void index="36">
+     <string>payroll_cloud</string>
+    </void>
+    <void index="37">
+     <string>payroll_responsible</string>
+    </void>
+    <void index="38">
+     <string>pdf_base64_1</string>
+    </void>
+    <void index="39">
+     <string>pdf_base64_10</string>
+    </void>
+    <void index="40">
+     <string>pdf_base64_11</string>
+    </void>
+    <void index="41">
+     <string>pdf_base64_12</string>
+    </void>
+    <void index="42">
+     <string>pdf_base64_13</string>
+    </void>
+    <void index="43">
+     <string>pdf_base64_14</string>
+    </void>
+    <void index="44">
+     <string>pdf_base64_15</string>
+    </void>
+    <void index="45">
+     <string>pdf_base64_16</string>
+    </void>
+    <void index="46">
+     <string>pdf_base64_17</string>
+    </void>
+    <void index="47">
+     <string>pdf_base64_18</string>
+    </void>
+    <void index="48">
+     <string>pdf_base64_19</string>
+    </void>
+    <void index="49">
+     <string>pdf_base64_2</string>
+    </void>
+    <void index="50">
+     <string>pdf_base64_20</string>
+    </void>
+    <void index="51">
+     <string>pdf_base64_3</string>
+    </void>
+    <void index="52">
+     <string>pdf_base64_4</string>
+    </void>
+    <void index="53">
+     <string>pdf_base64_5</string>
+    </void>
+    <void index="54">
+     <string>pdf_base64_6</string>
+    </void>
+    <void index="55">
+     <string>pdf_base64_7</string>
+    </void>
+    <void index="56">
+     <string>pdf_base64_8</string>
+    </void>
+    <void index="57">
+     <string>pdf_base64_9</string>
+    </void>
+    <void index="58">
+     <string>people_valuation</string>
+    </void>
+    <void index="59">
+     <string>process_formal</string>
+    </void>
+    <void index="60">
+     <string>productivity_tracking</string>
+    </void>
+    <void index="61">
+     <string>rh_team_size</string>
+    </void>
+    <void index="62">
+     <string>score_final</string>
+    </void>
+    <void index="63">
+     <string>segmento</string>
+    </void>
+    <void index="64">
+     <string>structured_performance_eval</string>
+    </void>
+    <void index="65">
+     <string>tamanho</string>
+    </void>
+    <void index="66">
+     <string>td_aligned_goals</string>
+    </void>
+    <void index="67">
+     <string>td_annual_planning</string>
+    </void>
+    <void index="68">
+     <string>td_gap_indicators</string>
+    </void>
+    <void index="69">
+     <string>td_impact_indicators</string>
+    </void>
+    <void index="70">
+     <string>td_leaders_contribution</string>
+    </void>
+    <void index="71">
+     <string>td_management_participation</string>
+    </void>
+    <void index="72">
+     <string>td_results_correlation</string>
+    </void>
+    <void index="73">
+     <string>td_strategy_clear</string>
+    </void>
+    <void index="74">
+     <string>telefone</string>
+    </void>
+    <void index="75">
+     <string>turnover_cost_analysis</string>
+    </void>
+    <void index="76">
+     <string>use_admission_portal</string>
+    </void>
+    <void index="77">
+     <string>use_ai_rh</string>
+    </void>
+    <void index="78">
+     <string>use_ats</string>
+    </void>
+    <void index="79">
+     <string>use_bpm_erp</string>
+    </void>
+    <void index="80">
+     <string>use_dashboards</string>
+    </void>
+    <void index="81">
+     <string>use_hr_consultancy</string>
+    </void>
+    <void index="82">
+     <string>use_sheets_payroll</string>
+    </void>
+    <void index="83">
+     <string>user_role</string>
+    </void>
+   </array>
+  </void>
+  <void method="put">
    <string>expediente</string>
    <array class="java.lang.String" length="1">
     <void index="0">

@@ -116,6 +116,13 @@ function createDataset(fields, constraints, sortFields) {
             cardDataArray.push({"field": "tb_nivel_maturidade___" + nextIndex, "value": maturidade});
             cardDataArray.push({"field": "tb_json_respostas___" + nextIndex, "value": jsonDados});
 
+            // INSERÇÃO DOS NOVOS CAMPOS COMERCIAIS
+            cardDataArray.push({"field": "tb_linkedin_url___" + nextIndex, "value": dadosObj.linkedin_url || ""});
+            cardDataArray.push({"field": "tb_flag_conexao_linkedin___" + nextIndex, "value": dadosObj.flag_conexao_linkedin || ""});
+            cardDataArray.push({"field": "tb_flag_envio_email___" + nextIndex, "value": dadosObj.flag_envio_email || ""});
+            cardDataArray.push({"field": "tb_flag_whatsapp___" + nextIndex, "value": dadosObj.flag_whatsapp || ""});
+            cardDataArray.push({"field": "tb_flag_mensagem_linkedin___" + nextIndex, "value": dadosObj.flag_mensagem_linkedin || ""});
+
             atualizarFormularioFluigSOAP(cardDocumentId, cardDataArray);
             dataset.addRow(new Array("SUCCESS", "Lead inserido com sucesso via SOAP na linha " + nextIndex, eventoId));
         }

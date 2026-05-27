@@ -4,33 +4,21 @@ function afterProcessCreate(processId) {
     try {
         var scoreFinal = hAPI.getCardValue("score_final");
         
-        // TRAVA DE SEGURANÇA: Se não tem score, foi criado no Passo 1 (Carrinho Abandonado)
         if (!scoreFinal || scoreFinal == "" || scoreFinal == "0") {
-            log.info(">>> DIAGNOSTICO RH: Solicitacao iniciada no Passo 1. Aguardando finalizacao para gerar PDF e enviar email.");
             return; 
         }
 
-        // Se por acaso foi criado de uma vez (fallback), o fluxo continua
         var emailContato = hAPI.getCardValue("email_contato");
         if (!emailContato || emailContato == "" || emailContato == "anonimo@teste.com") {
-            log.warn(">>> DIAGNOSTICO RH: Email invalido. Cancelando envio.");
             return;
         }
 
         var nomeContato = hAPI.getCardValue("nome_contato");
         var empresa = hAPI.getCardValue("empresa");
         var maturidade = hAPI.getCardValue("nivel_maturidade");
-        var linkPdfPublico = hAPI.getCardValue("link_pdf_publico"); 
+        var jsonInsights = hAPI.getCardValue("json_insights");
+
         var docIdAnexo = hAPI.getCardValue("id_pdf_diagnostico");
-
-        var base64String = "";
-        for (var i = 1; i <= 20; i++) {
-            var pedaco = hAPI.getCardValue("pdf_base64_" + i);
-            if (pedaco != null && pedaco.trim() != "") {
-                base64String += pedaco;
-            }
-        }
-
         if (docIdAnexo) {
             try { 
                 hAPI.attachDocument(parseInt(docIdAnexo)); 
@@ -42,83 +30,39 @@ function afterProcessCreate(processId) {
             } catch(e) {}
         }
 
-        var pdfBytes = null;
-        if (base64String && base64String.trim() !== "") {
-            pdfBytes = java.util.Base64.getDecoder().decode(new java.lang.String(base64String).getBytes("UTF-8"));
-        } else if (linkPdfPublico != null && linkPdfPublico.indexOf("http") !== -1) {
-            pdfBytes = baixarBytesDaUrl(linkPdfPublico);
-        }
-
-        var assuntoEmail = "Resultado do seu Diagnóstico de RH: " + maturidade;
-        var nomeArquivo = "Diagnostico_" + String(empresa).replace(/[^a-zA-Z0-9]/g, "_") + ".pdf";
+        var assuntoEmail = "📊 Resultado: A maturidade do RH da " + empresa + " é " + maturidade;
         
-        var htmlBody = "<div style='font-family: Arial, sans-serif; color: #333;'>" +
-                       "<h2>Olá, " + nomeContato + "!</h2>" +
-                       "<p>Agradecemos por realizar o Diagnóstico InteRHativa para a empresa <strong>" + empresa + "</strong>.</p>" +
-                       "<div style='padding: 15px; background-color: #f8fbff; border-left: 4px solid #1eaad9; margin: 20px 0;'>" +
-                       "<h3 style='margin: 0; color: #1eaad9;'>Seu Score Global: " + scoreFinal + "%</h3>" +
-                       "<p style='margin: 5px 0 0 0; font-size: 16px;'>Nível de Maturidade: <strong>" + maturidade + "</strong></p>" +
-                       "</div>" +
-                       "<p><strong>O seu relatório completo segue em anexo a este e-mail (PDF).</strong> Basta descarregá-lo diretamente da sua caixa de entrada.</p>" +
-                       "<p>Nossos especialistas avaliarão as suas respostas e entrarão em contacto para apresentar as melhores oportunidades de desenvolvimento e transformação.</p>" +
-                       "<p>Abraço,<br>Equipa de Especialistas em RH.</p>" +
-                       "</div>";
+        var sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        var dataAtualFormatada = sdf.format(new java.util.Date());
 
-        try {
-            enviarEmailComAnexo(emailContato, assuntoEmail, htmlBody, nomeArquivo, pdfBytes);
-            log.info(">>> DIAGNOSTICO RH: Email COM ANEXO enviado com sucesso!");
-        } catch (mailError) {
-            log.error(">>> DIAGNOSTICO RH: Erro JavaMail. Fallback...");
-            var parametros = new java.util.HashMap();
-            parametros.put("NOME_CONTATO", nomeContato);
-            parametros.put("NOME_EMPRESA", empresa);
-            parametros.put("SCORE_FINAL", scoreFinal + "%");
-            parametros.put("MATURIDADE", maturidade);
-            parametros.put("LINK_PDF", linkPdfPublico); 
-            parametros.put("subject", assuntoEmail);
-            var destinatarios = new java.util.ArrayList();
-            destinatarios.add(String(emailContato).trim());
-            notifier.notify("guilherme-af", "TPL_DIAGNOSTICO_RESULTADO", parametros, destinatarios, "text/html");
+        var htmlInsightsStr = "";
+        if (jsonInsights != null && jsonInsights != "" && jsonInsights.length > 5) {
+            try {
+                var insightsList = JSON.parse(jsonInsights);
+                for (var j = 0; j < insightsList.length; j++) {
+                    htmlInsightsStr += "<div style='margin-bottom: 12px; padding: 15px; background-color: #f8fafc; border-left: 4px solid #1eaad9; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);'>" +
+                                       "<h4 style='margin: 0 0 5px 0; color: #004b8d; font-size: 15px; font-weight: 700;'>" + insightsList[j].titulo + "</h4>" +
+                                       "<p style='margin: 0; font-size: 14px; color: #4a5568; line-height: 1.4;'>" + insightsList[j].descricao + "</p>" +
+                                       "</div>";
+                }
+            } catch(e) {}
         }
+
+        var parametros = new java.util.HashMap();
+        parametros.put("nomeContato", nomeContato);
+        parametros.put("empresa", empresa);
+        parametros.put("scoreFinal", scoreFinal);
+        parametros.put("maturidade", maturidade);
+        parametros.put("subject", assuntoEmail);
+        parametros.put("dataAtual", dataAtualFormatada);
+        parametros.put("htmlInsights", htmlInsightsStr);
+        
+        var destinatarios = new java.util.ArrayList();
+        destinatarios.add(String(emailContato).trim());
+        
+        notifier.notify("guilherme-af", "TPL_DIAGNOSTICO_RESULTADO", parametros, destinatarios, "text/html");
+
     } catch (e) {
-        log.error(">>> DIAGNOSTICO RH: ERRO FATAL: " + e.toString());
+        log.error(">>> DIAGNOSTICO RH: ERRO FATAL NO ENVIO: " + e.toString());
     }
-}
-
-function enviarEmailComAnexo(destinatario, assunto, htmlBody, nomeArquivo, pdfBytes) {
-    var initialContext = new javax.naming.InitialContext();
-    var session = initialContext.lookup("java:/mail/MailSession");
-    var msg = new javax.mail.internet.MimeMessage(session);
-    var fromAddress = session.getProperty("mail.from");
-    if (fromAddress != null && fromAddress.trim() != "") msg.setFrom(new javax.mail.internet.InternetAddress(fromAddress));
-    msg.setRecipients(javax.mail.Message.RecipientType.TO, javax.mail.internet.InternetAddress.parse(destinatario));
-    msg.setSubject(assunto, "UTF-8");
-    var multipart = new javax.mail.internet.MimeMultipart();
-    var htmlPart = new javax.mail.internet.MimeBodyPart();
-    htmlPart.setContent(htmlBody, "text/html; charset=utf-8");
-    multipart.addBodyPart(htmlPart);
-    if (pdfBytes != null) {
-        var attachmentPart = new javax.mail.internet.MimeBodyPart();
-        var dataSource = new javax.mail.util.ByteArrayDataSource(pdfBytes, "application/pdf");
-        attachmentPart.setDataHandler(new javax.activation.DataHandler(dataSource));
-        attachmentPart.setFileName(nomeArquivo);
-        multipart.addBodyPart(attachmentPart);
-    }
-    msg.setContent(multipart);
-    javax.mail.Transport.send(msg);
-}
-
-function baixarBytesDaUrl(urlStr) {
-    try {
-        var url = new java.net.URL(urlStr);
-        var conn = url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setConnectTimeout(5000); 
-        conn.setReadTimeout(10000);   
-        if (conn.getResponseCode() >= 300) return null;
-        var is = conn.getInputStream();
-        var bytes = org.apache.commons.io.IOUtils.toByteArray(is);
-        is.close();
-        return bytes;
-    } catch (e) { return null; }
 }

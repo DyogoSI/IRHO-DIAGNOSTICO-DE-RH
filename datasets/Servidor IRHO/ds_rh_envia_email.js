@@ -3,9 +3,8 @@ function createDataset(fields, constraints, sortFields) {
     dataset.addColumn("status");
     dataset.addColumn("message");
 
-    var emailContato = "", nomeContato = "", empresa = "", scoreFinal = "", maturidade = "", linkPdfPublico = "";
+    var emailContato = "", nomeContato = "", empresa = "", scoreFinal = "", maturidade = "", jsonInsights = "";
     
-    // Captura as variaveis enviadas pelo Widget
     if (constraints != null) {
         for (var i = 0; i < constraints.length; i++) {
             if (constraints[i].fieldName == "emailContato") emailContato = constraints[i].initialValue;
@@ -13,7 +12,7 @@ function createDataset(fields, constraints, sortFields) {
             if (constraints[i].fieldName == "empresa") empresa = constraints[i].initialValue;
             if (constraints[i].fieldName == "scoreFinal") scoreFinal = constraints[i].initialValue;
             if (constraints[i].fieldName == "maturidade") maturidade = constraints[i].initialValue;
-            if (constraints[i].fieldName == "linkPdfPublico") linkPdfPublico = constraints[i].initialValue;
+            if (constraints[i].fieldName == "json_insights") jsonInsights = constraints[i].initialValue;
         }
     }
 
@@ -23,103 +22,49 @@ function createDataset(fields, constraints, sortFields) {
     }
 
     try {
-        var pdfBytes = null;
-        if (linkPdfPublico != "") {
-            pdfBytes = baixarBytesDaUrl(linkPdfPublico);
-        }
-
-        var assuntoEmail = "Resultado do seu Diagnóstico de RH: " + maturidade;
-        var nomeArquivo = "Diagnostico_" + String(empresa).replace(/[^a-zA-Z0-9]/g, "_") + ".pdf";
+        // ASSUNTO FORMATADO CONFORME SOLICITADO
+        var assuntoEmail = "📊 Resultado: A maturidade do RH da " + empresa + " é " + maturidade;
         
-        var htmlBody = "<div style='font-family: Arial, sans-serif; color: #333;'>" +
-                       "<h2>Olá, " + nomeContato + "!</h2>" +
-                       "<p>Agradecemos por realizar o Diagnóstico InteRHativa para a empresa <strong>" + empresa + "</strong>.</p>" +
-                       "<div style='padding: 15px; background-color: #f8fbff; border-left: 4px solid #1eaad9; margin: 20px 0;'>" +
-                       "<h3 style='margin: 0; color: #1eaad9;'>Seu Score Global: " + scoreFinal + "%</h3>" +
-                       "<p style='margin: 5px 0 0 0; font-size: 16px;'>Nível de Maturidade: <strong>" + maturidade + "</strong></p>" +
-                       "</div>" +
-                       "<p><strong>O seu relatório completo segue em anexo a este e-mail (PDF).</strong> Basta descarregá-lo diretamente da sua caixa de entrada.</p>" +
-                       "<p>Nossos especialistas avaliarão as suas respostas e entrarão em contacto para apresentar as melhores oportunidades de desenvolvimento e transformação.</p>" +
-                       "<p>Abraço,<br>Equipa de Especialistas em RH.</p>" +
-                       "</div>";
-
-        // TENTATIVA 1: Enviar Email com Anexo embutido via JavaMail
-        try {
-            enviarEmailComAnexo(emailContato, assuntoEmail, htmlBody, nomeArquivo, pdfBytes);
-            dataset.addRow(["SUCCESS", "Email enviado com sucesso (Com Anexo)"]);
-            log.info(">>> DIAGNOSTICO RH: Dataset enviou email com sucesso para " + emailContato);
-            
-        } catch (mailError) {
-            log.warn(">>> DIAGNOSTICO RH: Erro no JavaMail nativo. Acionando Fallback Notifier para: " + emailContato);
-            
-            // TENTATIVA 2: Fallback (Mesma logica de emergencia que funcionava no seu processo antigo)
+        var sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        var dataAtualFormatada = sdf.format(new java.util.Date());
+        
+        // Transforma o JSON de Insights em blocos HTML
+        var htmlInsightsStr = "";
+        if (jsonInsights != null && jsonInsights != "" && jsonInsights.length > 5) {
             try {
-                var parametros = new java.util.HashMap();
-                parametros.put("NOME_CONTATO", nomeContato);
-                parametros.put("NOME_EMPRESA", empresa);
-                parametros.put("SCORE_FINAL", scoreFinal + "%");
-                parametros.put("MATURIDADE", maturidade);
-                parametros.put("LINK_PDF", linkPdfPublico); 
-                parametros.put("subject", assuntoEmail);
-                
-                var destinatarios = new java.util.ArrayList();
-                destinatarios.add(String(emailContato).trim());
-                
-                // Dispara usando o motor de notificacao nativo do Fluig
-                notifier.notify("guilherme-af", "TPL_DIAGNOSTICO_RESULTADO", parametros, destinatarios, "text/html");
-                
-                dataset.addRow(["SUCCESS", "Email disparado com sucesso via Fallback Notifier"]);
-                log.info(">>> DIAGNOSTICO RH: Fallback Notifier concluido com sucesso!");
-                
-            } catch (fallbackError) {
-                log.error(">>> DIAGNOSTICO RH: Erro FATAL no Fallback de E-mail: " + fallbackError.toString());
-                dataset.addRow(["ERROR", "Falha nos dois metodos de envio: " + fallbackError.toString()]);
+                var insightsList = JSON.parse(jsonInsights);
+                for (var j = 0; j < insightsList.length; j++) {
+                    htmlInsightsStr += "<div style='margin-bottom: 12px; padding: 15px; background-color: #f8fafc; border-left: 4px solid #1eaad9; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);'>" +
+                                       "<h4 style='margin: 0 0 5px 0; color: #004b8d; font-size: 15px; font-weight: 700;'>" + insightsList[j].titulo + "</h4>" +
+                                       "<p style='margin: 0; font-size: 14px; color: #4a5568; line-height: 1.4;'>" + insightsList[j].descricao + "</p>" +
+                                       "</div>";
+                }
+            } catch (e) {
+                log.warn(">>> DIAGNOSTICO RH: Erro ao fazer parse dos insights no email: " + e.toString());
             }
         }
 
+        var parametros = new java.util.HashMap();
+        parametros.put("nomeContato", nomeContato);
+        parametros.put("empresa", empresa);
+        parametros.put("scoreFinal", scoreFinal); 
+        parametros.put("maturidade", maturidade);
+        parametros.put("subject", assuntoEmail);
+        parametros.put("dataAtual", dataAtualFormatada); 
+        parametros.put("htmlInsights", htmlInsightsStr); 
+        
+        var destinatarios = new java.util.ArrayList();
+        destinatarios.add(String(emailContato).trim());
+        
+        notifier.notify("guilherme-af", "TPL_DIAGNOSTICO_RESULTADO", parametros, destinatarios, "text/html");
+        
+        dataset.addRow(["SUCCESS", "Email disparado com sucesso via Notifier"]);
+        log.info(">>> DIAGNOSTICO RH: Notifier concluido com sucesso para " + emailContato);
+        
     } catch (e) {
-        log.error(">>> ERRO DATASET EMAIL: " + e.toString());
+        log.error(">>> ERRO DATASET EMAIL (NOTIFIER): " + e.toString());
         dataset.addRow(["ERROR", e.toString()]);
     }
+    
     return dataset;
-}
-
-// Funcao Auxiliar 1: Disparo JavaMail
-function enviarEmailComAnexo(destinatario, assunto, htmlBody, nomeArquivo, pdfBytes) {
-    var initialContext = new javax.naming.InitialContext();
-    var session = initialContext.lookup("java:/mail/MailSession");
-    var msg = new javax.mail.internet.MimeMessage(session);
-    var fromAddress = session.getProperty("mail.from");
-    if (fromAddress != null && fromAddress.trim() != "") msg.setFrom(new javax.mail.internet.InternetAddress(fromAddress));
-    msg.setRecipients(javax.mail.Message.RecipientType.TO, javax.mail.internet.InternetAddress.parse(destinatario));
-    msg.setSubject(assunto, "UTF-8");
-    var multipart = new javax.mail.internet.MimeMultipart();
-    var htmlPart = new javax.mail.internet.MimeBodyPart();
-    htmlPart.setContent(htmlBody, "text/html; charset=utf-8");
-    multipart.addBodyPart(htmlPart);
-    if (pdfBytes != null) {
-        var attachmentPart = new javax.mail.internet.MimeBodyPart();
-        var dataSource = new javax.mail.util.ByteArrayDataSource(pdfBytes, "application/pdf");
-        attachmentPart.setDataHandler(new javax.activation.DataHandler(dataSource));
-        attachmentPart.setFileName(nomeArquivo);
-        multipart.addBodyPart(attachmentPart);
-    }
-    msg.setContent(multipart);
-    javax.mail.Transport.send(msg);
-}
-
-// Funcao Auxiliar 2: Baixar PDF do GED para embutir
-function baixarBytesDaUrl(urlStr) {
-    try {
-        var url = new java.net.URL(urlStr);
-        var conn = url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setConnectTimeout(5000); 
-        conn.setReadTimeout(10000);   
-        if (conn.getResponseCode() >= 300) return null;
-        var is = conn.getInputStream();
-        var bytes = org.apache.commons.io.IOUtils.toByteArray(is);
-        is.close();
-        return bytes;
-    } catch (e) { return null; }
 }

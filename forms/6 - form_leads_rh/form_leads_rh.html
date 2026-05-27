@@ -68,6 +68,9 @@
             opacity: 1 !important;
             line-height: 1.4 !important;
         }
+        
+        .fluig-style-guide .checkbox label { font-weight: 600; color: #004b8d; cursor: pointer; }
+        
         .score-card { 
             background: #f8fbff; 
             padding: 30px; 
@@ -347,6 +350,33 @@
                                 <div class="form-group"><label>Email Corporativo</label><input type="text" name="email_contato" class="form-control" readonly></div>
                                 <div class="form-group"><label>Telefone</label><input type="text" name="telefone" class="form-control" readonly></div>
                                 <div class="form-group"><label>Cargo / Setor</label><input type="text" name="user_role" class="form-control" readonly></div>
+                                <div class="form-group"><label>URL do LinkedIn</label><input type="text" name="linkedin_url" id="linkedin_url" class="form-control" placeholder="https://linkedin.com/in/..."></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-section">
+                        <h4 class="form-section-title">Ações Comerciais (Nutrição 1)</h4>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="checkbox">
+                                    <label><input type="checkbox" name="flag_conexao_linkedin" id="flag_conexao_linkedin"> Conexão LinkedIn</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="checkbox">
+                                    <label><input type="checkbox" name="flag_envio_email" id="flag_envio_email"> Envio E-mail</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="checkbox">
+                                    <label><input type="checkbox" name="flag_whatsapp" id="flag_whatsapp"> WhatsApp</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="checkbox">
+                                    <label><input type="checkbox" name="flag_mensagem_linkedin" id="flag_mensagem_linkedin"> Mensagem LinkedIn</label>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -28,7 +28,7 @@
     <processDefinitionVersionPK>
       <companyId>1</companyId>
       <processId>PROCESSO_RH_DIAGNOSTICO</processId>
-      <version>50</version>
+      <version>59</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
     <formId>6</formId>
@@ -104,8 +104,8 @@
         <version>1</version>
         <sequence>5</sequence>
       </processStatePK>
-      <stateName>Analisar Lead</stateName>
-      <stateDescription>Analisar Lead</stateDescription>
+      <stateName>Nutrição 1</stateName>
+      <stateDescription>Nutrição 1</stateDescription>
       <instruction></instruction>
       <deadlineTime>0</deadlineTime>
       <deadlineFieldName></deadlineFieldName>
@@ -127,7 +127,59 @@
       <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
       <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
       <automatic>false</automatic>
-      <positionX>330</positionX>
+      <positionX>280</positionX>
+      <positionY>253</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <allowanceManagerTime>0</allowanceManagerTime>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>0</stateType>
+      <bpmnType>80</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <noticeExpirationAuthorityTime>0</noticeExpirationAuthorityTime>
+      <noticeExpirationRequisitionerTime>0</noticeExpirationRequisitionerTime>
+      <noticeExpirationManagerTime>0</noticeExpirationManagerTime>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+      <executionType>0</executionType>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <sequence>9</sequence>
+      </processStatePK>
+      <stateName>Tentativa de contato</stateName>
+      <stateDescription>Tentativa de contato</stateDescription>
+      <instruction></instruction>
+      <deadlineTime>0</deadlineTime>
+      <deadlineFieldName></deadlineFieldName>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId>Usuário</engineAllocationId>
+      <engineAllocationConfiguration>&lt;AssignmentController&gt;&lt;User&gt;guilherme-af&lt;/User&gt;&lt;/AssignmentController&gt;</engineAllocationConfiguration>
+      <selectColleague>1</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>true</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>3600</allowanceAuthorityTime>
+      <frequenceAuthorityTime>3600</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>false</automatic>
+      <positionX>480</positionX>
       <positionY>253</positionY>
       <forecastedEffortType>0</forecastedEffortType>
       <forecastedEffort>0</forecastedEffort>
@@ -209,7 +261,7 @@
       <actionLabel></actionLabel>
       <returnPermited>false</returnPermited>
       <initialStateSequence>5</initialStateSequence>
-      <finalStateSequence>6</finalStateSequence>
+      <finalStateSequence>9</finalStateSequence>
       <returnLabel></returnLabel>
       <name></name>
       <automaticLink>false</automaticLink>
@@ -233,6 +285,23 @@
       <defaultLink>false</defaultLink>
       <type>0</type>
     </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <linkSequence>10</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>9</initialStateSequence>
+      <finalStateSequence>6</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
   </list>
   <list/>
   <list>
@@ -249,33 +318,21 @@
     try {
         var scoreFinal = hAPI.getCardValue(&quot;score_final&quot;);
         
-        // TRAVA DE SEGURANÇA: Se não tem score, foi criado no Passo 1 (Carrinho Abandonado)
         if (!scoreFinal || scoreFinal == &quot;&quot; || scoreFinal == &quot;0&quot;) {
-            log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Solicitacao iniciada no Passo 1. Aguardando finalizacao para gerar PDF e enviar email.&quot;);
             return; 
         }
 
-        // Se por acaso foi criado de uma vez (fallback), o fluxo continua
         var emailContato = hAPI.getCardValue(&quot;email_contato&quot;);
         if (!emailContato || emailContato == &quot;&quot; || emailContato == &quot;anonimo@teste.com&quot;) {
-            log.warn(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Email invalido. Cancelando envio.&quot;);
             return;
         }
 
         var nomeContato = hAPI.getCardValue(&quot;nome_contato&quot;);
         var empresa = hAPI.getCardValue(&quot;empresa&quot;);
         var maturidade = hAPI.getCardValue(&quot;nivel_maturidade&quot;);
-        var linkPdfPublico = hAPI.getCardValue(&quot;link_pdf_publico&quot;); 
+        var jsonInsights = hAPI.getCardValue(&quot;json_insights&quot;);
+
         var docIdAnexo = hAPI.getCardValue(&quot;id_pdf_diagnostico&quot;);
-
-        var base64String = &quot;&quot;;
-        for (var i = 1; i &lt;= 20; i++) {
-            var pedaco = hAPI.getCardValue(&quot;pdf_base64_&quot; + i);
-            if (pedaco != null &amp;&amp; pedaco.trim() != &quot;&quot;) {
-                base64String += pedaco;
-            }
-        }
-
         if (docIdAnexo) {
             try { 
                 hAPI.attachDocument(parseInt(docIdAnexo)); 
@@ -287,85 +344,41 @@
             } catch(e) {}
         }
 
-        var pdfBytes = null;
-        if (base64String &amp;&amp; base64String.trim() !== &quot;&quot;) {
-            pdfBytes = java.util.Base64.getDecoder().decode(new java.lang.String(base64String).getBytes(&quot;UTF-8&quot;));
-        } else if (linkPdfPublico != null &amp;&amp; linkPdfPublico.indexOf(&quot;http&quot;) !== -1) {
-            pdfBytes = baixarBytesDaUrl(linkPdfPublico);
-        }
-
-        var assuntoEmail = &quot;Resultado do seu Diagnóstico de RH: &quot; + maturidade;
-        var nomeArquivo = &quot;Diagnostico_&quot; + String(empresa).replace(/[^a-zA-Z0-9]/g, &quot;_&quot;) + &quot;.pdf&quot;;
+        var assuntoEmail = &quot;📊 Resultado: A maturidade do RH da &quot; + empresa + &quot; é &quot; + maturidade;
         
-        var htmlBody = &quot;&lt;div style=&apos;font-family: Arial, sans-serif; color: #333;&apos;&gt;&quot; +
-                       &quot;&lt;h2&gt;Olá, &quot; + nomeContato + &quot;!&lt;/h2&gt;&quot; +
-                       &quot;&lt;p&gt;Agradecemos por realizar o Diagnóstico InteRHativa para a empresa &lt;strong&gt;&quot; + empresa + &quot;&lt;/strong&gt;.&lt;/p&gt;&quot; +
-                       &quot;&lt;div style=&apos;padding: 15px; background-color: #f8fbff; border-left: 4px solid #1eaad9; margin: 20px 0;&apos;&gt;&quot; +
-                       &quot;&lt;h3 style=&apos;margin: 0; color: #1eaad9;&apos;&gt;Seu Score Global: &quot; + scoreFinal + &quot;%&lt;/h3&gt;&quot; +
-                       &quot;&lt;p style=&apos;margin: 5px 0 0 0; font-size: 16px;&apos;&gt;Nível de Maturidade: &lt;strong&gt;&quot; + maturidade + &quot;&lt;/strong&gt;&lt;/p&gt;&quot; +
-                       &quot;&lt;/div&gt;&quot; +
-                       &quot;&lt;p&gt;&lt;strong&gt;O seu relatório completo segue em anexo a este e-mail (PDF).&lt;/strong&gt; Basta descarregá-lo diretamente da sua caixa de entrada.&lt;/p&gt;&quot; +
-                       &quot;&lt;p&gt;Nossos especialistas avaliarão as suas respostas e entrarão em contacto para apresentar as melhores oportunidades de desenvolvimento e transformação.&lt;/p&gt;&quot; +
-                       &quot;&lt;p&gt;Abraço,&lt;br&gt;Equipa de Especialistas em RH.&lt;/p&gt;&quot; +
-                       &quot;&lt;/div&gt;&quot;;
+        var sdf = new java.text.SimpleDateFormat(&quot;dd/MM/yyyy&quot;);
+        var dataAtualFormatada = sdf.format(new java.util.Date());
 
-        try {
-            enviarEmailComAnexo(emailContato, assuntoEmail, htmlBody, nomeArquivo, pdfBytes);
-            log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Email COM ANEXO enviado com sucesso!&quot;);
-        } catch (mailError) {
-            log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: Erro JavaMail. Fallback...&quot;);
-            var parametros = new java.util.HashMap();
-            parametros.put(&quot;NOME_CONTATO&quot;, nomeContato);
-            parametros.put(&quot;NOME_EMPRESA&quot;, empresa);
-            parametros.put(&quot;SCORE_FINAL&quot;, scoreFinal + &quot;%&quot;);
-            parametros.put(&quot;MATURIDADE&quot;, maturidade);
-            parametros.put(&quot;LINK_PDF&quot;, linkPdfPublico); 
-            parametros.put(&quot;subject&quot;, assuntoEmail);
-            var destinatarios = new java.util.ArrayList();
-            destinatarios.add(String(emailContato).trim());
-            notifier.notify(&quot;guilherme-af&quot;, &quot;TPL_DIAGNOSTICO_RESULTADO&quot;, parametros, destinatarios, &quot;text/html&quot;);
+        var htmlInsightsStr = &quot;&quot;;
+        if (jsonInsights != null &amp;&amp; jsonInsights != &quot;&quot; &amp;&amp; jsonInsights.length &gt; 5) {
+            try {
+                var insightsList = JSON.parse(jsonInsights);
+                for (var j = 0; j &lt; insightsList.length; j++) {
+                    htmlInsightsStr += &quot;&lt;div style=&apos;margin-bottom: 12px; padding: 15px; background-color: #f8fafc; border-left: 4px solid #1eaad9; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);&apos;&gt;&quot; +
+                                       &quot;&lt;h4 style=&apos;margin: 0 0 5px 0; color: #004b8d; font-size: 15px; font-weight: 700;&apos;&gt;&quot; + insightsList[j].titulo + &quot;&lt;/h4&gt;&quot; +
+                                       &quot;&lt;p style=&apos;margin: 0; font-size: 14px; color: #4a5568; line-height: 1.4;&apos;&gt;&quot; + insightsList[j].descricao + &quot;&lt;/p&gt;&quot; +
+                                       &quot;&lt;/div&gt;&quot;;
+                }
+            } catch(e) {}
         }
+
+        var parametros = new java.util.HashMap();
+        parametros.put(&quot;nomeContato&quot;, nomeContato);
+        parametros.put(&quot;empresa&quot;, empresa);
+        parametros.put(&quot;scoreFinal&quot;, scoreFinal);
+        parametros.put(&quot;maturidade&quot;, maturidade);
+        parametros.put(&quot;subject&quot;, assuntoEmail);
+        parametros.put(&quot;dataAtual&quot;, dataAtualFormatada);
+        parametros.put(&quot;htmlInsights&quot;, htmlInsightsStr);
+        
+        var destinatarios = new java.util.ArrayList();
+        destinatarios.add(String(emailContato).trim());
+        
+        notifier.notify(&quot;guilherme-af&quot;, &quot;TPL_DIAGNOSTICO_RESULTADO&quot;, parametros, destinatarios, &quot;text/html&quot;);
+
     } catch (e) {
-        log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: ERRO FATAL: &quot; + e.toString());
+        log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH: ERRO FATAL NO ENVIO: &quot; + e.toString());
     }
-}
-
-function enviarEmailComAnexo(destinatario, assunto, htmlBody, nomeArquivo, pdfBytes) {
-    var initialContext = new javax.naming.InitialContext();
-    var session = initialContext.lookup(&quot;java:/mail/MailSession&quot;);
-    var msg = new javax.mail.internet.MimeMessage(session);
-    var fromAddress = session.getProperty(&quot;mail.from&quot;);
-    if (fromAddress != null &amp;&amp; fromAddress.trim() != &quot;&quot;) msg.setFrom(new javax.mail.internet.InternetAddress(fromAddress));
-    msg.setRecipients(javax.mail.Message.RecipientType.TO, javax.mail.internet.InternetAddress.parse(destinatario));
-    msg.setSubject(assunto, &quot;UTF-8&quot;);
-    var multipart = new javax.mail.internet.MimeMultipart();
-    var htmlPart = new javax.mail.internet.MimeBodyPart();
-    htmlPart.setContent(htmlBody, &quot;text/html; charset=utf-8&quot;);
-    multipart.addBodyPart(htmlPart);
-    if (pdfBytes != null) {
-        var attachmentPart = new javax.mail.internet.MimeBodyPart();
-        var dataSource = new javax.mail.util.ByteArrayDataSource(pdfBytes, &quot;application/pdf&quot;);
-        attachmentPart.setDataHandler(new javax.activation.DataHandler(dataSource));
-        attachmentPart.setFileName(nomeArquivo);
-        multipart.addBodyPart(attachmentPart);
-    }
-    msg.setContent(multipart);
-    javax.mail.Transport.send(msg);
-}
-
-function baixarBytesDaUrl(urlStr) {
-    try {
-        var url = new java.net.URL(urlStr);
-        var conn = url.openConnection();
-        conn.setRequestMethod(&quot;GET&quot;);
-        conn.setConnectTimeout(5000); 
-        conn.setReadTimeout(10000);   
-        if (conn.getResponseCode() &gt;= 300) return null;
-        var is = conn.getInputStream();
-        var bytes = org.apache.commons.io.IOUtils.toByteArray(is);
-        is.close();
-        return bytes;
-    } catch (e) { return null; }
 }</eventDescription>
     </WorkflowProcessEvent>
     <WorkflowProcessEvent>

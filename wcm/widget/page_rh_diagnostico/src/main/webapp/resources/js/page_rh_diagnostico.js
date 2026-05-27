@@ -11,7 +11,6 @@ var RHDiagnostico = SuperWidget.extend({
     currentProcessId: null,
 
     authConfig: {
-        // ALTERAÇÃO APLICADA AQUI: URL Dinâmica do Fluig
         url: WCMAPI.getServerURL(),
         consumerKey: 'integracao_widget_diagnostico',
         consumerSecret: 's3cr3t_key_1nt_w1dt_0384183',
@@ -405,6 +404,14 @@ var RHDiagnostico = SuperWidget.extend({
 
         if (window.innerWidth <= 768) {
             $('html, body').animate({ scrollTop: $(".content-box").offset().top - 80 }, 300);
+            
+            // INTELIGÊNCIA MOBILE: Centraliza automaticamente a etapa atual na barra de rolagem!
+            var $stepper = $(".wizard-stepper");
+            var $activeStep = $stepper.find(".step-item.active");
+            if ($activeStep.length) {
+                var scrollLeftPos = $activeStep.position().left + $stepper.scrollLeft() - ($stepper.width() / 2) + ($activeStep.width() / 2);
+                $stepper.animate({ scrollLeft: scrollLeftPos }, 300);
+            }
         }
     },
 

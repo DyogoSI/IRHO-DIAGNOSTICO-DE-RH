@@ -6,15 +6,45 @@
     <script type="text/javascript" src="/page_rh_diagnostico/resources/js/oauth-1.0a.js"></script>
     <script type="text/javascript" src="/page_rh_diagnostico/resources/js/form_validation.js"></script>
     <script type="text/javascript" src="/page_rh_diagnostico/resources/js/test_helper.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <div class="landing-wrapper">
-        <header class="landing-header">
+        
+        <header class="landing-header-premium-3d">
             <div class="container">
+              
                 <div class="header-content">
-                    <div class="brand">
-                        <img src="/page_rh_diagnostico/resources/images/IRHO-BRANCO-LARANJA.png" alt="InteRHativa Logo" class="brand-logo">
+                    
+                    <div class="header-branding">
+                        <img src="/page_rh_diagnostico/resources/images/LOGO-COMPLETA-BRANCA.png" alt="InteRHativa Logo" class="header-logo">
+                        <div class="header-divider-3d"></div>
+   
+                        <div class="header-text">
+                            <h2 class="header-title-3d">DIAGNÓSTICO DE MATURIDADE RH</h2>
+                        </div>
                     </div>
+
+  
+                    <div class="header-social-top">
+                        <a href="https://www.linkedin.com/company/interhativa/" target="_blank" class="social-icon linkedin" title="Siga-nos no LinkedIn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                            </svg>
+                        </a>
+
+                        <a href="mailto:contato@interhativa.com.br" class="social-icon email" title="Envie-nos um E-mail">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M0 3v18h24v-18h-24zm21.518 2l-9.518 7.713-9.518-7.713h19.036zm-19.518 14v-11.817l10 8.104 10-8.104v11.817h-20z"/>
+                            </svg>
+                        </a>
+      
+                        <a href="https://wa.me/5531998377928" target="_blank" class="social-icon whatsapp" title="Fale com a gente no WhatsApp">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.347-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.876 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                            </svg>
+                        </a>
+                    </div>
+                    
                 </div>
             </div>
         </header>
@@ -39,7 +69,7 @@
                                 <label>
                                     <input type="checkbox" id="consent_privacy_${instanceId}" data-privacy-check> 
                                     <span class="terms-text">
-                                        Estou ciente de que os dados coletados serão utilizados para <strong>finalidade de diagnóstico e pesquisas de mercado</strong>.<br>A Interhativa garante que as informações <strong>não serão compartilhadas com terceiros</strong>.
+                                         Estou ciente de que os dados coletados serão utilizados para <strong>finalidade de diagnóstico e pesquisas de mercado</strong>.<br>A Interhativa garante que as informações <strong>não serão compartilhadas com terceiros</strong>.
                                     </span>
                                 </label>
                             </div>
@@ -82,13 +112,11 @@
                     </div>
 
                     <div id="landing-result" class="section-step" style="display:none;">
-                        
                         <div class="text-center mb-5">
-                            <h2 style="color: #1eaad9; font-weight: 700;">Diagnóstico de maturidade do RH</h2>
+                             <h2 style="color: #1eaad9; font-weight: 700;">Diagnóstico de maturidade do RH</h2>
                         </div>
 
                         <div class="dashboard-container">
-                            
                             <div class="row mb-5">
                                 <div class="col-md-12">
                                     <h4 class="section-subtitle mt-0">Jornada de Evolução:</h4>
@@ -103,20 +131,18 @@
                                         <h3 id="result-title" class="mt-3">Aguarde...</h3>
                                         <p id="result-description" class="text-muted small mt-2"></p>
                                     </div>
-                                    
                                     <div class="mt-4">
                                         <canvas id="maturityChart"></canvas>
                                     </div>
                                 </div>
                                 <div class="col-md-7">
-                                    
-                                    <h4 class="section-subtitle mt-0">Sugestões de Melhoria com Insights:</h4>
+                                     <h4 class="section-subtitle mt-0">Sugestões de Melhoria com Insights:</h4>
                                     <div id="recommendations-list"></div>
 
                                     <h4 class="section-subtitle mt-4">Oportunidades:</h4>
                                     <div id="opportunities-list"></div>
                                     
-                                    <div class="cta-box mt-4">
+                                     <div class="cta-box mt-4">
                                         <h5 class="text-center">Pronto para transformar o seu RH?</h5>
                                         <p class="text-center">Transforme este diagnostico em uma vantagem competitiva para a sua organização.</p>
                                         
@@ -131,7 +157,7 @@
                                             </button>
                                             <br><br>
                                             <button class="btn btn-restart" onclick="window.location.reload()">
-                                                <i class="flaticon flaticon-refresh icon-sm"></i> Refazer Diagnóstico
+                                                  <i class="flaticon flaticon-refresh icon-sm"></i> Refazer Diagnóstico
                                             </button>
                                         </div>
 
@@ -156,8 +182,7 @@
                                                         <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.347-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.876 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
                                                     </svg>
                                                 </a>
-                                             
-                                            </div>
+                                        </div>
                                         </div>
 
                                     </div>
@@ -173,5 +198,11 @@
         <footer class="landing-footer text-center">
             <p>&copy; 2025 Interhativa. Inteligência em Gestão de Pessoas.</p>
         </footer>
+        
+        <a href="https://wa.me/5531998377928?text=Ol%C3%A1!%20Gostaria%20de%20iniciar%20a%20transforma%C3%A7%C3%A3o%20do%20meu%20RH." target="_blank" class="floating-whatsapp" title="Fale com a gente no WhatsApp">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.347-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.876 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+             </svg>
+        </a>
     </div>
 </div>
