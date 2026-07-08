@@ -53,53 +53,42 @@ var RHDiagnostico = SuperWidget.extend({
     bindings: function () {
         var that = this;
         var $dom = $(this.DOM);
-
         $dom.off(".rhDiag");
-
         $dom.on("change.rhDiag", "[data-privacy-check]", function () {
             $dom.find("[data-start-quiz]").prop("disabled", !$(this).is(":checked"));
         });
-
         $dom.on("click.rhDiag", "[data-start-quiz]", function (e) {
             e.preventDefault();
             if (that.isNavigating) return;
             that.startFlow();
         });
-
         $dom.on("click.rhDiag", "[data-next-step]", function (e) {
             e.preventDefault();
             if (that.isNavigating) return;
             that.processNextStep();
         });
-
         $dom.on("click.rhDiag", "[data-prev-step]", function (e) {
             e.preventDefault();
             if (that.isNavigating) return;
             that.processPrevStep();
         });
-
         $dom.on("input.rhDiag change.rhDiag", "#company_name, #user_name, #user_email", function () {
             $(this).css({ "border-color": "", "box-shadow": "" });
         });
-
         $dom.on("change.rhDiag", "input[name='use_ats']", function () {
             $(this).val() === "sim" ? $("#ats-name-container").slideDown() : $("#ats-name-container").slideUp();
         });
-
         $dom.on("change.rhDiag", "input[name='has_digital_admission']", function () {
             $(this).val() === "sim" ? $(".conditional-admission").slideDown() : $(".conditional-admission").slideUp();
         });
-
         $dom.on("click.rhDiag", "#btn-add-phone", function (e) {
             e.preventDefault();
             $("#phone-container").append('<div class="phone-input-group mt-2" style="display:flex; gap:5px;"><input type="tel" class="form-control phone-field" placeholder="(00) 00000-0000"><button type="button" class="btn btn-danger btn-xs remove-phone">X</button></div>');
         });
-
         $dom.on("click.rhDiag", ".remove-phone", function (e) {
             e.preventDefault();
             $(this).parent().remove();
         });
-
         $dom.on("click.rhDiag", "#btn-whatsapp", function (e) {
             e.preventDefault();
             that.sendToWhatsApp();
@@ -109,7 +98,6 @@ var RHDiagnostico = SuperWidget.extend({
     startFlow: function () {
         var that = this;
         this.isNavigating = true;
-
         $("#landing-intro").fadeOut(300, function () {
             $("#landing-quiz").fadeIn(300);
             that.currentStep = 1;
@@ -120,11 +108,9 @@ var RHDiagnostico = SuperWidget.extend({
 
     processNextStep: function () {
         this.isNavigating = true;
-
         if (this.currentStep === 1) {
             var isValid = true;
             var requiredFields = ['#company_name', '#user_name', '#user_email'];
-
             requiredFields.forEach(function (selector) {
                 var $input = $(selector);
                 if (!$input.val() || $input.val().trim() === "") {
@@ -134,29 +120,24 @@ var RHDiagnostico = SuperWidget.extend({
                     $input.css({ "border-color": "", "box-shadow": "" });
                 }
             });
-
             if (!isValid) {
                 this.isNavigating = false;
                 return;
             }
-
             if (!this.currentProcessId) {
                 this.createInitialLead();
                 return;
             }
         }
-
         if (this.currentProcessId && this.currentStep < 8) {
             this.updateProgressiveData();
         }
-
         this.next();
     },
 
     buildAllFields: function (score, nivel, docId, linkPublico, calculatedScores) {
         var phoneVal = this.userAnswers['telefone'] || "";
         var email = this.userAnswers['user_email'] || "anonimo@teste.com";
-
         var payloadFields = {
             "empresa": this.userAnswers['company_name'] || "",
             "segmento": this.userAnswers['company_segment'] || "",
@@ -194,7 +175,7 @@ var RHDiagnostico = SuperWidget.extend({
             "td_annual_planning": this.userAnswers['td_annual_planning'] || "Não informado",
             "td_management_participation": this.userAnswers['td_management_participation'] || "Não informado",
             "td_gap_indicators": this.userAnswers['td_gap_indicators'] || "Não informado",
-            "td_leaders_contribution": this.userAnswers['td_leaders_contribution'] || "Não informado",
+            "td_leaders_contribution": this.userAnswers['td_impact_indicators'] || "Não informado",
             "td_impact_indicators": this.userAnswers['td_impact_indicators'] || "Não informado",
             "td_results_correlation": this.userAnswers['td_results_correlation'] || "Não informado",
             "culture_alignment": this.userAnswers['culture_alignment'] || "Não informado",
@@ -223,48 +204,64 @@ var RHDiagnostico = SuperWidget.extend({
             "id_pdf_diagnostico": docId ? docId.toString() : "",
             "link_pdf_publico": linkPublico || ""
         };
-
         if (calculatedScores) {
             payloadFields["json_radar_scores"] = JSON.stringify(calculatedScores);
         }
-
         return payloadFields;
     },
 
     createInitialLead: function () {
         var that = this;
-        var myLoading = FLUIGC.loading(window, { textMessage: 'Iniciando diagnóstico...', title: 'Aguarde' });
+        var myLoading = FLUIGC.loading(window, { textMessage: 'A iniciar diagnóstico...', title: 'Aguarde' });
         myLoading.show();
-
         this.saveCurrentData();
         var formFields = this.buildAllFields(0, "Aguardando preenchimento", null, "", null);
-
-        var apiPayload = {
-            "targetState": 5,
-            "targetAssignee": "guilherme-af",
-            "comment": "Lead capturado no Passo 1 (Aguardando preenchimento total do usuário)",
-            "formFields": formFields
-        };
-
+        
         var baseUrl = this.authConfig.url || WCMAPI.getServerURL();
-        var endpoint = baseUrl + "/process-management/api/v2/processes/PROCESSO_RH_DIAGNOSTICO/start";
-        var authHeader = this.getOAuthData(endpoint, 'POST');
+        var endpointUser = baseUrl + '/api/public/2.0/users/getCurrent';
 
         $.ajax({
-            url: endpoint,
-            type: 'POST',
-            data: JSON.stringify(apiPayload),
-            contentType: 'application/json',
-            headers: authHeader,
+            url: endpointUser,
+            type: 'GET',
+            headers: that.getOAuthData(endpointUser, 'GET'),
             crossDomain: true,
-            success: function (response) {
-                myLoading.hide();
-                that.currentProcessId = response.processInstanceId;
-                console.log('ID do Diagnóstico Criado: ' + that.currentProcessId);
-                that.next();
+            success: function(resUser) {
+                var integrationUser = "guilherme-af"; 
+                if (resUser && resUser.content && resUser.content.login) {
+                    integrationUser = resUser.content.login; 
+                }
+
+                var endpointStart = baseUrl + "/process-management/api/v2/processes/PROCESSO_RH_DIAGNOSTICO/start";
+                var apiPayload = {
+                    "targetState": 40,
+                    "targetAssignee": integrationUser,
+                    "comment": "Lead capturado no Passo 1",
+                    "formFields": formFields
+                };
+                
+                $.ajax({
+                    url: endpointStart,
+                    type: 'POST',
+                    data: JSON.stringify(apiPayload),
+                    contentType: 'application/json',
+                    headers: that.getOAuthData(endpointStart, 'POST'),
+                    crossDomain: true,
+                    success: function (response) {
+                        myLoading.hide();
+                        that.currentProcessId = response.processInstanceId;
+                        console.log('ID do Diagnóstico Criado: ' + that.currentProcessId + ' | Atribuído para: ' + integrationUser);
+                        that.next();
+                    },
+                    error: function (xhr) {
+                        myLoading.hide();
+                        console.error("Erro ao iniciar processo:", xhr.responseText);
+                        that.next();
+                    }
+                });
             },
-            error: function (xhr) {
+            error: function() {
                 myLoading.hide();
+                console.error("Erro ao identificar o usuário da API. O processo será criado com falha de owner.");
                 that.next();
             }
         });
@@ -273,7 +270,6 @@ var RHDiagnostico = SuperWidget.extend({
     updateProgressiveData: function () {
         var that = this;
         this.saveCurrentData();
-        
         var calculatedScores = {
             'Recrutamento': this.calcPillar('Recrutamento', ['process_formal', 'use_ats', 'ats_name', 'job_channels', 'dedicated_team', 'hiring_volume']),
             'Admissão': this.calcPillar('Admissão', ['has_digital_admission', 'use_admission_portal', 'has_electronic_signature', 'has_integration_program', 'is_admission_secure']),
@@ -283,7 +279,6 @@ var RHDiagnostico = SuperWidget.extend({
             'Analytics': this.calcPillar('Analytics', ['has_rh_indicators', 'use_dashboards', 'cost_per_employee', 'indicator_tools', 'indicators_integration', 'structured_performance_eval', 'productivity_tracking', 'benefits_cost_comparison', 'turnover_cost_analysis']),
             'Tecnologia': this.calcPillar('Tecnologia', ['use_ai_rh', 'integrated_data', 'payroll_cloud', 'use_hr_consultancy', 'full_resource_usage', 'use_bpm_erp', 'has_hr_portal', 'apply_data_science'])
         };
-
         var totalScore = 0;
         var scoreCount = 0;
         for (var key in calculatedScores) {
@@ -291,13 +286,10 @@ var RHDiagnostico = SuperWidget.extend({
         }
         var partialAvg = scoreCount > 0 ? Math.round(totalScore / scoreCount) : 0;
         if (partialAvg > 80) partialAvg = 80;
-
         var title = "Em preenchimento (Passo " + this.currentStep + ")";
         var formFields = this.buildAllFields(partialAvg, title, null, "", calculatedScores);
-
         var baseUrl = this.authConfig.url || WCMAPI.getServerURL();
         var dsEndpoint = baseUrl + "/api/public/ecm/dataset/datasets";
-
         var dsPayload = {
             "name": "ds_rh_save_lead",
             "fields": [],
@@ -307,9 +299,7 @@ var RHDiagnostico = SuperWidget.extend({
                 { "_field": "jsonDados", "_initialValue": JSON.stringify(formFields), "_finalValue": JSON.stringify(formFields), "_type": 1, "_likeSearch": false }
             ]
         };
-
         var authHeader = this.getOAuthData(dsEndpoint, 'POST');
-
         $.ajax({
             url: dsEndpoint, type: 'POST', data: JSON.stringify(dsPayload),
             contentType: 'application/json', headers: authHeader, crossDomain: true,
@@ -333,7 +323,6 @@ var RHDiagnostico = SuperWidget.extend({
         var that = this;
         this.isNavigating = true;
         if (this.currentStep > 1) {
-            this.saveCurrentData();
             this.currentStep--;
             this.renderStep();
         }
@@ -352,7 +341,6 @@ var RHDiagnostico = SuperWidget.extend({
                 }
             }
         });
-
         if (this.currentStep === 1) {
             var phones = [];
             $("#step-content-container").find(".phone-field").each(function () {
@@ -366,15 +354,12 @@ var RHDiagnostico = SuperWidget.extend({
     renderStep: function () {
         var that = this;
         var $container = $("#step-content-container");
-
         $(".step-item").removeClass("active completed").each(function (i) {
             if (i + 1 < that.currentStep) $(this).addClass("completed");
             else if (i + 1 === that.currentStep) $(this).addClass("active");
         });
-
         $("#btn-prev-step").css("visibility", this.currentStep === 1 ? "hidden" : "visible");
         $("#btn-next-step").html(this.currentStep === 8 ? '<span>Finalizar Diagnóstico</span> <i class="flaticon flaticon-chevron-right icon-sm"></i>' : '<span>Próximo Passo</span> <i class="flaticon flaticon-chevron-right icon-sm"></i>');
-
         switch (this.currentStep) {
             case 1: this.renderEmpresa($container); break;
             case 2: this.renderRecrutamento($container); break;
@@ -385,14 +370,11 @@ var RHDiagnostico = SuperWidget.extend({
             case 7: this.renderAnalytics($container); break;
             case 8: this.renderTecnologia($container); break;
         }
-
         this.restoreData();
-
         if (this.currentStep === 1 && this.userAnswers['telefone']) {
             var phonesArray = this.userAnswers['telefone'].split(" / ");
             var $phoneContainer = $("#phone-container");
             $phoneContainer.empty();
-
             phonesArray.forEach(function (phone, index) {
                 if (index === 0) {
                     $phoneContainer.append('<div class="phone-input-group"><input type="tel" class="form-control phone-field" placeholder="(00) 00000-0000" value="' + phone + '"><button type="button" id="btn-add-phone" class="btn-add-phone">+</button></div>');
@@ -401,11 +383,8 @@ var RHDiagnostico = SuperWidget.extend({
                 }
             });
         }
-
         if (window.innerWidth <= 768) {
             $('html, body').animate({ scrollTop: $(".content-box").offset().top - 80 }, 300);
-            
-            // INTELIGÊNCIA MOBILE: Centraliza automaticamente a etapa atual na barra de rolagem!
             var $stepper = $(".wizard-stepper");
             var $activeStep = $stepper.find(".step-item.active");
             if ($activeStep.length) {
@@ -441,15 +420,11 @@ var RHDiagnostico = SuperWidget.extend({
 
     calcPillar: function (category, keys) {
         var score = 0, that = this;
-        
         keys.forEach(function (k) {
             var v = that.userAnswers[k];
             if (v && v.toString().trim() !== '') {
                 var resposta = v.toString().toLowerCase();
-
-                if (resposta === 'nao' || resposta === 'não') {
-                    score += 0.15; 
-                }
+                if (resposta === 'nao' || resposta === 'não') { score += 0.15; }
                 else if (k === 'hiring_volume') {
                     if (resposta === '1-10') score += 0.33;
                     else if (resposta === '11-20') score += 0.66;
@@ -462,44 +437,27 @@ var RHDiagnostico = SuperWidget.extend({
                     else if (resposta === 'bpo') score += 1;
                     else score += 0.3; 
                 }
-                else {
-                    score += 1;
-                }
+                else { score += 1; }
             }
         });
-
         if (score === 0) return 0;
-
         var map = [];
-        if (category === 'Recrutamento' || category === 'DP' || category === 'Cultura') {
-            map = [0, 21, 30, 40, 50, 60, 80]; 
-        } 
-        else if (category === 'Admissão') {
-            map = [0, 30, 40, 50, 60, 80]; 
-        }
-        else if (category === 'T&D' || category === 'Tecnologia') {
-            map = [0, 25, 30, 35, 40, 47, 54, 60, 80]; 
-        }
-        else if (category === 'Analytics') {
-            map = [0, 25, 30, 35, 40, 47, 54, 60, 70, 80]; 
-        }
-
+        if (category === 'Recrutamento' || category === 'DP' || category === 'Cultura') { map = [0, 21, 30, 40, 50, 60, 80]; } 
+        else if (category === 'Admissão') { map = [0, 30, 40, 50, 60, 80]; }
+        else if (category === 'T&D' || category === 'Tecnologia') { map = [0, 25, 30, 35, 40, 47, 54, 60, 80]; }
+        else if (category === 'Analytics') { map = [0, 25, 30, 35, 40, 47, 54, 60, 70, 80]; }
         var lowerBound = Math.floor(score);
         var upperBound = Math.ceil(score);
-        
         if (lowerBound >= map.length - 1) return map[map.length - 1];
         if (lowerBound === upperBound) return map[lowerBound];
-        
         var fraction = score - lowerBound;
         var pct = map[lowerBound] + (fraction * (map[upperBound] - map[lowerBound]));
-        
         return Math.round(pct);
     },
 
     showResult: function () {
         var that = this;
         this.isNavigating = true;
-
         $("#landing-quiz").hide();
         $("#landing-result").show();
 
@@ -520,22 +478,15 @@ var RHDiagnostico = SuperWidget.extend({
         }
         var avg = scoreCount > 0 ? Math.round(totalScore / scoreCount) : 0;
         if (avg > 80) avg = 80;
-
         this.finalScoreGlobal = avg;
 
         var title = "";
         var currentStateDescription = "";
-        if (avg <= 20) {
-            title = "Tradicional"; currentStateDescription = "Foco em processos operacionais e burocráticos. Há um grande potencial para iniciar a automação e ganhar agilidade.";
-        } else if (avg <= 40) {
-            title = "Ágil"; currentStateDescription = "Busca por eficiência e rapidez, iniciando a transição para processos mais dinâmicos e menos engessados.";
-        } else if (avg <= 60) {
-            title = "Digital"; currentStateDescription = "Uso de tecnologia e automação consolidados. O próximo passo é equilibrar as ferramentas com a valorização da experiência humana.";
-        } else if (avg <= 80) {
-            title = "Humanizado"; currentStateDescription = "Une tecnologia avançada e foco genuíno nas pessoas, promovendo uma excelente experiência para o colaborador.";
-        } else {
-            title = "Estratégico"; currentStateDescription = "O setor atua como parceiro de negócios, focando em análise de dados, métricas e retenção profunda de talentos.";
-        }
+        if (avg <= 20) { title = "Tradicional"; currentStateDescription = "Foco em processos operacionais e burocráticos. Há um grande potencial para iniciar a automação e ganhar agilidade."; }
+        else if (avg <= 40) { title = "Ágil"; currentStateDescription = "Busca por eficiência e rapidez, iniciando a transição para processos mais dinâmicos e menos engessados."; }
+        else if (avg <= 60) { title = "Digital"; currentStateDescription = "Uso de tecnologia e automação consolidados. O próximo passo é equilibrar as ferramentas com a valorização da experiência humana."; }
+        else if (avg <= 80) { title = "Humanizado"; currentStateDescription = "Une tecnologia avançada e foco genuíno nas pessoas, promovendo uma excelente experiência para o colaborador."; }
+        else { title = "Estratégico"; currentStateDescription = "O setor atua como parceiro de negócios, focando em análise de dados, métricas e retenção profunda de talentos."; }
 
         this.finalClassification = title;
         $("#final-score-pct").text(avg + "%");
@@ -545,41 +496,176 @@ var RHDiagnostico = SuperWidget.extend({
         this.generateRecommendations();
         this.generateMaturityLevels(title);
 
-        var myLoading = FLUIGC.loading(window, { textMessage: 'Avaliando dados e gerando relatório do seu RH...', title: 'Aguarde' });
+        var myLoading = FLUIGC.loading(window, { textMessage: 'Avaliando dados e a gerar relatório do seu RH...', title: 'Aguarde' });
         myLoading.show();
-
+        
         this.renderRadarChart(calculatedScores, false);
 
         setTimeout(function () {
-            var element = document.getElementById('landing-result');
             var nomeEmpresa = (that.userAnswers['company_name'] || 'RH').replace(/\s+/g, '_');
-            var opt = { margin: 10, filename: 'Diagnostico_' + nomeEmpresa + '.pdf', image: { type: 'jpeg', quality: 0.75 }, html2canvas: { scale: 1.5, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            var originalElement = document.getElementById('landing-result');
 
-            html2pdf().set(opt).from(element).outputPdf('datauristring').then(function (pdfBase64) {
-                var rawBase64 = pdfBase64.split(',')[1];
-                that.uploadPdfToECM(rawBase64, nomeEmpresa, function (documentId, linkPublico) {
-                    that.saveLeadToFluig(avg, title, calculatedScores, documentId, linkPublico, rawBase64, myLoading);
+            // Container externo do PDF: sem padding próprio, para a navbar poder
+            // ocupar 100% da largura sem sofrer corte/clipping.
+            var pdfContainer = document.createElement('div');
+            pdfContainer.id = 'pdf-clone-isolado';
+            pdfContainer.style.position = 'absolute';
+            pdfContainer.style.top = '0px';
+            pdfContainer.style.left = '0px';
+            pdfContainer.style.width = '1200px';
+            pdfContainer.style.minWidth = '1200px';
+            pdfContainer.style.maxWidth = '1200px';
+            pdfContainer.style.backgroundColor = '#ffffff';
+            pdfContainer.style.margin = '0';
+            pdfContainer.style.padding = '0';
+            pdfContainer.style.boxSizing = 'border-box';
+            pdfContainer.style.zIndex = '-9999';
+            pdfContainer.style.setProperty('box-shadow', 'none', 'important');
+            pdfContainer.style.setProperty('border', 'none', 'important');
+
+            // --- NAVBAR NO PDF (sem ícones de WhatsApp, E-mail e LinkedIn) ---
+            var originalHeader = document.querySelector('.landing-header-premium-3d');
+            if (originalHeader) {
+                var headerClone = originalHeader.cloneNode(true);
+                headerClone.classList.add('pdf-header-clone');
+
+                // Remove todo o bloco de ícones sociais do topo (WhatsApp, E-mail e LinkedIn)
+                var headerSocialBlock = headerClone.querySelectorAll('.header-social-top, .social-icon');
+                headerSocialBlock.forEach(function (icon) {
+                    if (icon && icon.parentNode) icon.parentNode.removeChild(icon);
                 });
-            })["catch"](function (err) {
-                console.error("Erro ao gerar PDF:", err);
-                that.saveLeadToFluig(avg, title, calculatedScores, null, "", "", myLoading);
+
+                // O header original usa "position: sticky", o que faz o html2canvas
+                // renderizar mal o clone (faixa branca/corte). Forçamos "static"
+                // apenas no clone (não afeta a navbar real da página).
+                headerClone.style.setProperty('position', 'static', 'important');
+                headerClone.style.top = 'auto';
+                headerClone.style.width = '100%';
+                headerClone.style.margin = '0';
+                headerClone.style.boxSizing = 'border-box';
+                headerClone.style.setProperty('box-shadow', 'none', 'important');
+
+                pdfContainer.appendChild(headerClone);
+            }
+            // --------------------------------------------------------------------
+
+            var clone = originalElement.cloneNode(true);
+            clone.id = 'pdf-content-isolado';
+
+            clone.style.position = 'static';
+            clone.style.width = '1200px'; 
+            clone.style.minWidth = '1200px';
+            clone.style.maxWidth = '1200px';
+            clone.style.backgroundColor = '#ffffff';
+            clone.style.margin = '0';
+            clone.style.padding = '40px'; 
+            clone.style.boxSizing = 'border-box';
+            clone.style.borderBottom = 'none';
+            clone.style.setProperty('box-shadow', 'none', 'important'); 
+            clone.style.setProperty('border', 'none', 'important');
+
+            pdfContainer.appendChild(clone);
+
+            // --- REMOVER MANCHAS (SOMBRAS) DE TODOS OS ELEMENTOS DO PDF (navbar + conteúdo) ---
+            var allElements = pdfContainer.querySelectorAll('*');
+            for (var k = 0; k < allElements.length; k++) {
+                allElements[k].style.setProperty('box-shadow', 'none', 'important');
+                allElements[k].style.setProperty('-webkit-box-shadow', 'none', 'important');
+                allElements[k].style.setProperty('text-shadow', 'none', 'important');
+            }
+            // ----------------------------------------------------------------
+
+            var footer = clone.querySelector('.fluig-style-guide-footer, .footer, footer, div[class*="footer"]');
+            if (footer) footer.style.display = 'none';
+
+            var ctaBox = clone.querySelector('.cta-box');
+            if (ctaBox) ctaBox.style.display = 'none';
+
+            var socialShare = clone.querySelector('.social-share');
+            if (socialShare) socialShare.style.display = 'none';
+
+            var btnGroups = clone.querySelectorAll('#btn-whatsapp, .btn-restart');
+            btnGroups.forEach(function(btn) {
+                if (btn && btn.parentNode) btn.parentNode.style.display = 'none';
             });
 
-        }, 1000);
+            document.body.appendChild(pdfContainer);
+
+            var originalCanvas = document.getElementById('maturityChart');
+            var canvasInClone = clone.querySelector('#maturityChart'); 
+            
+            if (originalCanvas && canvasInClone) {
+                var chartBase64 = originalCanvas.toDataURL('image/png', 1.0); 
+                var img = new Image();
+                img.src = chartBase64;
+                img.style.display = 'block';
+                
+                var isMobileDevice = window.innerWidth <= 768;
+                img.style.width = isMobileDevice ? '550px' : '850px'; 
+                img.style.height = 'auto'; 
+                img.style.margin = '40px auto'; 
+
+                canvasInClone.parentNode.replaceChild(img, canvasInClone); 
+            }
+
+            setTimeout(function() {
+                var larguraFinal = 1200;
+                var alturaFinal = pdfContainer.scrollHeight + 40; 
+
+                var opt = {
+                    margin: 0,
+                    filename: 'Diagnostico_' + nomeEmpresa + '.pdf',
+                    image: { type: 'jpeg', quality: 0.85 }, 
+                    html2canvas: {
+                        scale: 1, 
+                        useCORS: true,
+                        windowWidth: larguraFinal,
+                        width: larguraFinal,
+                        height: alturaFinal,
+                        x: 0,           
+                        y: 0,           
+                        scrollY: 0,     
+                        scrollX: 0,     
+                        backgroundColor: '#ffffff'
+                    },
+                    jsPDF: {
+                        unit: 'px', 
+                        format: [larguraFinal, alturaFinal], 
+                        orientation: 'portrait',
+                        compress: true 
+                    }
+                };
+
+                html2pdf().set(opt).from(pdfContainer).outputPdf('datauristring').then(function (pdfBase64) {
+                    document.body.removeChild(pdfContainer);
+
+                    var rawBase64 = pdfBase64.split(',')[1];
+                    that.uploadPdfToECM(rawBase64, nomeEmpresa, function (documentId, linkPublico) {
+                        that.saveLeadToFluig(avg, title, calculatedScores, documentId, linkPublico, rawBase64, myLoading);
+                    });
+                })["catch"](function (err) {
+                    console.error("Erro ao gerar PDF:", err);
+                    if (document.body.contains(pdfContainer)) {
+                        document.body.removeChild(pdfContainer);
+                    }
+                    that.saveLeadToFluig(avg, title, calculatedScores, null, "", "", myLoading);
+                });
+
+            }, 500);
+
+        }, 1500); 
     },
 
     uploadPdfToECM: function (base64Content, nomeEmpresa, callback) {
         var that = this;
         var pastaDestinoECM = 214;
         var baseUrl = this.authConfig.url || WCMAPI.getServerURL();
-
         var nomeSanitizado = nomeEmpresa.replace(/[^a-zA-Z0-9]/g, "_");
         var fileName = 'Diagnostico_' + nomeSanitizado + '.pdf';
         var byteCharacters = atob(base64Content);
         var byteNumbers = new Array(byteCharacters.length);
         for (var i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
         var blob = new Blob([new Uint8Array(byteNumbers)], { type: 'application/pdf' });
-
         var endpointUpload = baseUrl + "/api/public/2.0/contentfiles/upload/?fileName=" + encodeURIComponent(fileName);
         $.ajax({
             url: endpointUpload, type: 'POST', data: blob, processData: false, contentType: 'application/octet-stream', headers: that.getOAuthData(endpointUpload, 'POST'), crossDomain: true,
@@ -592,7 +678,6 @@ var RHDiagnostico = SuperWidget.extend({
                         var docId = null;
                         if (response && response.content && response.content.id) docId = response.content.id;
                         else if (response && response.content && response.content.documentId) docId = response.content.documentId;
-
                         if (docId) {
                             var endpointDownloadUrl = baseUrl + "/api/public/2.0/documents/getDownloadURL/" + docId;
                             $.ajax({
@@ -620,23 +705,27 @@ var RHDiagnostico = SuperWidget.extend({
             { titulo: "Humanizado", requisitos: ["Escuta Ativa com Feedback Digital Contínuo", "Tecnologia como Meio, não como Fim", "Personalização da Experiência (Hiper-personalização)", "Cultura de Segurança Psicológica e Ética de Dados"] },
             { titulo: "Estratégico", requisitos: ["Alinhamento com os Objetivos do Negócio", "Visão de Longo Prazo e Planejamento Sucessório", "Cultura de Indicadores e Resultados (KPIs)", "Gestão da Mudança e Transformação Organizacional"] }
         ];
-
         var currentIndex = ["Tradicional", "Ágil", "Digital", "Humanizado", "Estratégico"].indexOf(currentLevel);
         var baseScore = currentIndex * 20;
         var reqsCumpridosNesteNivel = Math.ceil((this.finalScoreGlobal - baseScore) / 5);
         if (reqsCumpridosNesteNivel < 0) reqsCumpridosNesteNivel = 0;
         if (reqsCumpridosNesteNivel > 4) reqsCumpridosNesteNivel = 4;
+        
+        var svgCheck = '<svg width="18" height="18" style="min-width:18px; margin-right:8px;" viewBox="0 0 24 24" fill="#2ecc71" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
+        var svgCancel = '<svg width="18" height="18" style="min-width:18px; margin-right:8px;" viewBox="0 0 24 24" fill="#e74c3c" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>';
 
         var html = "";
         for (var i = 0; i < levels.length; i++) {
             var lvl = levels[i];
             var isCurrent = (lvl.titulo === currentLevel);
-            var reqHtml = '<ul class="level-checklist">';
+            var reqHtml = '<ul class="level-checklist" style="list-style:none; padding:0; margin:0;">';
             for (var j = 0; j < lvl.requisitos.length; j++) {
                 var status = 'missing';
                 if (i < currentIndex || (i === currentIndex && j < reqsCumpridosNesteNivel)) status = 'achieved';
-                var iconClass = status === 'achieved' ? 'flaticon-check-circle' : 'flaticon-cancel';
-                reqHtml += '<li class="' + status + '"><i class="flaticon ' + iconClass + '"></i><span>' + lvl.requisitos[j] + '</span></li>';
+                
+                var iconHtml = status === 'achieved' ? svgCheck : svgCancel;
+                
+                reqHtml += '<li class="' + status + '" style="display:flex; align-items:flex-start; margin-bottom:8px; font-size:13px; line-height:1.4;">' + iconHtml + '<span>' + lvl.requisitos[j] + '</span></li>';
             }
             reqHtml += '</ul>';
             html += '<div class="level-card' + (isCurrent ? ' current-level-card' : '') + '">' + (isCurrent ? '<span class="badge-popular" style="background:#ffffff; color:#d68910;">Você está aqui</span>' : '') + '<h6>' + lvl.titulo + '</h6>' + reqHtml + '</div>';
@@ -662,14 +751,11 @@ var RHDiagnostico = SuperWidget.extend({
         var canvas = document.getElementById('maturityChart');
         var ctx = canvas.getContext('2d');
         if (this.myChart) this.myChart.destroy();
-
         var gradientFill = ctx.createLinearGradient(0, 0, 0, 400);
         gradientFill.addColorStop(0, 'rgba(30, 170, 217, 0.5)');
         gradientFill.addColorStop(1, 'rgba(0, 0, 0, 0.05)');
-
         var chartLabels = [], chartData = [];
         for (var key in scores) { if (scores.hasOwnProperty(key)) { chartLabels.push(key); chartData.push(scores[key]); } }
-
         this.myChart = new Chart(ctx, {
             type: 'radar',
             data: {
@@ -690,7 +776,7 @@ var RHDiagnostico = SuperWidget.extend({
                         }
                     }
                 },
-                scales: { r: { angleLines: { display: true, color: 'rgba(30, 170, 217, 0.2)', lineWidth: 1 }, grid: { circular: false, color: 'rgba(30, 170, 217, 0.15)', lineWidth: 1.5 }, pointLabels: { font: { size: 12, weight: '700' }, color: '#333' }, ticks: { beginAtZero: true, max: 100, stepSize: 20, display: false } } }
+                scales: { r: { angleLines: { display: true, color: 'rgba(30, 170, 217, 0.2)', lineWidth: 1 }, grid: { circular: false, color: 'rgba(30, 170, 217, 0.15)', lineWidth: 1.5 }, pointLabels: { font: { size: 16, weight: '700' }, color: '#333' }, ticks: { beginAtZero: true, max: 100, stepSize: 20, display: false } } }
             }
         });
     },
@@ -712,11 +798,10 @@ var RHDiagnostico = SuperWidget.extend({
             { titulo: "Retenção e cultura", descricao: "75% das empresas apontam a retenção de talentos como um dos maiores desafios." },
             { titulo: "Adesão a Bônus", descricao: "A concessão de bônus pode ser essencial para reter talentos em cenários econômicos difíceis." },
             { titulo: "Automação da folha", descricao: "82% das empresas usam software para folha de pagamento; a tecnologia é pilar." },
-            { titulo: "Jornada digital", descricao: "Apenas 21% já estão avançadas. O foco deve ser investimento aliado à cultura." },
+            { titulo: "Jornada digital", descricao: "Apenas 21% já estão avançadas. O foco deve ser investment aliado à cultura." },
             { titulo: "RH digitalizado", descricao: "Aumentar investimentos em automação de tarefas e busca por dados (People Analytics)." },
             { titulo: "Aplicações da IA no RH", descricao: "O principal uso da IA é em recrutamento, automatizando tarefas operacionais." }
         ];
-
         var listaOportunidades = [
             { titulo: "Desempenho e Crescimento", descricao: "Empresas com planos claros têm maior engajamento." },
             { titulo: "Treinamento e desenvolvimento", descricao: "Iniciativas como mentoria equilibram qualificação." },
@@ -737,21 +822,16 @@ var RHDiagnostico = SuperWidget.extend({
             { titulo: "Estratégia para IA no RH", descricao: "Definir um plano estratégico maximiza o impacto, indo além de simples automação." },
             { titulo: "Mudança cultural e IA", descricao: "A resistência à IA pode ser reduzida com projeções práticas de como a tecnologia complementa o trabalho." }
         ];
-
         function shuffle(array) { for (var i = array.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var temp = array[i]; array[i] = array[j]; array[j] = temp; } return array; }
-
         var randomInsights = shuffle(listaInsights).slice(0, 4);
         this.chosenInsights = randomInsights;
-
         var htmlInsights = "";
         for (var i = 0; i < randomInsights.length; i++) htmlInsights += '<div class="rec-item"><h6>' + randomInsights[i].titulo + '</h6><p>' + randomInsights[i].descricao + '</p></div>';
         $("#recommendations-list").html(htmlInsights);
-
         var randomOps = shuffle(listaOportunidades).slice(0, 3);
         this.chosenOpportunities = randomOps;
-
         var htmlOportunidades = "";
-        for (var j = 0; j < randomOps.length; j++) htmlOportunidades += '<div class="rec-item' + (j === 1 ? ' highlight-card' : '') + '">' + (j === 1 ? '<span class="badge-popular">Prioridade</span>' : '') + '<h6>' + randomOps[j].titulo + '</h6><p>' + randomOps[j].descricao + '</p></div>';
+        for (var j = 0; j < randomOps.length; j++) htmlOportunidades += '<div class="rec-item' + (j === 1 ? ' highlight-card' : '') + '">' + (j === 1 ? ' <span class="badge-popular">Prioridade</span>' : '') + '<h6>' + randomOps[j].titulo + '</h6><p>' + randomOps[j].descricao + '</p></div>';
         $("#opportunities-list").html(htmlOportunidades);
     },
 
@@ -774,11 +854,19 @@ var RHDiagnostico = SuperWidget.extend({
         var that = this;
         var formFields = this.buildAllFields(finalScore, classification, documentId, linkPublico, calculatedScores);
         var baseUrl = this.authConfig.url || WCMAPI.getServerURL();
-
+        
         var finalizarAnimacao = function () {
             if (myLoading) myLoading.hide();
+
+            setTimeout(function() {
+                $(".modal-backdrop").remove();
+                $("#fluig-loading-message").remove();
+                $("body").removeClass("modal-open");
+            }, 200); 
+
             $("#landing-result").addClass("vibrant-tech-entrance");
             if (window.innerWidth <= 768) $('html, body').animate({ scrollTop: $(".content-box").offset().top - 80 }, 300);
+            
             that.renderRadarChart(calculatedScores, true);
             $("#final-score-pct").text("0%");
             that.animateScoreCounter(finalScore, 1500);
@@ -791,24 +879,76 @@ var RHDiagnostico = SuperWidget.extend({
             finalizarAnimacao();
         };
 
+        var movimentarProcessoParaParalelo = function () {
+            var tasksEndpoint = baseUrl + "/process-management/api/v2/requests/" + that.currentProcessId + "/tasks";
+            
+            $.ajax({
+                url: tasksEndpoint,
+                type: 'GET',
+                headers: that.getOAuthData(tasksEndpoint, 'GET'),
+                crossDomain: true,
+                success: function (respTasks) {
+                    var movementSeq = 2; // Default
+                    if (respTasks && respTasks.items && respTasks.items.length > 0) {
+                        for (var i = 0; i < respTasks.items.length; i++) {
+                            if (respTasks.items[i].active === true || respTasks.items[i].status === "OPEN") {
+                                movementSeq = respTasks.items[i].movementSequence;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    var moveEndpoint = baseUrl + "/process-management/api/v2/requests/" + that.currentProcessId + "/move";
+                    var movePayload = {
+                        "movementSequence": movementSeq, 
+                        "targetState": 11,               
+                        "comment": "Diagnóstico finalizado. Movendo para o fluxo automático de nutrição."
+                    };
+                    
+                    $.ajax({
+                        url: moveEndpoint,
+                        type: 'POST',
+                        data: JSON.stringify(movePayload),
+                        contentType: 'application/json',
+                        headers: that.getOAuthData(moveEndpoint, 'POST'),
+                        crossDomain: true,
+                        success: function () {
+                            console.log("SUCESSO! Processo movido para o Gateway Paralelo 11.");
+                            acionarDisparoEmail();
+                        },
+                        error: function (xhrMove) {
+                            console.error("Falha ao mover para o Gateway via REST:", xhrMove.responseText);
+                            acionarDisparoEmail(); 
+                        }
+                    });
+                },
+                error: function (xhrTasks) {
+                    console.error("Falha ao consultar tasks:", xhrTasks.responseText);
+                    acionarDisparoEmail(); 
+                }
+            });
+        };
+
         if (this.currentProcessId) {
             var dsEndpoint = baseUrl + "/api/public/ecm/dataset/datasets";
-
             var dsPayloadUpdate = { "name": "ds_rh_save_lead", "fields": [], "constraints": [{ "_field": "acao", "_initialValue": "ATUALIZAR_PROGRESSIVO", "_finalValue": "ATUALIZAR_PROGRESSIVO", "_type": 1, "_likeSearch": false }, { "_field": "eventoId", "_initialValue": that.currentProcessId.toString(), "_finalValue": that.currentProcessId.toString(), "_type": 1, "_likeSearch": false }, { "_field": "jsonDados", "_initialValue": JSON.stringify(formFields), "_finalValue": JSON.stringify(formFields), "_type": 1, "_likeSearch": false }] };
             $.ajax({
                 url: dsEndpoint, type: 'POST', data: JSON.stringify(dsPayloadUpdate), contentType: 'application/json', headers: that.getOAuthData(dsEndpoint, 'POST'), crossDomain: true,
                 success: function () {
                     var dsPayloadInsert = { "name": "ds_rh_save_lead", "fields": [], "constraints": [{ "_field": "acao", "_initialValue": "INSERIR_LEAD", "_finalValue": "INSERIR_LEAD", "_type": 1, "_likeSearch": false }, { "_field": "eventoId", "_initialValue": that.currentProcessId.toString(), "_finalValue": that.currentProcessId.toString(), "_type": 1, "_likeSearch": false }, { "_field": "jsonDados", "_initialValue": JSON.stringify(formFields), "_finalValue": JSON.stringify(formFields), "_type": 1, "_likeSearch": false }] };
-
                     $.ajax({
                         url: dsEndpoint, type: 'POST', data: JSON.stringify(dsPayloadInsert), contentType: 'application/json', headers: that.getOAuthData(dsEndpoint, 'POST'), crossDomain: true,
-                        success: function () { acionarDisparoEmail(); },
-                        error: function () { acionarDisparoEmail(); }
+                        success: function () { 
+                            movimentarProcessoParaParalelo(); 
+                        },
+                        error: function () { 
+                            movimentarProcessoParaParalelo(); 
+                        }
                     });
                 },
-                error: function (xhr) {
-                    console.error("Erro no update final:", xhr.responseText);
-                    acionarDisparoEmail();
+                error: function (xhr) { 
+                    console.error("Erro no update final:", xhr.responseText); 
+                    movimentarProcessoParaParalelo(); 
                 }
             });
         }

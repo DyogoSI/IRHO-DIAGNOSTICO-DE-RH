@@ -1,0 +1,15 @@
+!SESSION 2026-06-26 14:07:18.457 -----------------------------------------------
+eclipse.buildId=4.4.0.I20140606-1215
+java.version=1.8.0_492
+java.vendor=Private Build
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=pt_BR
+Command-line arguments:  -data /home/dyogo-henrique/Documentos/eclipse luna/DIAGNOSTICO RH -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.ui 4 4 2026-06-26 14:07:21.692
+!MESSAGE Referenced part does not exist yet: org.eclipse.ui.views.TaskList.
+
+!ENTRY org.eclipse.ui 4 4 2026-06-26 14:07:21.696
+!MESSAGE Referenced part does not exist yet: org.eclipse.ui.views.TaskList.
+
+!ENTRY org.eclipse.ui 4 4 2026-06-26 14:07:21.697
+!MESSAGE Referenced part does not exist yet: org.eclipse.ui.views.TaskList.

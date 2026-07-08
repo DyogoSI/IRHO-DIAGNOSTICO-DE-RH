@@ -246,6 +246,8 @@
             text-transform: uppercase !important;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
         }
+
+
         @media (max-width: 1024px) {
             #recommendations-list, #opportunities-list { grid-template-columns: repeat(2, 1fr) !important; }
             #maturity-levels-list { grid-template-columns: repeat(3, 1fr) !important; }
@@ -262,11 +264,41 @@
             .card-results .row { flex-direction: column !important; }
             .card-results .col-md-4 { width: 100% !important; margin-bottom: 20px; }
         }
+
+        /* ===========================================
+          STATUS DOS E-MAILS
+     =========================================== */
+
+.email-status {
+    font-weight: 600;
+    text-align: center;
+    cursor: default;
+}
+
+.email-status.status-aguardando {
+    background: #fff8db;
+    color: #856404;
+    border: 1px solid #ffe58f;
+}
+
+.email-status.status-enviado {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.email-status.status-erro {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
     </style>
 </head>
 <body>
     <div class="fluig-style-guide">
         <form name="form" role="form">
+            
+            <input type="hidden" name="data_criacao" id="data_criacao" value="">
             
             <input type="hidden" name="score_final" id="score_final">
             <input type="hidden" name="nivel_maturidade" id="nivel_maturidade">
@@ -275,6 +307,8 @@
             <input type="hidden" name="json_oportunidades" id="json_oportunidades">
             <input type="hidden" name="id_pdf_diagnostico" id="id_pdf_diagnostico">
             <input type="hidden" name="link_pdf_publico" id="link_pdf_publico">
+            
+            <input type="hidden" name="current_atividade" id="current_atividade">
             
             <textarea name="pdf_base64_1" id="pdf_base64_1" style="display:none;"></textarea>
             <textarea name="pdf_base64_2" id="pdf_base64_2" style="display:none;"></textarea>
@@ -343,44 +377,63 @@
                                 <div class="form-group"><label>Segmento</label><input type="text" name="segmento" class="form-control" readonly></div>
                                 <div class="form-group"><label>Número de Funcionários</label><input type="text" name="tamanho" class="form-control" readonly></div>
                                 <div class="form-group"><label>Site</label><input type="text" name="company_site" class="form-control" readonly></div>
-                                <div class="form-group"><label>Pessoas no RH atualmente</label><input type="text" name="rh_team_size" class="form-control" readonly></div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group"><label>Nome do Contato</label><input type="text" name="nome_contato" class="form-control" readonly></div>
                                 <div class="form-group"><label>Email Corporativo</label><input type="text" name="email_contato" class="form-control" readonly></div>
                                 <div class="form-group"><label>Telefone</label><input type="text" name="telefone" class="form-control" readonly></div>
                                 <div class="form-group"><label>Cargo / Setor</label><input type="text" name="user_role" class="form-control" readonly></div>
-                                <div class="form-group"><label>URL do LinkedIn</label><input type="text" name="linkedin_url" id="linkedin_url" class="form-control" placeholder="https://linkedin.com/in/..."></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card-section">
-                        <h4 class="form-section-title">Ações Comerciais (Nutrição 1)</h4>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="flag_conexao_linkedin" id="flag_conexao_linkedin"> Conexão LinkedIn</label>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="flag_envio_email" id="flag_envio_email"> Envio E-mail</label>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="flag_whatsapp" id="flag_whatsapp"> WhatsApp</label>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="flag_mensagem_linkedin" id="flag_mensagem_linkedin"> Mensagem LinkedIn</label>
-                                </div>
+                                <div class="form-group"><label>Pessoas no RH atualmente</label><input type="text" name="rh_team_size" class="form-control" readonly></div>
                             </div>
                         </div>
                     </div>
 
+    <div class="card-section">
+    <h4 class="form-section-title">Status de Automação de E-mails</h4>
+
+    <div class="row">
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="status_email_1">E-mail 1</label>
+                <input
+                    type="text"
+                    name="status_email_1"
+                    id="status_email_1"
+                    class="form-control email-status status-aguardando"
+                    readonly
+                    value="Aguardando disparo">
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="status_email_2">E-mail 2</label>
+                <input
+                    type="text"
+                    name="status_email_2"
+                    id="status_email_2"
+                    class="form-control email-status status-aguardando"
+                    readonly
+                    value="Aguardando disparo">
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="status_email_3">E-mail 3</label>
+                <input
+                    type="text"
+                    name="status_email_3"
+                    id="status_email_3"
+                    class="form-control email-status status-aguardando"
+                    readonly
+                    value="Aguardando disparo">
+            </div>
+        </div>
+
+    </div>
+</div>
                     <div class="card-section">
                         <h4 class="form-section-title">Recrutamento e Seleção</h4>
                         <div class="row">
@@ -470,9 +523,10 @@
                             <div class="col-md-6"><div class="form-group"><label>Aplica ciência dos dados para otimizar processos?</label><input type="text" name="apply_data_science" class="form-control" readonly></div></div>
                         </div>
                     </div>
-
                 </div>
             </div>
+
+
         </form>
     </div>
 
@@ -484,6 +538,12 @@
             renderCards(); 
         });
 
+
+
+        // ==========================================
+        // Geração de gráficos, cards e cálculo de score
+        // ==========================================
+        
         function generateMaturityLevels(currentLevel, score) {
             var levels = [
                 { titulo: "Tradicional", requisitos: ["Foco em Tarefas Administrativas e Burocráticas", "Recrutamento e Seleção Operacionais", "Gestão Reativa de Pessoas", "Estrutura Hierárquica e Verticalizada"] },
@@ -622,9 +682,9 @@
                     $("#lbl_nivel").text(nivelMaturidade);
 
                     var descricoes = {
-                        "Tradicional": "Foco em processes operacionais e burocráticos. Há um grande potencial para iniciar a automação e ganhar agilidade.",
+                        "Tradicional": "Foco em processos operacionais e burocráticos. Há grande potencial para iniciar a automação e ganhar agilidade.",
                         "Ágil": "Busca por eficiência e rapidez, iniciando a transição para processos mais dinâmicos e menos engessados.",
-                        "Digital": "Uso de tecnologia e automação consolidados. O próximo passo é equilibrar as ferramentas com a valorização da experiência humana.",
+                        "Digital": "Uso de tecnologia e automação consolidados. O próximo passo é equilibrar ferramentas com a valorização da experiência humana.",
                         "Humanizado": "Une tecnologia avançada e foco genuíno nas pessoas, promovendo uma excelente experiência para o colaborador.",
                         "Estratégico": "O setor atua como parceiro de negócios, focando em análise de dados, métricas e retenção profunda de talentos."
                     };

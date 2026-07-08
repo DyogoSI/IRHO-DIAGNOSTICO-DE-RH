@@ -28,7 +28,7 @@
     <processDefinitionVersionPK>
       <companyId>1</companyId>
       <processId>PROCESSO_RH_DIAGNOSTICO</processId>
-      <version>59</version>
+      <version>103</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
     <formId>6</formId>
@@ -76,8 +76,8 @@
       <notifyAuthorityFollowUp>false</notifyAuthorityFollowUp>
       <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
       <automatic>false</automatic>
-      <positionX>120</positionX>
-      <positionY>84</positionY>
+      <positionX>70</positionX>
+      <positionY>270</positionY>
       <forecastedEffortType>0</forecastedEffortType>
       <forecastedEffort>0</forecastedEffort>
       <notifyManagerFollowUp>false</notifyManagerFollowUp>
@@ -127,8 +127,8 @@
       <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
       <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
       <automatic>false</automatic>
-      <positionX>280</positionX>
-      <positionY>253</positionY>
+      <positionX>300</positionX>
+      <positionY>392</positionY>
       <forecastedEffortType>0</forecastedEffortType>
       <forecastedEffort>0</forecastedEffort>
       <notifyManagerFollowUp>false</notifyManagerFollowUp>
@@ -179,8 +179,8 @@
       <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
       <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
       <automatic>false</automatic>
-      <positionX>480</positionX>
-      <positionY>253</positionY>
+      <positionX>490</positionX>
+      <positionY>378</positionY>
       <forecastedEffortType>0</forecastedEffortType>
       <forecastedEffort>0</forecastedEffort>
       <notifyManagerFollowUp>false</notifyManagerFollowUp>
@@ -200,6 +200,400 @@
       <destinationStates/>
       <digitalSignature>false</digitalSignature>
       <executionType>0</executionType>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <sequence>14</sequence>
+      </processStatePK>
+      <stateName>email 1</stateName>
+      <stateDescription>email 1</stateDescription>
+      <instruction></instruction>
+      <deadlineTime>0</deadlineTime>
+      <deadlineFieldName></deadlineFieldName>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId></engineAllocationId>
+      <selectColleague>1</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>false</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>0</allowanceAuthorityTime>
+      <frequenceAuthorityTime>0</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>false</automatic>
+      <positionX>440</positionX>
+      <positionY>97</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <allowanceManagerTime>0</allowanceManagerTime>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>0</stateType>
+      <bpmnType>82</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <noticeExpirationAuthorityTime>0</noticeExpirationAuthorityTime>
+      <noticeExpirationRequisitionerTime>0</noticeExpirationRequisitionerTime>
+      <noticeExpirationManagerTime>0</noticeExpirationManagerTime>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+      <executionType>2</executionType>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <sequence>27</sequence>
+      </processStatePK>
+      <stateName>email 2</stateName>
+      <stateDescription>email 2</stateDescription>
+      <instruction></instruction>
+      <deadlineTime>0</deadlineTime>
+      <deadlineFieldName></deadlineFieldName>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId></engineAllocationId>
+      <selectColleague>1</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>false</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>0</allowanceAuthorityTime>
+      <frequenceAuthorityTime>0</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>false</automatic>
+      <positionX>690</positionX>
+      <positionY>98</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <allowanceManagerTime>0</allowanceManagerTime>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>0</stateType>
+      <bpmnType>82</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <noticeExpirationAuthorityTime>0</noticeExpirationAuthorityTime>
+      <noticeExpirationRequisitionerTime>0</noticeExpirationRequisitionerTime>
+      <noticeExpirationManagerTime>0</noticeExpirationManagerTime>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+      <executionType>2</executionType>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <sequence>28</sequence>
+      </processStatePK>
+      <stateName>email 3</stateName>
+      <stateDescription>email 3</stateDescription>
+      <instruction></instruction>
+      <deadlineTime>0</deadlineTime>
+      <deadlineFieldName></deadlineFieldName>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId></engineAllocationId>
+      <selectColleague>1</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>false</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>0</allowanceAuthorityTime>
+      <frequenceAuthorityTime>0</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>false</automatic>
+      <positionX>980</positionX>
+      <positionY>97</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <allowanceManagerTime>0</allowanceManagerTime>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>0</stateType>
+      <bpmnType>82</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <noticeExpirationAuthorityTime>0</noticeExpirationAuthorityTime>
+      <noticeExpirationRequisitionerTime>0</noticeExpirationRequisitionerTime>
+      <noticeExpirationManagerTime>0</noticeExpirationManagerTime>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+      <executionType>2</executionType>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <sequence>40</sequence>
+      </processStatePK>
+      <stateName>Aguardabdo preencher diagnostico</stateName>
+      <stateDescription>Aguardabdo preencher diagnostico</stateDescription>
+      <instruction></instruction>
+      <deadlineTime>0</deadlineTime>
+      <deadlineFieldName></deadlineFieldName>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <selectColleague>1</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>true</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>3600</allowanceAuthorityTime>
+      <frequenceAuthorityTime>3600</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>false</automatic>
+      <positionX>160</positionX>
+      <positionY>244</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <allowanceManagerTime>0</allowanceManagerTime>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>0</stateType>
+      <bpmnType>80</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <noticeExpirationAuthorityTime>0</noticeExpirationAuthorityTime>
+      <noticeExpirationRequisitionerTime>0</noticeExpirationRequisitionerTime>
+      <noticeExpirationManagerTime>0</noticeExpirationManagerTime>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+      <executionType>0</executionType>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <sequence>22</sequence>
+      </processStatePK>
+      <stateName>Intermediário</stateName>
+      <stateDescription>Intermediário</stateDescription>
+      <instruction>Evento intermediário do processo</instruction>
+      <deadlineTime>0</deadlineTime>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId></engineAllocationId>
+      <engineAllocationConfiguration></engineAllocationConfiguration>
+      <selectColleague>0</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>true</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>1</allowanceAuthorityTime>
+      <frequenceAuthorityTime>1</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>true</automatic>
+      <positionX>320</positionX>
+      <positionY>110</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>0</stateType>
+      <bpmnType>32</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+      <parentSequence>0</parentSequence>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <sequence>29</sequence>
+      </processStatePK>
+      <stateName>Intermediário</stateName>
+      <stateDescription>Intermediário</stateDescription>
+      <instruction>Evento intermediário do processo</instruction>
+      <deadlineTime>0</deadlineTime>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId></engineAllocationId>
+      <engineAllocationConfiguration></engineAllocationConfiguration>
+      <selectColleague>0</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>true</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>1</allowanceAuthorityTime>
+      <frequenceAuthorityTime>1</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>true</automatic>
+      <positionX>610</positionX>
+      <positionY>106</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>0</stateType>
+      <bpmnType>32</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+      <parentSequence>0</parentSequence>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <sequence>30</sequence>
+      </processStatePK>
+      <stateName>Intermediário</stateName>
+      <stateDescription>Intermediário</stateDescription>
+      <instruction>Evento intermediário do processo</instruction>
+      <deadlineTime>0</deadlineTime>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId></engineAllocationId>
+      <engineAllocationConfiguration></engineAllocationConfiguration>
+      <selectColleague>0</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>true</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>1</allowanceAuthorityTime>
+      <frequenceAuthorityTime>1</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>true</automatic>
+      <positionX>880</positionX>
+      <positionY>106</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>0</stateType>
+      <bpmnType>32</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+      <parentSequence>0</parentSequence>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <sequence>11</sequence>
+      </processStatePK>
+      <stateName>Paralelo</stateName>
+      <stateDescription>Paralelo</stateDescription>
+      <joint>false</joint>
+      <initialState>false</initialState>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <automatic>false</automatic>
+      <positionX>320</positionX>
+      <positionY>229</positionY>
+      <inhibitTransfer>false</inhibitTransfer>
+      <stateType>3</stateType>
+      <bpmnType>126</bpmnType>
+      <signalId>0</signalId>
+      <openInstances>0</openInstances>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <sequence>35</sequence>
+      </processStatePK>
+      <stateName>Join</stateName>
+      <stateDescription>Join</stateDescription>
+      <joint>false</joint>
+      <initialState>false</initialState>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <automatic>false</automatic>
+      <positionX>1000</positionX>
+      <positionY>233</positionY>
+      <inhibitTransfer>false</inhibitTransfer>
+      <stateType>4</stateType>
+      <bpmnType>127</bpmnType>
+      <signalId>0</signalId>
+      <openInstances>0</openInstances>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
     </ProcessState>
     <ProcessState>
       <processStatePK>
@@ -230,8 +624,8 @@
       <notifyAuthorityFollowUp>false</notifyAuthorityFollowUp>
       <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
       <automatic>false</automatic>
-      <positionX>700</positionX>
-      <positionY>265</positionY>
+      <positionX>1010</positionX>
+      <positionY>390</positionY>
       <forecastedEffortType>0</forecastedEffortType>
       <forecastedEffort>0</forecastedEffort>
       <notifyManagerFollowUp>false</notifyManagerFollowUp>
@@ -256,7 +650,58 @@
         <companyId>1</companyId>
         <processId>PROCESSO_RH_DIAGNOSTICO</processId>
         <version>1</version>
-        <linkSequence>7</linkSequence>
+        <linkSequence>13</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>11</initialStateSequence>
+      <finalStateSequence>5</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <linkSequence>23</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>11</initialStateSequence>
+      <finalStateSequence>22</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <linkSequence>24</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>22</initialStateSequence>
+      <finalStateSequence>14</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <linkSequence>26</linkSequence>
       </processLinkPK>
       <actionLabel></actionLabel>
       <returnPermited>false</returnPermited>
@@ -273,12 +718,12 @@
         <companyId>1</companyId>
         <processId>PROCESSO_RH_DIAGNOSTICO</processId>
         <version>1</version>
-        <linkSequence>8</linkSequence>
+        <linkSequence>31</linkSequence>
       </processLinkPK>
       <actionLabel></actionLabel>
       <returnPermited>false</returnPermited>
-      <initialStateSequence>4</initialStateSequence>
-      <finalStateSequence>5</finalStateSequence>
+      <initialStateSequence>14</initialStateSequence>
+      <finalStateSequence>29</finalStateSequence>
       <returnLabel></returnLabel>
       <name></name>
       <automaticLink>false</automaticLink>
@@ -290,12 +735,131 @@
         <companyId>1</companyId>
         <processId>PROCESSO_RH_DIAGNOSTICO</processId>
         <version>1</version>
-        <linkSequence>10</linkSequence>
+        <linkSequence>32</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>29</initialStateSequence>
+      <finalStateSequence>27</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <linkSequence>33</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>27</initialStateSequence>
+      <finalStateSequence>30</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <linkSequence>34</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>30</initialStateSequence>
+      <finalStateSequence>28</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <linkSequence>36</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>28</initialStateSequence>
+      <finalStateSequence>35</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <linkSequence>37</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>35</initialStateSequence>
+      <finalStateSequence>6</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <linkSequence>38</linkSequence>
       </processLinkPK>
       <actionLabel></actionLabel>
       <returnPermited>false</returnPermited>
       <initialStateSequence>9</initialStateSequence>
-      <finalStateSequence>6</finalStateSequence>
+      <finalStateSequence>35</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <linkSequence>41</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>4</initialStateSequence>
+      <finalStateSequence>40</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <linkSequence>42</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>40</initialStateSequence>
+      <finalStateSequence>11</finalStateSequence>
       <returnLabel></returnLabel>
       <name></name>
       <automaticLink>false</automaticLink>
@@ -384,6 +948,207 @@
     <WorkflowProcessEvent>
       <workflowProcessEventPK>
         <companyId>1</companyId>
+        <eventId>servicetask27</eventId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+      </workflowProcessEventPK>
+      <eventDescription>function servicetask27(attempt, message) {
+    log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH [ST27]: Iniciando disparo agendado do E-mail Nutrição 2&quot;);
+
+    try {
+        var emailContato = hAPI.getCardValue(&quot;email_contato&quot;);
+        
+        // Trava de segurança
+        if (!emailContato || emailContato == &quot;&quot; || emailContato == &quot;anonimo@teste.com&quot;) {
+            log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH [ST27]: Email vazio ou anônimo. Disparo cancelado.&quot;);
+            return true; 
+        }
+
+        var nomeContato = hAPI.getCardValue(&quot;nome_contato&quot;);
+        var empresa = hAPI.getCardValue(&quot;empresa&quot;);
+        var maturidade = hAPI.getCardValue(&quot;nivel_maturidade&quot;);
+        var scoreFinal = hAPI.getCardValue(&quot;score_final&quot;);
+
+        // Assunto específico para a nutrição 2
+        var assuntoEmail = &quot;Insights exclusivos para a sua gestão de pessoas&quot;;
+
+        var parametros = new java.util.HashMap();
+        parametros.put(&quot;nomeContato&quot;, nomeContato);
+        parametros.put(&quot;empresa&quot;, empresa);
+        parametros.put(&quot;scoreFinal&quot;, scoreFinal);
+        parametros.put(&quot;maturidade&quot;, maturidade);
+        parametros.put(&quot;subject&quot;, assuntoEmail);
+        
+        var destinatarios = new java.util.ArrayList();
+        destinatarios.add(String(emailContato).trim());
+        
+        // Dispara chamando o Template 2
+        notifier.notify(&quot;guilherme-af&quot;, &quot;TPL_NUTRICAO_2&quot;, parametros, destinatarios, &quot;text/html&quot;);
+
+       
+        log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH [ST27]: E-mail de nutrição 2 disparado com sucesso para &quot; + emailContato);
+        
+        // Data e hora do disparo, no mesmo padrão de formatação usado no restante do projeto
+        var dataHoraEnvio = new java.text.SimpleDateFormat(&quot;dd/MM/yyyy HH:mm:ss&quot;).format(new java.util.Date());
+        hAPI.setCardValue(&quot;status_email_2&quot;, &quot;Enviado em &quot; + dataHoraEnvio);
+        
+        return true;
+
+    } catch (e) {
+        log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH [ST27]: ERRO FATAL NO ENVIO: &quot; + e.toString());
+        throw &quot;Erro ao enviar e-mail 2 agendado: &quot; + e.toString();
+    }
+}</eventDescription>
+    </WorkflowProcessEvent>
+    <WorkflowProcessEvent>
+      <workflowProcessEventPK>
+        <companyId>1</companyId>
+        <eventId>servicetask14</eventId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+      </workflowProcessEventPK>
+      <eventDescription>function servicetask14(attempt, message) {
+    log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH [ST14]: Iniciando disparo agendado do E-mail Nutrição 1&quot;);
+
+    try {
+        // Pega o e-mail preenchido na Landing Page
+        var emailContato = hAPI.getCardValue(&quot;email_contato&quot;);
+        
+        // Trava de segurança: Se não tiver e-mail, encerra a tarefa silenciosamente sem travar o processo
+        if (!emailContato || emailContato == &quot;&quot; || emailContato == &quot;anonimo@teste.com&quot;) {
+            log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH [ST14]: Email vazio ou anônimo. Disparo cancelado.&quot;);
+            return true; 
+        }
+
+        // Pega os demais dados do formulário
+        var nomeContato = hAPI.getCardValue(&quot;nome_contato&quot;);
+        var empresa = hAPI.getCardValue(&quot;empresa&quot;);
+        var maturidade = hAPI.getCardValue(&quot;nivel_maturidade&quot;);
+        var scoreFinal = hAPI.getCardValue(&quot;score_final&quot;);
+
+        var assuntoEmail = &quot;Seu Diagnóstico RH - Próximos Passos&quot;;
+
+        // Monta os parâmetros exatamente como você fez no afterProcessCreate
+        var parametros = new java.util.HashMap();
+        parametros.put(&quot;nomeContato&quot;, nomeContato);
+        parametros.put(&quot;empresa&quot;, empresa);
+        parametros.put(&quot;scoreFinal&quot;, scoreFinal);
+        parametros.put(&quot;maturidade&quot;, maturidade);
+        parametros.put(&quot;subject&quot;, assuntoEmail);
+        
+        // Adiciona o destinatário externo
+        var destinatarios = new java.util.ArrayList();
+        destinatarios.add(String(emailContato).trim());
+        
+        // Dispara usando o remetente válido que já mapeamos
+        notifier.notify(&quot;guilherme-af&quot;, &quot;TPL_NUTRICAO_1&quot;, parametros, destinatarios, &quot;text/html&quot;);
+
+        log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH [ST14]: E-mail de nutrição disparado com sucesso para &quot; + emailContato);
+        
+        // Data e hora do disparo, no mesmo padrão de formatação usado no restante do projeto
+        var dataHoraEnvio = new java.text.SimpleDateFormat(&quot;dd/MM/yyyy HH:mm:ss&quot;).format(new java.util.Date());
+        hAPI.setCardValue(&quot;status_email_1&quot;, &quot;Enviado em &quot; + dataHoraEnvio);
+        
+        return true;
+
+    } catch (e) {
+        log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH [ST14]: ERRO FATAL NO ENVIO: &quot; + e.toString());
+        // Lança a exceção para que o Fluig jogue a tarefa para a bolinha de &quot;Erro&quot; (se houver) e não perca o rastro
+        throw &quot;Erro ao enviar e-mail agendado: &quot; + e.toString();
+    }
+}</eventDescription>
+    </WorkflowProcessEvent>
+    <WorkflowProcessEvent>
+      <workflowProcessEventPK>
+        <companyId>1</companyId>
+        <eventId>afterTaskSave</eventId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+      </workflowProcessEventPK>
+      <eventDescription>function afterTaskSave(colleagueId, nextSequenceId, userList) {
+    var atividadeAtual = getValue(&quot;WKNumState&quot;);
+    var numSolicitacao = getValue(&quot;WKNumProces&quot;);
+
+    log.info(&quot;### DIAGNOSTICO RH [&quot; + numSolicitacao + &quot;]: Iniciando afterTaskSave. Atv Atual: &quot; + atividadeAtual + &quot; -&gt; Destino: &quot; + nextSequenceId);
+
+    // =========================================================================
+    // DISPARO DE E-MAIL NA ATIVIDADE &quot;NUTRIÇÃO 1&quot; (Atividade 5)
+    // =========================================================================
+    
+    // Regra 1: Disparar quando a equipe comercial SALVAR/CONCLUIR a Nutrição 1
+    if (atividadeAtual == 5) {
+        log.info(&quot;### DIAGNOSTICO RH [&quot; + numSolicitacao + &quot;]: Finalizando Nutrição 1. Disparando e-mail.&quot;);
+        try {
+            enviarEmailNutricao(numSolicitacao);
+        } catch (e) {
+            log.error(&quot;### DIAGNOSTICO RH: Erro ao disparar e-mail de Nutrição 1: &quot; + e);
+        }
+    }
+
+    // Regra 2 (Alternativa): Se você quiser que o e-mail dispare SOZINHO 
+    // no momento exato em que a solicitação CHEGAR na caixa de entrada da Nutrição 1,
+    // comente o bloco acima e descomente o bloco abaixo:
+    /*
+    if (nextSequenceId == 5) {
+        log.info(&quot;### DIAGNOSTICO RH [&quot; + numSolicitacao + &quot;]: O processo chegou na Nutrição 1. Disparando e-mail.&quot;);
+        try {
+            enviarEmailNutricao(numSolicitacao);
+        } catch (e) {
+            log.error(&quot;### DIAGNOSTICO RH: Erro ao disparar e-mail ao chegar na Nutrição 1: &quot; + e);
+        }
+    }
+    */
+}
+
+// =============================================================================
+// FUNÇÃO AUXILIAR DE ENVIO DE E-MAIL (Usando API Nativa do Fluig)
+// =============================================================================
+function enviarEmailNutricao(numSolicitacao) {
+    // 1. Coleta os dados que foram salvos no Formulário pelo Widget
+    var nomeContato = hAPI.getCardValue(&quot;nome_contato&quot;);
+    var emailDestino = hAPI.getCardValue(&quot;email_contato&quot;);
+    var empresa = hAPI.getCardValue(&quot;empresa&quot;);
+    var scoreFinal = hAPI.getCardValue(&quot;score_final&quot;);
+    var maturidade = hAPI.getCardValue(&quot;nivel_maturidade&quot;);
+    var linkPdfPublico = hAPI.getCardValue(&quot;link_pdf_publico&quot;);
+
+    // 2. Valida se o candidato preencheu o e-mail
+    if (emailDestino != null &amp;&amp; String(emailDestino).trim() != &quot;&quot;) {
+        var emailLimpo = String(emailDestino).trim();
+
+        // 3. Monta as variáveis que serão injetadas dentro do seu Template HTML
+        var parametros = new java.util.HashMap();
+        parametros.put(&quot;NOME_CONTATO&quot;, nomeContato);
+        parametros.put(&quot;EMPRESA&quot;, empresa);
+        parametros.put(&quot;SCORE_FINAL&quot;, scoreFinal);
+        parametros.put(&quot;MATURIDADE&quot;, maturidade);
+        parametros.put(&quot;LINK_PDF&quot;, linkPdfPublico);
+        
+        // Assunto do E-mail
+        parametros.put(&quot;subject&quot;, &quot;Resultados do Diagnóstico de Maturidade RH - &quot; + empresa);
+
+        // 4. Prepara a lista de destinatários
+        var destinatarios = new java.util.ArrayList();
+        destinatarios.add(emailLimpo);
+
+        // 5. Aciona o Notifier do Fluig.
+        // IMPORTANTE: Mude &quot;TPL_DIAGNOSTICO_RESULTADO&quot; para o ID exato do seu template cadastrado no Fluig
+        var templateId = &quot;TPL_DIAGNOSTICO_RESULTADO&quot;; 
+        
+        // Remetente padrão do sistema (pode colocar a matricula do vendedor &quot;guilherme-af&quot; se preferir)
+        var remetente = &quot;guilherme-af&quot;; 
+
+        notifier.notify(remetente, templateId, parametros, destinatarios, &quot;text/html&quot;);
+
+        log.info(&quot;### DIAGNOSTICO RH [&quot; + numSolicitacao + &quot;]: E-mail disparado com sucesso para &quot; + emailLimpo);
+    } else {
+        log.warn(&quot;### DIAGNOSTICO RH [&quot; + numSolicitacao + &quot;]: E-mail de destino vazio. Disparo cancelado.&quot;);
+    }
+}</eventDescription>
+    </WorkflowProcessEvent>
+    <WorkflowProcessEvent>
+      <workflowProcessEventPK>
+        <companyId>1</companyId>
         <eventId>ESP_LITERALS</eventId>
         <processId>PROCESSO_RH_DIAGNOSTICO</processId>
         <version>1</version>
@@ -465,13 +1230,67 @@ process.version.instructions=
 process.category=
 </eventDescription>
     </WorkflowProcessEvent>
+    <WorkflowProcessEvent>
+      <workflowProcessEventPK>
+        <companyId>1</companyId>
+        <eventId>servicetask28</eventId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+      </workflowProcessEventPK>
+      <eventDescription>function servicetask28(attempt, message) {
+    log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH [ST28]: Iniciando disparo agendado do E-mail Nutrição 3&quot;);
+
+    try {
+        var emailContato = hAPI.getCardValue(&quot;email_contato&quot;);
+        
+        // Trava de segurança
+        if (!emailContato || emailContato == &quot;&quot; || emailContato == &quot;anonimo@teste.com&quot;) {
+            log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH [ST28]: Email vazio ou anônimo. Disparo cancelado.&quot;);
+            return true; 
+        }
+
+        var nomeContato = hAPI.getCardValue(&quot;nome_contato&quot;);
+        var empresa = hAPI.getCardValue(&quot;empresa&quot;);
+        var maturidade = hAPI.getCardValue(&quot;nivel_maturidade&quot;);
+        var scoreFinal = hAPI.getCardValue(&quot;score_final&quot;);
+
+        // Assunto específico para a nutrição 3
+        var assuntoEmail = &quot;Vamos transformar o RH da &quot; + empresa + &quot;?&quot;;
+
+        var parametros = new java.util.HashMap();
+        parametros.put(&quot;nomeContato&quot;, nomeContato);
+        parametros.put(&quot;empresa&quot;, empresa);
+        parametros.put(&quot;scoreFinal&quot;, scoreFinal);
+        parametros.put(&quot;maturidade&quot;, maturidade);
+        parametros.put(&quot;subject&quot;, assuntoEmail);
+        
+        var destinatarios = new java.util.ArrayList();
+        destinatarios.add(String(emailContato).trim());
+        
+        // Dispara chamando o Template 3
+        notifier.notify(&quot;guilherme-af&quot;, &quot;TPL_NUTRICAO_3&quot;, parametros, destinatarios, &quot;text/html&quot;);
+
+        log.info(&quot;&gt;&gt;&gt; DIAGNOSTICO RH [ST28]: E-mail de nutrição 3 disparado com sucesso para &quot; + emailContato);
+        
+        // Data e hora do disparo, no mesmo padrão de formatação usado no restante do projeto
+        var dataHoraEnvio = new java.text.SimpleDateFormat(&quot;dd/MM/yyyy HH:mm:ss&quot;).format(new java.util.Date());
+        hAPI.setCardValue(&quot;status_email_3&quot;, &quot;Enviado em &quot; + dataHoraEnvio);
+        
+        return true;
+
+    } catch (e) {
+        log.error(&quot;&gt;&gt;&gt; DIAGNOSTICO RH [ST28]: ERRO FATAL NO ENVIO: &quot; + e.toString());
+        throw &quot;Erro ao enviar e-mail 3 agendado: &quot; + e.toString();
+    }
+}</eventDescription>
+    </WorkflowProcessEvent>
   </list>
   <list/>
   <list>
     <SwimLane>
       <color>FFFFFF</color>
-      <height>361</height>
-      <width>831</width>
+      <height>521</height>
+      <width>1261</width>
       <positionX>10</positionX>
       <positionY>10</positionY>
       <stateName>Pool</stateName>
@@ -486,10 +1305,10 @@ process.category=
     </SwimLane>
     <SwimLane>
       <color>9F9F9F</color>
-      <height>180</height>
-      <width>801</width>
+      <height>173</height>
+      <width>1231</width>
       <positionX>40</positionX>
-      <positionY>10</positionY>
+      <positionY>183</positionY>
       <stateName>Solicitante</stateName>
       <type>2</type>
       <parentSequence>1</parentSequence>
@@ -502,10 +1321,10 @@ process.category=
     </SwimLane>
     <SwimLane>
       <color>82b0b7</color>
-      <height>181</height>
-      <width>801</width>
+      <height>175</height>
+      <width>1231</width>
       <positionX>40</positionX>
-      <positionY>190</positionY>
+      <positionY>356</positionY>
       <stateName>Comercial</stateName>
       <type>2</type>
       <parentSequence>1</parentSequence>
@@ -516,14 +1335,104 @@ process.category=
         <sequence>3</sequence>
       </swimLanePK>
     </SwimLane>
+    <SwimLane>
+      <color>adc9ac</color>
+      <height>173</height>
+      <width>1231</width>
+      <positionX>40</positionX>
+      <positionY>10</positionY>
+      <stateName>Disparo email</stateName>
+      <type>2</type>
+      <parentSequence>1</parentSequence>
+      <swimLanePK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>1</version>
+        <sequence>4</sequence>
+      </swimLanePK>
+    </SwimLane>
   </list>
   <list/>
   <list/>
   <list/>
+  <list>
+    <ProcessStateTrigger>
+      <processStateTriggerPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>103</version>
+        <stateSequence>22</stateSequence>
+        <triggerSequence>0</triggerSequence>
+      </processStateTriggerPK>
+      <runType>0</runType>
+      <type>2</type>
+      <timeTrigger>0:0:0</timeTrigger>
+      <frequencia>10</frequencia>
+    </ProcessStateTrigger>
+    <ProcessStateTrigger>
+      <processStateTriggerPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>103</version>
+        <stateSequence>29</stateSequence>
+        <triggerSequence>1</triggerSequence>
+      </processStateTriggerPK>
+      <runType>0</runType>
+      <type>2</type>
+      <timeTrigger>0:0:0</timeTrigger>
+      <frequencia>10</frequencia>
+    </ProcessStateTrigger>
+    <ProcessStateTrigger>
+      <processStateTriggerPK>
+        <companyId>1</companyId>
+        <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+        <version>103</version>
+        <stateSequence>30</stateSequence>
+        <triggerSequence>2</triggerSequence>
+      </processStateTriggerPK>
+      <runType>0</runType>
+      <type>2</type>
+      <timeTrigger>0:0:0</timeTrigger>
+      <frequencia>10</frequencia>
+    </ProcessStateTrigger>
+  </list>
   <list/>
   <list/>
-  <list/>
-  <list/>
+  <list>
+    <ProcessStateService>
+      <companyId>1</companyId>
+      <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+      <version>1</version>
+      <sequence>14</sequence>
+      <attempts>0</attempts>
+      <sucessFullMessage>Integração executada com sucesso</sucessFullMessage>
+      <serviceName></serviceName>
+      <frequency>1</frequency>
+      <frequencyType>0</frequencyType>
+    </ProcessStateService>
+    <ProcessStateService>
+      <companyId>1</companyId>
+      <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+      <version>1</version>
+      <sequence>27</sequence>
+      <attempts>0</attempts>
+      <sucessFullMessage>Integração executada com sucesso</sucessFullMessage>
+      <serviceName></serviceName>
+      <frequency>1</frequency>
+      <frequencyType>0</frequencyType>
+    </ProcessStateService>
+    <ProcessStateService>
+      <companyId>1</companyId>
+      <processId>PROCESSO_RH_DIAGNOSTICO</processId>
+      <version>1</version>
+      <sequence>28</sequence>
+      <attempts>0</attempts>
+      <sucessFullMessage>Integração executada com sucesso</sucessFullMessage>
+      <serviceName></serviceName>
+      <frequency>1</frequency>
+      <frequencyType>0</frequencyType>
+    </ProcessStateService>
+  </list>
   <list/>
   <list/>
   <list/>

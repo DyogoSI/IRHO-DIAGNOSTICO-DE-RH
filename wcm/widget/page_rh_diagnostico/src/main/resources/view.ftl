@@ -3,6 +3,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
     
+    
     <script type="text/javascript" src="/page_rh_diagnostico/resources/js/oauth-1.0a.js"></script>
     <script type="text/javascript" src="/page_rh_diagnostico/resources/js/form_validation.js"></script>
     <script type="text/javascript" src="/page_rh_diagnostico/resources/js/test_helper.js"></script>
